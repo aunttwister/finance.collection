@@ -1,0 +1,14 @@
+## IntrinsicValue.WASM
+
+Blazor, client-based, web assembly type of project which provides true intrinsic value calculation capabilities.
+
+The data flow (for now)
+
+![ERD](./media/IntrinsicValue.WASM.png)
+
+Features that are currently supported:
+
+* Calculate "Graham Intrinsic Value Model" value. [wiki](https://en.wikipedia.org/wiki/Benjamin_Graham_formula)
+* Calculate "Discounted Cash Flow Intrinsic Value Model" value. [wiki](https://en.wikipedia.org/wiki/Discounted_cash_flow)
+
+These calculations are supported only for single ticker. There is a plan to add an ability to calculate multiple tickers 
