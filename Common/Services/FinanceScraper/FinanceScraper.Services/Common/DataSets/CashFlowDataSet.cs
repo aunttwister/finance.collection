@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StockPortfolio.FinanceScraper.Common.DataSets.Base;
+using FinanceScraper.Common.DataSets.Base;
 
-namespace StockPortfolio.FinanceScraper.Common.DataSets
+namespace FinanceScraper.Common.DataSets
 {
     public class CashFlowDataSet : IFinanceDataSet
     {

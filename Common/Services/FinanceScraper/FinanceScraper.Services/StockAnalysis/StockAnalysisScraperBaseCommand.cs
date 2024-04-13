@@ -1,11 +1,11 @@
-﻿using StockPortfolio.FinanceScraper.Common.Base;
+﻿using FinanceScraper.Common.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockPortfolio.FinanceScraper.StockAnalysis
+namespace FinanceScraper.StockAnalysis
 {
     public class StockAnalysisScraperBaseCommand : ScraperBaseCommand
     {

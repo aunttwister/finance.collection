@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using StockPortfolio.FinanceScraper.Common.Base;
-using StockPortfolio.FinanceScraper.Common.DataSets;
+using FinanceScraper.Common.Base;
+using FinanceScraper.Common.DataSets;
 
-namespace StockPortfolio.FinanceScraper.YahooFinance.CashFlowScraper.Commands
+namespace FinanceScraper.YahooFinance.CashFlowScraper.Commands
 {
     public class YahooFinanceCashFlowScraperCommandHandler : IRequestHandler<YahooFinanceCashFlowScraperCommand, CashFlowDataSet>
     {

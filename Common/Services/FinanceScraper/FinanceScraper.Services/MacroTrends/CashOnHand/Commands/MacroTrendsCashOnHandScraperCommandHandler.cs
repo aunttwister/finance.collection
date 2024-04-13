@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StockPortfolio.FinanceScraper.Common.DataSets;
-using StockPortfolio.FinanceScraper.Common.Base;
+using FinanceScraper.Common.DataSets;
+using FinanceScraper.Common.Base;
 
-namespace StockPortfolio.FinanceScraper.MacroTrends.CashFlow.Commands
+namespace FinanceScraper.MacroTrends.CashFlow.Commands
 {
     public class MacroTrendsCashOnHandScraperCommandHandler : IRequestHandler<MacroTrendsCashOnHandScraperCommand, CashFlowDataSet>
     {

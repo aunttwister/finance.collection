@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockPortfolio.FinanceScraper.Common.DataSets
+namespace FinanceScraper.Common.DataSets
 {
     public class TickerDataSet
     {

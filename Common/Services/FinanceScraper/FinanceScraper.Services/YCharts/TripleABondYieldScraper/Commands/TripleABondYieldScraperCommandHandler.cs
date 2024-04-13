@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using StockPortfolio.FinanceScraper.Common.Base;
-using StockPortfolio.FinanceScraper.Common.DataSets;
+using FinanceScraper.Common.Base;
+using FinanceScraper.Common.DataSets;
 
-namespace StockPortfolio.FinanceScraper.YCharts.TripleABondYieldScraper.Commands
+namespace FinanceScraper.YCharts.TripleABondYieldScraper.Commands
 {
     public class TripleABondYieldScraperCommandHandler : IRequestHandler<TripleABondYieldScraperCommand, TripleABondsDataSet>
     {

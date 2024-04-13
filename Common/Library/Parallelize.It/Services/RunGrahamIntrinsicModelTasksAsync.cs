@@ -1,17 +1,17 @@
 ﻿using MediatR;
-using StockPortfolio.FinanceScraper.Common.Constants;
-using StockPortfolio.FinanceScraper.Common.DataSets;
-using StockPortfolio.FinanceScraper.YahooFinance.AnalysisScraper.Commands;
-using StockPortfolio.FinanceScraper.YahooFinance.CashFlowScraper.Commands;
-using StockPortfolio.FinanceScraper.YahooFinance.SummaryScraper.Commands;
-using StockPortfolio.FinanceScraper.YCharts.TripleABondYieldScraper.Commands;
+using FinanceScraper.Common.Constants;
+using FinanceScraper.Common.DataSets;
+using FinanceScraper.YahooFinance.AnalysisScraper.Commands;
+using FinanceScraper.YahooFinance.CashFlowScraper.Commands;
+using FinanceScraper.YahooFinance.SummaryScraper.Commands;
+using FinanceScraper.YCharts.TripleABondYieldScraper.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Calculation.Intrinsic.DataSets.GrahamIntrinsicModel;
-using Calculation.Intrinsic.GrahamIntrinsicModel.Commands;
+using IntrinsicValue.Calculation.DataSets.GrahamIntrinsicModel;
+using IntrinsicValue.Calculation.GrahamIntrinsicModel.Commands;
 
 namespace Parallelize.It.Services
 {

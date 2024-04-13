@@ -1,26 +1,26 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using StockPortfolio.FinanceScraper.Common.Base;
-using StockPortfolio.FinanceScraper.Common.DataSets;
-using StockPortfolio.FinanceScraper.Common.Exceptions.ExceptionResolver;
-using StockPortfolio.FinanceScraper.MacroTrends.CashFlow;
-using StockPortfolio.FinanceScraper.MacroTrends.CashFlow.Commands;
-using StockPortfolio.FinanceScraper.StockAnalysis.BalanceSheetScraper;
-using StockPortfolio.FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands;
-using StockPortfolio.FinanceScraper.StockAnalysis.StatisticsScraper;
-using StockPortfolio.FinanceScraper.StockAnalysis.StatisticsScraper.Commands;
-using StockPortfolio.FinanceScraper.YahooFinance.AnalysisScraper;
-using StockPortfolio.FinanceScraper.YahooFinance.AnalysisScraper.Commands;
-using StockPortfolio.FinanceScraper.YahooFinance.CashFlowScraper;
-using StockPortfolio.FinanceScraper.YahooFinance.CashFlowScraper.Commands;
-using StockPortfolio.FinanceScraper.YahooFinance.SummaryScraper;
-using StockPortfolio.FinanceScraper.YahooFinance.SummaryScraper.Commands;
-using StockPortfolio.FinanceScraper.YCharts.TripleABondYieldScraper;
-using StockPortfolio.FinanceScraper.YCharts.TripleABondYieldScraper.Commands;
+using FinanceScraper.Common.Base;
+using FinanceScraper.Common.DataSets;
+using FinanceScraper.Common.Exceptions.ExceptionResolver;
+using FinanceScraper.MacroTrends.CashFlow;
+using FinanceScraper.MacroTrends.CashFlow.Commands;
+using FinanceScraper.StockAnalysis.BalanceSheetScraper;
+using FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands;
+using FinanceScraper.StockAnalysis.StatisticsScraper;
+using FinanceScraper.StockAnalysis.StatisticsScraper.Commands;
+using FinanceScraper.YahooFinance.AnalysisScraper;
+using FinanceScraper.YahooFinance.AnalysisScraper.Commands;
+using FinanceScraper.YahooFinance.CashFlowScraper;
+using FinanceScraper.YahooFinance.CashFlowScraper.Commands;
+using FinanceScraper.YahooFinance.SummaryScraper;
+using FinanceScraper.YahooFinance.SummaryScraper.Commands;
+using FinanceScraper.YCharts.TripleABondYieldScraper;
+using FinanceScraper.YCharts.TripleABondYieldScraper.Commands;
 using System.Reflection;
 
 
-namespace StockPortfolio.FinanceScraper.Common.Extensions
+namespace FinanceScraper.Common.Extensions
 {
     public static class FinanceScraperServicesExtensions
     {

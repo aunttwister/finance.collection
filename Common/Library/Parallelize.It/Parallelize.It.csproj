@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FinanceScraper\StockPortfolio.FinanceScraper.csproj" />
-    <ProjectReference Include="..\Intrinsic.Calculation\Calculation.Intrinsic.csproj" />
+    <ProjectReference Include="..\..\Services\FinanceScraper\FinanceScraper.Services\FinanceScraper.csproj" />
+    <ProjectReference Include="..\..\Services\IntrinsicValue\IntrinsicValue.Calculation\IntrinsicValue.Calculation.csproj" />
   </ItemGroup>
 
 </Project>

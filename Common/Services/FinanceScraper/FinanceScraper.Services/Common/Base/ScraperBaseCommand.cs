@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockPortfolio.FinanceScraper.Common.Base
+namespace FinanceScraper.Common.Base
 {
     public abstract class ScraperBaseCommand
     {

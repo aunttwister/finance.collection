@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockPortfolio.FinanceScraper.Common.Exceptions.ExceptionResolver
+namespace FinanceScraper.Common.Exceptions.ExceptionResolver
 {
     public interface IExceptionResolverService
     {

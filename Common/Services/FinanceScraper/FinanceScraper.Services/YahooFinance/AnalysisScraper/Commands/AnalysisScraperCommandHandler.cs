@@ -1,14 +1,14 @@
-﻿using StockPortfolio.FinanceScraper.YahooFinance.AnalysisScraper.Commands;
+﻿using FinanceScraper.YahooFinance.AnalysisScraper.Commands;
 using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StockPortfolio.FinanceScraper.Common.DataSets;
-using StockPortfolio.FinanceScraper.Common.Base;
+using FinanceScraper.Common.DataSets;
+using FinanceScraper.Common.Base;
 
-namespace StockPortfolio.FinanceScraper.YahooFinance.AnalysisScraper.Commands
+namespace FinanceScraper.YahooFinance.AnalysisScraper.Commands
 {
     public class AnalysisScraperCommandHandler : IRequestHandler<AnalysisScraperCommand, AnalysisDataSet>
     {

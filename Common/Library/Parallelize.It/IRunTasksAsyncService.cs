@@ -1,5 +1,5 @@
-﻿using Calculation.Intrinsic;
-using Calculation.Intrinsic.DataSets;
+﻿using IntrinsicValue.Calculation;
+using IntrinsicValue.Calculation.DataSets;
 using MediatR;
 
 namespace Parallelize.It

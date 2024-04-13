@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockPortfolio.FinanceScraper.Common.Constants
+namespace FinanceScraper.Common.Constants
 {
     public static class UrlPathConstants
     {

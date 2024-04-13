@@ -1,17 +1,17 @@
-﻿using StockPortfolio.FinanceScraper.YahooFinance.SummaryScraper.Commands;
-using StockPortfolio.FinanceScraper.YCharts.TripleABondYieldScraper.Commands;
+﻿using FinanceScraper.YahooFinance.SummaryScraper.Commands;
+using FinanceScraper.YCharts.TripleABondYieldScraper.Commands;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StockPortfolio.FinanceScraper.Common.Extensions;
-using StockPortfolio.FinanceScraper.Common.Exceptions.ExceptionResolver;
-using StockPortfolio.FinanceScraper.Common.DataSets;
-using StockPortfolio.FinanceScraper.Common.Base;
+using FinanceScraper.Common.Extensions;
+using FinanceScraper.Common.Exceptions.ExceptionResolver;
+using FinanceScraper.Common.DataSets;
+using FinanceScraper.Common.Base;
 
-namespace StockPortfolio.FinanceScraper.YCharts.TripleABondYieldScraper
+namespace FinanceScraper.YCharts.TripleABondYieldScraper
 {
     public class YChartsTripleABondsScrapeService : IScrapeServiceStrategy<TripleABondYieldScraperCommand, TripleABondsDataSet>
     {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StockPortfolio.FinanceScraper.Common.Base;
+using FinanceScraper.Common.Base;
 
-namespace StockPortfolio.FinanceScraper.MacroTrends
+namespace FinanceScraper.MacroTrends
 {
     public class MacroTrendsScraperBaseCommand : ScraperBaseCommand
     {

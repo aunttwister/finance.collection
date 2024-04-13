@@ -1,12 +1,12 @@
 ﻿using HtmlAgilityPack;
-using StockPortfolio.FinanceScraper.Common.Base;
-using StockPortfolio.FinanceScraper.Common.DataSets;
-using StockPortfolio.FinanceScraper.Common.Exceptions;
-using StockPortfolio.FinanceScraper.Common.Exceptions.ExceptionResolver;
-using StockPortfolio.FinanceScraper.Common.Extensions;
-using StockPortfolio.FinanceScraper.YahooFinance.AnalysisScraper.Commands;
+using FinanceScraper.Common.Base;
+using FinanceScraper.Common.DataSets;
+using FinanceScraper.Common.Exceptions;
+using FinanceScraper.Common.Exceptions.ExceptionResolver;
+using FinanceScraper.Common.Extensions;
+using FinanceScraper.YahooFinance.AnalysisScraper.Commands;
 
-namespace StockPortfolio.FinanceScraper.YahooFinance.AnalysisScraper
+namespace FinanceScraper.YahooFinance.AnalysisScraper
 {
     public class YahooFinanceAnalysisScrapeService : IScrapeServiceStrategy<AnalysisScraperCommand, AnalysisDataSet>
     {

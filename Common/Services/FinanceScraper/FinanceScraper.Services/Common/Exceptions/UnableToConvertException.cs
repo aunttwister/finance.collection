@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockPortfolio.FinanceScraper.Common.Exceptions
+namespace FinanceScraper.Common.Exceptions
 {
     public class UnableToConvertException : Exception
     {

@@ -1,10 +1,10 @@
 ﻿using HtmlAgilityPack;
-using StockPortfolio.FinanceScraper.Common.Base;
-using StockPortfolio.FinanceScraper.Common.DataSets;
-using StockPortfolio.FinanceScraper.Common.Extensions;
-using StockPortfolio.FinanceScraper.MacroTrends.CashFlow.Commands;
+using FinanceScraper.Common.Base;
+using FinanceScraper.Common.DataSets;
+using FinanceScraper.Common.Extensions;
+using FinanceScraper.MacroTrends.CashFlow.Commands;
 
-namespace StockPortfolio.FinanceScraper.MacroTrends.CashFlow
+namespace FinanceScraper.MacroTrends.CashFlow
 {
     public class MacroTrendsCashFlowScrapeService : IScrapeServiceStrategy<MacroTrendsCashFlowScraperCommand, CashFlowDataSet>
     {

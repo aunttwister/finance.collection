@@ -1,14 +1,14 @@
 ﻿using MediatR;
-using StockPortfolio.FinanceScraper.Common.Base;
-using StockPortfolio.FinanceScraper.Common.DataSets;
-using StockPortfolio.FinanceScraper.YahooFinance.AnalysisScraper.Commands;
+using FinanceScraper.Common.Base;
+using FinanceScraper.Common.DataSets;
+using FinanceScraper.YahooFinance.AnalysisScraper.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockPortfolio.FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands
+namespace FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands
 {
     public class BalanceSheetScraperCommandHandler : IRequestHandler<BalanceSheetScraperCommand, BalanceSheetDataSet>
     {

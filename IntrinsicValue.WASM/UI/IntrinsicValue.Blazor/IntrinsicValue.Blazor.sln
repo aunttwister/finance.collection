@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{D6C0F85F-7
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parallelize.It", "..\..\..\Common\Library\Parallelize.It\Parallelize.It.csproj", "{A5F6D5D7-308F-4397-9860-A0ED82C34BF1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockPortfolio.FinanceScraper", "..\..\..\Common\Services\FinanceScraper\FinanceScraper.Services\StockPortfolio.FinanceScraper.csproj", "{56A1F532-8A71-4791-9C32-17C9A8547845}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinanceScraper", "..\..\..\Common\Services\FinanceScraper\FinanceScraper.Services\FinanceScraper.csproj", "{56A1F532-8A71-4791-9C32-17C9A8547845}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntrinsicValue.Calculation", "..\..\..\Common\Services\IntrinsicValue\IntrinsicValue.Calculation\IntrinsicValue.Calculation.csproj", "{943D7791-123A-4790-9D43-CBE2C8EBB153}"
 EndProject
