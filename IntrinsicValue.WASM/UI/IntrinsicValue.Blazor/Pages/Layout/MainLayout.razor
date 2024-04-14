@@ -1,0 +1,25 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemingProvider />
+<MudLayout Style="height: 100%;">
+    <MudAppBar Elevation="1">
+        <MudText Typo="Typo.h5" Class="ml-3">Intrinsic Value Calculator.</MudText>
+    </MudAppBar>
+    <MudDrawer @bind-Open="@open" Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="true">
+        <NavMenu />
+    </MudDrawer>
+    
+    <MudMainContent Class="mt-16 pa-4 d-flex justify-center" Style="height 100%;">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code
+{
+    bool open = false;
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+}
