@@ -1,25 +1,24 @@
 ﻿@page "/"
-@inject ISnackbar Snackbar
 
 <PageTitle>Home</PageTitle>
-<MudLayout>
+<MudLayout Style="text-align: center !important;">
     <MudAppBar Color="Color.Primary">
         <MudText Typo="Typo.h6" Class="mud-appbar-text">Ticker Intrinsic Value Calculator</MudText>
     </MudAppBar>
 
     <MudContainer Class="my-4">
         <MudText Typo="Typo.h3" GutterBottom="true">Welcome to the Ticker Intrinsic Value Calculator!</MudText>
-        <MudText>
+        <MudText Typo="Typo.subtitle1">
             Discover the true value of your investments with our intuitive and powerful intrinsic value calculator designed for stock market enthusiasts, investors, and financial analysts alike. This tool helps you assess the fundamental value of publicly traded stocks based on their financial data and key performance metrics. Make informed investment decisions by understanding whether a stock is overvalued, undervalued, or fairly priced according to its intrinsic value.
         </MudText>
 
         <MudExpansionPanels MultiExpansion="true" Class="mt-4">
             <MudExpansionPanel Text="What is Intrinsic Value?">
                 <TitleContent>
-                    <MudText Typo="Typo.h6">What is Intrinsic Value?</MudText>
+                    <MudText Typo="Typo.h4">What is Intrinsic Value?</MudText>
                 </TitleContent>
                 <ChildContent>
-                    <MudText>
+                    <MudText Typo="Typo.subtitle1">
                         Intrinsic value is the perceived or calculated value of a company, stock, currency, or product determined through fundamental analysis without reference to its market value. It is used by investors to determine the future cash flows of a company discounted back to their present value, giving a fair value estimate that helps in making investment decisions.
                     </MudText>
                 </ChildContent>
@@ -27,81 +26,95 @@
 
             <MudExpansionPanel>
                 <TitleContent>
-                    <MudText Typo="Typo.h6">Features of the Ticker Intrinsic Value Calculator:</MudText>
+                    <MudText Typo="Typo.h4">Features of the Ticker Intrinsic Value Calculator:</MudText>
                 </TitleContent>
                 <ChildContent>
                     <MudExpansionPanel>
                         <TitleContent>
-                            <MudText Typo="Typo.subtitle2">Comprehensive Financial Analysis</MudText>
+                            <MudText Typo="Typo.h6">Comprehensive Financial Analysis</MudText>
                         </TitleContent>
                         <ChildContent>
-                            Our calculator incorporates a wide range of financial indicators including earnings per share (EPS), price-to-earnings ratios (P/E), projected growth rates, and more, to provide a thorough analysis of a company’s financial health.
+                            <MudText Typo="Typo.subtitle1">Our calculator incorporates a wide range of financial indicators including earnings per share (EPS), price-to-earnings ratios (P/E), projected growth rates, and more, to provide a thorough analysis of a company’s financial health.</MudText>
                         </ChildContent>
                     </MudExpansionPanel>
                     <MudExpansionPanel>
                         <TitleContent>
-                            <MudText Typo="Typo.subtitle2">Customizable Inputs</MudText>
+                            <MudText Typo="Typo.h6">Customizable Inputs</MudText>
                         </TitleContent>
                         <ChildContent>
-                            Adjust the variables such as discount rates, future growth rates, and final PE ratios according to your own assumptions or use default values based on historical averages and industry standards.
+                            <MudText Typo="Typo.subtitle1">Adjust the variables such as discount rates, future growth rates, and final PE ratios according to your own assumptions or use default values based on historical averages and industry standards.</MudText>
                         </ChildContent>
                     </MudExpansionPanel>
                     <MudExpansionPanel>
                         <TitleContent>
-                            <MudText Typo="Typo.subtitle2">Real-Time Data Integration</MudText>
+                            <MudText Typo="Typo.h6">Real-Time Data Integration</MudText>
                         </TitleContent>
                         <ChildContent>
-                            Connect seamlessly with real-time financial data feeds to ensure that you are working with the most current and relevant data available.
+                            <MudText Typo="Typo.subtitle1">Connect seamlessly with real-time financial data feeds to ensure that you are working with the most current and relevant data available.</MudText>
                         </ChildContent>
                     </MudExpansionPanel>
                     <MudExpansionPanel>
                         <TitleContent>
-                            <MudText Typo="Typo.subtitle2">User-Friendly Interface</MudText>
+                            <MudText Typo="Typo.h6">User-Friendly Interface</MudText>
                         </TitleContent>
                         <ChildContent>
-                            User-Friendly Interface: Designed with both novice and experienced users in mind, our interface allows easy navigation and operation without compromising on the depth of functionality and analytical power.
+                            <MudText Typo="Typo.subtitle1">User-Friendly Interface: Designed with both novice and experienced users in mind, our interface allows easy navigation and operation without compromising on the depth of functionality and analytical power.</MudText>
                         </ChildContent>
                     </MudExpansionPanel>
                     <MudExpansionPanel>
                         <TitleContent>
-                            <MudText Typo="Typo.subtitle2">Detailed Report Generation</MudText>
+                            <MudText Typo="Typo.h6">Detailed Report Generation</MudText>
                         </TitleContent>
                         <ChildContent>
-                            Generate detailed reports summarizing the intrinsic value calculations, including a breakdown of all input parameters and the logic used for the evaluation. These reports can be saved, printed, or shared directly from the platform.
+                            <MudText Typo="Typo.subtitle1">Generate detailed reports summarizing the intrinsic value calculations, including a breakdown of all input parameters and the logic used for the evaluation. These reports can be saved, printed, or shared directly from the platform.</MudText>
                         </ChildContent>
                     </MudExpansionPanel>
                     <MudExpansionPanel>
                         <TitleContent>
-                            <MudText Typo="Typo.subtitle2">Historical Data Comparison</MudText>
+                            <MudText Typo="Typo.h6">Historical Data Comparison</MudText>
                         </TitleContent>
                         <ChildContent>
-                            Analyze how the intrinsic value of a stock has changed over time in relation to its market price to spot trends, potential market corrections, or confirm long-term investment theses.
+                            <MudText Typo="Typo.subtitle1">Analyze how the intrinsic value of a stock has changed over time in relation to its market price to spot trends, potential market corrections, or confirm long-term investment theses.</MudText>
                         </ChildContent>
                     </MudExpansionPanel>
                 </ChildContent>
             </MudExpansionPanel>
         </MudExpansionPanels>
 
-        <MudText Typo="Typo.h5" GutterBottom="true" Class="mt-6">How It Works:</MudText>
+        <MudText Typo="Typo.h4" GutterBottom="true" Class="mt-6" Stlyle="text-align: center;">How It Works:</MudText>
         <MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start" Reverse="false">
             <MudTimelineItem Color="Color.Primary" Variant="Variant.Filled">
                 <ItemContent>
-                    <MudAlert Severity="Severity.Info">Select a Ticker: Start by entering the ticker symbol of the stock you are interested in analyzing.</MudAlert>
+                    <MudAlert Severity="Severity.Info">
+                        <MudText Typo="Typo.subtitle1">
+                            Select a Ticker: Start by entering the ticker symbol of the stock you are interested in analyzing.
+                        </MudText>
+                    </MudAlert>
                 </ItemContent>
             </MudTimelineItem>
             <MudTimelineItem Color="Color.Primary" Variant="Variant.Filled">
                 <ItemContent>
-                    <MudAlert Severity="Severity.Info">Review Financials: Automatically pull in the latest available financial data or manually enter/edit the financial metrics relevant to your analysis.</MudAlert>
+                    <MudAlert Severity="Severity.Info">
+                        <MudText Typo="Typo.subtitle1">
+                            Review Financials: Automatically pull in the latest available financial data or manually enter/edit the financial metrics relevant to your analysis.
+                        </MudText>
+                    </MudAlert>
                 </ItemContent>
             </MudTimelineItem>
             <MudTimelineItem Color="Color.Primary" Variant="Variant.Filled">
                 <ItemContent>
-                    <MudAlert Severity="Severity.Info">Set Assumptions: Customize the assumptions used in the calculation, such as the discount rate and expected growth rate.</MudAlert>
+                    <MudAlert Severity="Severity.Info">
+                        <MudText Typo="Typo.subtitle1">Set Assumptions: Customize the assumptions used in the calculation, such as the discount rate and expected growth rate.</MudText>
+                    </MudAlert>
                 </ItemContent>
             </MudTimelineItem>
             <MudTimelineItem Color="Color.Primary" Variant="Variant.Filled">
                 <ItemContent>
-                    <MudAlert Severity="Severity.Info">Calculate Intrinsic Value: With one click, calculate the intrinsic value based on the inputs and assumptions.</MudAlert>
+                    <MudAlert Severity="Severity.Info">
+                        <MudText Typo="Typo.subtitle1">
+                            Calculate Intrinsic Value: With one click, calculate the intrinsic value based on the inputs and assumptions.
+                        </MudText>
+                    </MudAlert>
                 </ItemContent>
             </MudTimelineItem>
             <MudTimelineItem Color="Color.Primary" Variant="Variant.Filled">
@@ -112,64 +125,46 @@
         </MudTimeline>
     </MudContainer>
     <MudContainer Class="my-4">
-        <MudTabs Outlined="true" Position="Position.End" Rounded="true" Border="true"
-                 ApplyEffectsToContainer="true" Class="mt-8" PanelClass="pa-6">
-            <MudTabPanel Text="Make Smarter Investment Decisions">
-                <MudText>By knowing the intrinsic value, you can better determine the right time to buy or sell a stock.</MudText>
-            </MudTabPanel>
-            <MudTabPanel Text="Save Time">
-                <MudText>Quickly calculate and compare without the need for manual calculations or spreadsheets.</MudText>
-            </MudTabPanel>
-            <MudTabPanel Text="Gain Financial Insight">
-                <MudText>Enhance your understanding of financial metrics and how they contribute to a stock's intrinsic value.</MudText>
-            </MudTabPanel>
-            <MudTabPanel Text="Educational Tool">
-                <MudText>Learn about fundamental analysis through hands-on practice and detailed explanations of each step.</MudText>
-            </MudTabPanel>
-        </MudTabs>
+        <MudCarousel Style="height: 100px; align-content: center; text-align: center;" TData="object" AutoCycle="true" CycleItems="true" TimerInterval="3000" ShowArrows="false" ShowBullets="false">
+            <MudCarouselItem>
+                <MudCard>
+                    <MudCardContent>
+                        <MudText Typo="Typo.h4">Make Smarter Investment Decisions</MudText>
+                        <MudText>By knowing the intrinsic value, you can better determine the right time to buy or sell a stock.</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudCarouselItem>
+            <MudCarouselItem>
+                <MudCard>
+                    <MudCardContent>
+                        <MudText Typo="Typo.h4">Save Time</MudText>
+                        <MudText>By knowing the intrinsic value, you can better determine the right time to buy or sell a stock.</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudCarouselItem>
+            <MudCarouselItem>
+                <MudCard>
+                    <MudCardContent>
+                        <MudText Typo="Typo.h4">Gain Financial Insight</MudText>
+                        <MudText>Enhance your understanding of financial metrics and how they contribute to a stock's intrinsic value.</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudCarouselItem>
+            <MudCarouselItem>
+                <MudCard>
+                    <MudCardContent>
+                        <MudText Typo="Typo.h4">Educational Tool</MudText>
+                        <MudText>Learn about fundamental analysis through hands-on practice and detailed explanations of each step.</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudCarouselItem>
+        </MudCarousel>
     </MudContainer>
-    <MudContainer Class="my-4">
-        <MudGrid>
-            <MudItem>
-                <MudText Typo="Typo.h5" GutterBottom="true">Start Now!</MudText>
-                <MudText>
-                    Use our intuitive calculator to evaluate the intrinsic value of stocks based on fundamental analysis and financial data.
-                </MudText>
-                <MudTextField @bind-Value="ticker" Label="Enter Ticker Symbol" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" Adornment="Adornment.End" @onkeydown="@SearchTicker" Class="mt-2" />
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2" OnClick="CalculateValue">Calculate</MudButton>
-            </MudItem>
-        </MudGrid>
-
-        <MudExpansionPanels Class="mt-4">
-            <!-- Expansion Panels for Information -->
-        </MudExpansionPanels>
-
-        <MudText Typo="Typo.h5" GutterBottom="true" Class="mt-5">Calculation Results:</MudText>
-        <!-- Placeholder for results, possibly showing charts or tables -->
-        <MudSimpleTable Dense="true" Hover="true" Striped="true" Class="mt-2">
-            <!-- Data table for displaying calculation results -->
-        </MudSimpleTable>
+    <MudContainer Class="my-4" Style="align-content: center; text-align: center;">
+        <MudButton style="height: 7.5vh; width: 15vw;" StartIcon="@Icons.Material.Filled.Calculate" Color="Color.Primary" Variant="Variant.Filled" Href="calculate">
+        <MudText Typo="Typo.h5">
+            Calculate Now
+        </MudText>
+        </MudButton>
     </MudContainer>
 </MudLayout>
-
-@code {
-    private string ticker = "";
-
-    private void CalculateValue()
-    {
-        if (string.IsNullOrWhiteSpace(ticker))
-        {
-            Snackbar.Add("Please enter a valid ticker symbol.", Severity.Error);
-            return;
-        }
-        Snackbar.Add("Calculating intrinsic value for: " + ticker, Severity.Success);
-        // Add logic to fetch and calculate intrinsic value
-    }
-
-    private Task SearchTicker(KeyboardEventArgs args)
-    {
-        if (args.Key == "Enter")
-            CalculateValue();
-        return Task.CompletedTask;
-    }
-}

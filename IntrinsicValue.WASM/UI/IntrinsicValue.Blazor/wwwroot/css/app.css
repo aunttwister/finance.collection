@@ -19,13 +19,6 @@
     --bs-nav-link-hover-color: var(--mud-palette-primary-darken) !important;
 }
 
-.border-light {
-    border: 1px solid #dee2e6; /* Light grey border */
-    padding: 8px; /* Optional: to give some space inside the items */
-    border-radius: 4px; /* Optional: to give rounded corners */
-    margin-bottom: 4px; /* Optional: to separate items */
-}
-
 html, body, #app {
     height: 100%;
 }

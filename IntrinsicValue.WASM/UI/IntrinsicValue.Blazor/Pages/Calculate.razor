@@ -1,0 +1,49 @@
+﻿@page "/calculate";
+@inject ISnackbar Snackbar;
+
+<PageTitle>Calculate</PageTitle>
+<MudContainer Class="my-4">
+    <MudGrid>
+        <MudItem>
+            <MudText Typo="Typo.h4" GutterBottom="true">Start Now!</MudText>
+            <MudText>
+                Use our intuitive calculator to evaluate the intrinsic value of stocks based on fundamental analysis and financial data.
+            </MudText>
+            <MudTextField @bind-Value="ticker" Label="Enter Ticker Symbol" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" Adornment="Adornment.End" @onkeydown="@SearchTicker" Class="mt-2" />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2" OnClick="CalculateValue">Calculate</MudButton>
+        </MudItem>
+    </MudGrid>
+
+    <MudExpansionPanels Class="mt-4">
+        <!-- Expansion Panels for Information -->
+    </MudExpansionPanels>
+
+    <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-5">Calculation Results:</MudText>
+    <!-- Placeholder for results, possibly showing charts or tables -->
+    <MudSimpleTable Dense="true" Hover="true" Striped="true" Class="mt-2">
+        <!-- Data table for displaying calculation results -->
+    </MudSimpleTable>
+</MudContainer>
+
+
+@code {
+    private string ticker = "";
+
+    private void CalculateValue()
+    {
+        if (string.IsNullOrWhiteSpace(ticker))
+        {
+            Snackbar.Add("Please enter a valid ticker symbol.", Severity.Error);
+            return;
+        }
+        Snackbar.Add("Calculating intrinsic value for: " + ticker, Severity.Success);
+        // Add logic to fetch and calculate intrinsic value
+    }
+
+    private Task SearchTicker(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+            CalculateValue();
+        return Task.CompletedTask;
+    }
+}
