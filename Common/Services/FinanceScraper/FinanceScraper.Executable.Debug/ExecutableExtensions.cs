@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockPortfolio.FinanceScraper.Executable.Debug
+namespace StockPortfolio.FinanceScraper.Executable
 {
     public static class ExecutableExtensions
     {

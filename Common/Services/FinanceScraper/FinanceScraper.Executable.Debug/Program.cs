@@ -1,38 +1,115 @@
-﻿using Calculation.Intrinsic;
+﻿using IntrinsicValue.Calculation;
+using IntrinsicValue.Calculation.DataSets.GrahamIntrinsicModel;
+using IntrinsicValue.Calculation.GrahamIntrinsicModel.Commands;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using StockPortfolio.FinanceScraper.Common.Constants;
-using StockPortfolio.FinanceScraper.Common.DataSets;
-using StockPortfolio.FinanceScraper.Common.Extensions;
-using StockPortfolio.FinanceScraper.MacroTrends.CashFlow.Commands;
-using StockPortfolio.FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands;
-using StockPortfolio.FinanceScraper.StockAnalysis.StatisticsScraper.Commands;
+using FinanceScraper.Common.Constants;
+using FinanceScraper.Common.DataSets;
+using FinanceScraper.Common.Extensions;
+using StockPortfolio.FinanceScraper.Executable;
+using FinanceScraper.YahooFinance.AnalysisScraper.Commands;
+using FinanceScraper.YahooFinance.CashFlowScraper.Commands;
+using FinanceScraper.YahooFinance.SummaryScraper.Commands;
+using FinanceScraper.YCharts.TripleABondYieldScraper.Commands;
 
-namespace StockPortfolio.FinanceScraper.Executable.Debug
+namespace Scraper.YahooFinanceScraper
 {
-    internal class Program
+    public class Program
     {
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             IServiceProvider serviceProvider = CreateHostBuilder().Build().Services;
             IMediator _mediator = serviceProvider.GetRequiredService<IMediator>();
 
-            string ticker = "CMG";
+            string ticker = "DIS";
 
-            TickerDataSet tickerDataSet = new TickerDataSet();
+            var startTime = DateTime.Now;
 
-            BalanceSheetScraperCommand balanceSheetRequest = new BalanceSheetScraperCommand(ticker, UrlPathConstants.StockAnalysisBalanceSpreadSheetPath);
-            Task<BalanceSheetDataSet> taskBalanceSheet = _mediator.Send(balanceSheetRequest);
+            ScraperDataSetStruct dataSetStruct = await RunScrapersAsync(ticker, _mediator).ConfigureAwait(false);
 
-            StatisticsScraperCommand statisticsScraperCommand = new StatisticsScraperCommand(ticker, UrlPathConstants.StockAnalysisStatisticsSheetPath);
-            Task<StatisticsDataSet> taskStatisticsDataSet = _mediator.Send(statisticsScraperCommand);
+            //Calculate
+            GrahamIntrinsicModelCommand grahamIntrinsicModelRequest;
+            GrahamIntrinsicModelDataSet grahamIntrinsicModelDataSet;
+            decimal buyPrice;
 
-            await Task.WhenAll(taskBalanceSheet, taskStatisticsDataSet);
+            grahamIntrinsicModelRequest = new GrahamIntrinsicModelCommand(ticker, dataSetStruct.TickerDataSet.Summary.CurrentPrice.Data)
+            {
+                Eps = dataSetStruct.TickerDataSet.Summary.Eps.Data,
+                FiveYearGrowth = dataSetStruct.TickerDataSet.Analysis.FiveYearGrowth.Data,
+                AverageBondYield = dataSetStruct.TripleABondsDataSet.HistoricalAverageTripleABond.Data,
+                CurrentBondYield = dataSetStruct.TripleABondsDataSet.CurrentTripleABond.Data
+            };
+            grahamIntrinsicModelDataSet = await _mediator.Send(grahamIntrinsicModelRequest);
+
+            buyPrice = Math.Round(grahamIntrinsicModelDataSet.IntrinsicValue.Value * 0.65m, 2);
+
+            Console.WriteLine(ticker);
+            Console.WriteLine("Intrisic value:" + grahamIntrinsicModelDataSet.IntrinsicValue.Value);
+            Console.WriteLine("Buy price:" + buyPrice);
+            Console.WriteLine("Current price:" + grahamIntrinsicModelDataSet.CurrentPrice);
+
+            //decimal priceDiff = buyPrice > 0 ? Math.Round((buyPrice - dataSetStruct.TickerDataSet.Summary.CurrentPrice.Data) / buyPrice * 100, 2) : Math.Round((buyPrice - dataSetStruct.TickerDataSet.Summary.CurrentPrice.Data) / buyPrice * -100, 2);
+
+            //Console.WriteLine("Price difference:" + priceDiff + "%");
+            Console.WriteLine("\nExpected 5 year growth (Average):" + grahamIntrinsicModelDataSet.FiveYearGrowth + "%");
+            Console.WriteLine("EPS:" + grahamIntrinsicModelDataSet.Eps);
+
+            if (dataSetStruct.TickerDataSet.CashFlow.HistoricalYearCashFlows.Dictionary is not null)
+            {
+                foreach (var item in dataSetStruct.TickerDataSet.CashFlow.HistoricalYearCashFlows.Dictionary)
+                {
+                    Console.WriteLine($"{item.Key} - ${item.Value}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"\nExceptions occurred. {dataSetStruct.TickerDataSet.CashFlow.HistoricalYearCashFlows.KeyValuePairExceptions.Key}");
+                Console.WriteLine($"Exceptions occurred. {dataSetStruct.TickerDataSet.CashFlow.HistoricalYearCashFlows.KeyValuePairExceptions.Value}\n");
+            }
+
+            Console.WriteLine("run time: " + (DateTime.Now - startTime));
 
             Console.ReadLine();
         }
+        public async static Task<ScraperDataSetStruct> RunScrapersAsync(string ticker, IMediator _mediator)
+        {
+            /*CurrentPriceScraperCommand currentPriceRequest = new CurrentPriceScraperCommand(ticker);
+            tickerDataSet.CurrentPrice = await _mediator.Send(currentPriceRequest);*/
 
+            SummaryScraperCommand summaryRequest = new SummaryScraperCommand(ticker, UrlPathConstants.YahooFinanceSummaryScraperPath);
+            Task<SummaryDataSet> summaryTask = _mediator.Send(summaryRequest);
+
+            AnalysisScraperCommand analysisRequest = new AnalysisScraperCommand(ticker, UrlPathConstants.YahooFinanceAnalysisScraperPath);
+            Task<AnalysisDataSet> analysisTask = _mediator.Send(analysisRequest);
+
+            //MacroTrendsCashFlowScraperCommand macroTrendsCashFlowRequest = new MacroTrendsCashFlowScraperCommand(ticker, UrlPathConstants.MacroTrendsCashFlowScraperPath);
+            //tickerDataSet.CashFlow = await _mediator.Send(macroTrendsCashFlowRequest);
+
+            YahooFinanceCashFlowScraperCommand yahooCashFlowRequest = new YahooFinanceCashFlowScraperCommand(ticker, UrlPathConstants.YahooFinanceCashFlowScraperPath);
+            Task<CashFlowDataSet> cashFlowTask = _mediator.Send(yahooCashFlowRequest);
+
+            TripleABondYieldScraperCommand tripleABondYieldRequest = new TripleABondYieldScraperCommand();
+            Task<TripleABondsDataSet> tripleABondYieldTask = _mediator.Send(tripleABondYieldRequest);
+
+            await Task.WhenAll(summaryTask, analysisTask, cashFlowTask, tripleABondYieldTask);
+
+            TickerDataSet tickerDataSet = new TickerDataSet()
+            {
+                Summary = summaryTask.Result,
+                Analysis = analysisTask.Result, 
+                CashFlow = cashFlowTask.Result
+            };
+
+            TripleABondsDataSet tripleABondsDataSet = tripleABondYieldTask.Result;
+
+            return new ScraperDataSetStruct()
+            {
+                TickerDataSet = tickerDataSet,
+                TripleABondsDataSet = tripleABondsDataSet
+            };
+
+        }
         public static IHostBuilder CreateHostBuilder()
         {
             return Host.CreateDefaultBuilder()

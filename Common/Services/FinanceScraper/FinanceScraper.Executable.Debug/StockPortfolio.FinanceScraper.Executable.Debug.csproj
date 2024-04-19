@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FinanceScraper\StockPortfolio.FinanceScraper.csproj" />
-    <ProjectReference Include="..\Intrinsic.Calculation\Calculation.Intrinsic.csproj" />
+    <ProjectReference Include="..\..\IntrinsicValue\IntrinsicValue.Calculation\IntrinsicValue.Calculation.csproj" />
+    <ProjectReference Include="..\FinanceScraper.Services.Debug\FinanceScraper.csproj" />
   </ItemGroup>
 
 </Project>
