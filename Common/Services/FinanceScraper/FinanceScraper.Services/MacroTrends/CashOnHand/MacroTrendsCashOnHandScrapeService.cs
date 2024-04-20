@@ -6,23 +6,24 @@ using FinanceScraper.MacroTrends.CashFlow.Commands;
 
 namespace FinanceScraper.MacroTrends.CashFlow
 {
-    public class MacroTrendsCashOnHandScrapeService : IScrapeServiceStrategy<MacroTrendsCashOnHandScraperCommand, CashFlowDataSet>
+    public class MacroTrendsCashOnHandScrapeService
+       // : IScrapeServiceStrategy<MacroTrendsCashOnHandScraperCommand, CashFlowDataSet>
     {
         public MacroTrendsCashOnHandScrapeService() { }
-        public async Task<CashFlowDataSet> ExecuteScrape(MacroTrendsCashOnHandScraperCommand request)
+        /*public async Task<CashFlowDataSet> ExecuteScrape(MacroTrendsCashOnHandScraperCommand request)
         {
-            string fullUrl = await ResolveHistoricalCashFlowUrl(request.FullUrl, request.ActionPath);
+            string fullUrl = await ResolveHistoricalCashOnHandUrl(request.FullUrl, request.ActionPath);
 
             request.SetFullUrl(fullUrl);
 
             HtmlNode node = await request.NodeResolverAsync();
 
-            Dictionary<string, decimal> historicalYearCashFlows = GetHistoricalYearCashFlow(node);
+            Dictionary<string, decimal> historicalYearCashFlows = GetHistoricalYearCashOnHand(node);
 
             return new CashFlowDataSet() { HistoricalYearCashFlows = historicalYearCashFlows };
-        }
+        }*/
 
-        private static async Task<string> ResolveHistoricalCashFlowUrl(string url, string path)
+        private static async Task<string> ResolveHistoricalCashOnHandUrl(string url, string path)
         {
             Uri uri = new Uri(url);
 
@@ -56,7 +57,8 @@ namespace FinanceScraper.MacroTrends.CashFlow
             return url = uri.ToString() + path;
         }
 
-        private static Dictionary<string, decimal> GetHistoricalYearCashFlow(HtmlNode node)
+        [HandleMethodExecutionAspect]
+        private static Dictionary<string, decimal> GetHistoricalYearCashOnHand(HtmlNode node)
         {
             IEnumerable<HtmlNode> yearNodesTableRows = node.SelectNodes("//table[@class='historical_data_table table']/tbody").Nodes();
 

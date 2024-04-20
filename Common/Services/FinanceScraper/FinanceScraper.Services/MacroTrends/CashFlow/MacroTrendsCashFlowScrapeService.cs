@@ -6,10 +6,11 @@ using FinanceScraper.MacroTrends.CashFlow.Commands;
 
 namespace FinanceScraper.MacroTrends.CashFlow
 {
-    public class MacroTrendsCashFlowScrapeService : IScrapeServiceStrategy<MacroTrendsCashFlowScraperCommand, CashFlowDataSet>
+    public class MacroTrendsCashFlowScrapeService
+       // : IScrapeServiceStrategy<MacroTrendsCashFlowScraperCommand, CashFlowDataSet>
     {
         public MacroTrendsCashFlowScrapeService() { }
-        public async Task<CashFlowDataSet> ExecuteScrape(MacroTrendsCashFlowScraperCommand request)
+        /*public async Task<CashFlowDataSet> ExecuteScrape(MacroTrendsCashFlowScraperCommand request)
         {
             string fullUrl = await ResolveHistoricalCashFlowUrl(request.FullUrl);
 
@@ -20,7 +21,7 @@ namespace FinanceScraper.MacroTrends.CashFlow
             Dictionary<string, decimal> historicalYearCashFlows = GetHistoricalYearCashFlow(node);
 
             return new CashFlowDataSet() { HistoricalYearCashFlows = historicalYearCashFlows };
-        }
+        }*/
 
         private static async Task<string> ResolveHistoricalCashFlowUrl(string url)
         {
@@ -56,6 +57,7 @@ namespace FinanceScraper.MacroTrends.CashFlow
             return url = uri.ToString() + "free-cash-flow";
         }
 
+        [HandleMethodExecutionAspect]
         private static Dictionary<string, decimal> GetHistoricalYearCashFlow(HtmlNode node)
         {
             IEnumerable<HtmlNode> yearNodesTableRows = node.SelectNodes("//table[@class='historical_data_table table']/tbody").Nodes();

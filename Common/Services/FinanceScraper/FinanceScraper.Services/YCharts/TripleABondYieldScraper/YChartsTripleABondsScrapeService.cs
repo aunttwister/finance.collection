@@ -10,6 +10,7 @@ using FinanceScraper.Common.Extensions;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.Common.DataSets;
 using FinanceScraper.Common.Base;
+using FinanceScraper.Common.Propagation;
 
 namespace FinanceScraper.YCharts.TripleABondYieldScraper
 {
@@ -22,49 +23,97 @@ namespace FinanceScraper.YCharts.TripleABondYieldScraper
         }
         public async Task<TripleABondsDataSet> ExecuteScrape(TripleABondYieldScraperCommand request)
         {
-            HtmlNode node = await request.NodeResolverAsync();
+            HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
 
-            Task<decimal> currentTripleABond = Task.Run(() => GetCurrentBondTripleAYield(node));
+            Task<MethodResult<decimal>> currentTripleABond = Task.Run(() => GetCurrentBondTripleAYield(node));
 
-            Task<decimal> historicalAverageTripleABond = Task.Run(() => GetHistoricalAverageBondTripleAYield(node));
+            Task<MethodResult<decimal>> historicalAverageTripleABond = Task.Run(() => GetHistoricalAverageBondTripleAYield(node));
 
-            await Task.WhenAll(currentTripleABond, historicalAverageTripleABond);
+            await Task.WhenAll(currentTripleABond, historicalAverageTripleABond).ConfigureAwait(false);
 
-            return new TripleABondsDataSet() { CurrentTripleABond = currentTripleABond.Result, HistoricalAverageTripleABond = historicalAverageTripleABond.Result };
+            return new TripleABondsDataSet() { 
+                CurrentTripleABond = currentTripleABond.Result, 
+                HistoricalAverageTripleABond = historicalAverageTripleABond.Result 
+            };
         }
 
-        private decimal GetCurrentBondTripleAYield(HtmlNode node)
+        [HandleMethodExecutionAspect]
+        private Task<MethodResult<decimal>> GetCurrentBondTripleAYield(HtmlNode node)
         {
-            string commonExceptionSuffix = string.Format(" while attempting to acquire Current AAA Bond Yield");
+            try
+            {
+                return Task.Run(() => ResolveCurrentBondTripleAYield(node));
+            }
+            catch (Exception)
+            {
 
-            HtmlNode currentBondYieldNode = node.SelectSingleNode("//td[text()='Last Value']/following-sibling::td[1]");
-
-            _exceptionResolverService.HtmlNodeNullReferenceExceptionResolver(currentBondYieldNode, commonExceptionSuffix);
-
-            char splitChar = '%';
-            _exceptionResolverService.HtmlNodeKeyCharacterNotFoundExceptionResolver(currentBondYieldNode, splitChar, commonExceptionSuffix);
-            string currentBondYieldStr = currentBondYieldNode.InnerHtml.Split(splitChar)[0];
-
-            decimal currentBondYield = _exceptionResolverService.ConvertToDecimalExceptionResolver(currentBondYieldStr, commonExceptionSuffix);
-
-            return currentBondYield / 100;
+                throw;
+            }
         }
 
-        private decimal GetHistoricalAverageBondTripleAYield(HtmlNode node)
+        [HandleMethodExecutionAspect]
+        private Task<MethodResult<decimal>> GetHistoricalAverageBondTripleAYield(HtmlNode node)
         {
-            string commonExceptionSuffix = string.Format(" while attempting to acquire Historical Average AAA Bond Yield");
+            try
+            {
+                return Task.Run(() => ResolveAverageBondTripleAYield(node));
+            }
+            catch (Exception) 
+            {
+                throw; 
+            }
+        }
 
-            HtmlNode averageBondYieldNode = node.SelectSingleNode("//td[text()='Long Term Average']/following-sibling::td[1]");
-
-            _exceptionResolverService.HtmlNodeNullReferenceExceptionResolver(averageBondYieldNode, commonExceptionSuffix);
+        public MethodResult<decimal> ResolveCurrentBondTripleAYield(HtmlNode node)
+        {
+            node = node.SelectSingleNode("//td[text()='Last Value']/following-sibling::td[1]");
 
             char splitChar = '%';
-            _exceptionResolverService.HtmlNodeKeyCharacterNotFoundExceptionResolver(averageBondYieldNode, splitChar, commonExceptionSuffix);
-            string averageBondYieldStr = averageBondYieldNode.InnerHtml.Split(splitChar)[0];
 
-            decimal averageBondYield = _exceptionResolverService.ConvertToDecimalExceptionResolver(averageBondYieldStr, commonExceptionSuffix);
+            Func<MethodResult<decimal>>[] operations = new Func<MethodResult<decimal>>[]
+            {
+                () => _exceptionResolverService.HtmlNodeNullReferenceExceptionResolver<decimal>(node),
+                () => _exceptionResolverService.HtmlNodeNotApplicableExceptionResolver<decimal>(node),
+                () => _exceptionResolverService.HtmlNodeKeyCharacterNotFoundExceptionResolver<decimal>(node, splitChar),
+                () => _exceptionResolverService.ConvertToDecimalExceptionResolver(node.InnerHtml.Split(splitChar)[0])
+            };
 
-            return averageBondYield / 100;
+            MethodResult<decimal> result = node.ExecuteUntilFirstException(operations);
+
+            if (!result.IsSuccessful)
+                return result;
+
+            decimal data = result.Data / 100;
+
+            result.AssignData(data);
+
+            return result;
+        }
+
+        public MethodResult<decimal> ResolveAverageBondTripleAYield(HtmlNode node)
+        {
+            node = node.SelectSingleNode("//td[text()='Long Term Average']/following-sibling::td[1]");
+
+            char splitChar = '%';
+
+            Func<MethodResult<decimal>>[] operations = new Func<MethodResult<decimal>>[]
+            {
+                () => _exceptionResolverService.HtmlNodeNullReferenceExceptionResolver<decimal>(node),
+                () => _exceptionResolverService.HtmlNodeNotApplicableExceptionResolver<decimal>(node),
+                () => _exceptionResolverService.HtmlNodeKeyCharacterNotFoundExceptionResolver<decimal>(node, splitChar),
+                () => _exceptionResolverService.ConvertToDecimalExceptionResolver(node.InnerHtml.Split(splitChar)[0])
+            };
+
+            MethodResult<decimal> result = node.ExecuteUntilFirstException(operations);
+
+            if (!result.IsSuccessful)
+                return result;
+
+            decimal data = result.Data / 100;
+
+            result.AssignData(data);
+
+            return result;
         }
     }
 }

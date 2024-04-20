@@ -5,6 +5,8 @@ using FinanceScraper.Common.Exceptions;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.Common.Extensions;
 using FinanceScraper.YahooFinance.SummaryScraper.Commands;
+using System.Xml.Linq;
+using FinanceScraper.Common.Propagation;
 
 namespace FinanceScraper.YahooFinance.SummaryScraper
 {
@@ -17,40 +19,78 @@ namespace FinanceScraper.YahooFinance.SummaryScraper
         }
         public async Task<SummaryDataSet> ExecuteScrape(SummaryScraperCommand request)
         {
-            HtmlNode node = await request.NodeResolverAsync();
+            HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
 
-            Task<decimal> currentPrice = Task.Run(() => GetCurrentPrice(node, request.Ticker));
+            Task<MethodResult<decimal>> currentPrice = Task.Run(() => GetCurrentPrice(node));
 
-            Task<decimal> eps = Task.Run(() => GetEPS(node, request.Ticker));
+            Task<MethodResult<decimal>> eps = Task.Run(() => GetEPS(node));
 
-            await Task.WhenAll(currentPrice, eps);
+            await Task.WhenAll(currentPrice, eps).ConfigureAwait(false);
 
             return new SummaryDataSet() { CurrentPrice = currentPrice.Result, Eps = eps.Result };
         }
-
-        private decimal GetCurrentPrice(HtmlNode node, string ticker)
+        [HandleMethodExecutionAspect]
+        private async Task<MethodResult<decimal>> GetCurrentPrice(HtmlNode node)
         {
-            string commonExceptionSuffix = string.Format(" while attempting to acquire Current Price for the following ticker: {0}.", ticker);
+            try
+            {
+                Task<MethodResult<decimal>> taskCurrentPrice = Task.Run(() => ResolveCurrentPrice(node));
 
-            HtmlNode currentPriceNode = node.SelectSingleNode("//fin-streamer[@data-test='qsp-price']");
+                await taskCurrentPrice.ConfigureAwait(false);
+
+                return taskCurrentPrice.Result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
             
-            _exceptionResolverService.HtmlNodeNullReferenceExceptionResolver(currentPriceNode, commonExceptionSuffix);
-            decimal currentPrice = _exceptionResolverService.ConvertToDecimalExceptionResolver(currentPriceNode.InnerHtml, commonExceptionSuffix);
+        }
+        [HandleMethodExecutionAspect]
+        private async Task<MethodResult<decimal>> GetEPS(HtmlNode node)
+        {
+            try
+            {
+                Task<MethodResult<decimal>> taskEPS = Task.Run(() => ResolveEPS(node));
 
-            return currentPrice;
+                await taskEPS.ConfigureAwait(false);
+
+                return taskEPS.Result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        private decimal GetEPS(HtmlNode node, string ticker)
+        private MethodResult<decimal> ResolveCurrentPrice(HtmlNode node)
         {
-            string commonExceptionSuffix = string.Format(" while attempting to acquire EPS for the following ticker: {0}.", ticker);
+            node = node.SelectSingleNode("//fin-streamer[@data-testid='qsp-price']/span");
 
-            HtmlNode epsNode = node.SelectSingleNode("//td[@data-test='EPS_RATIO-value']");
+            Func<MethodResult<decimal>>[] operations = new Func<MethodResult<decimal>>[]
+            {
+                () => _exceptionResolverService.HtmlNodeNullReferenceExceptionResolver<decimal>(node),
+                () => _exceptionResolverService.HtmlNodeNotApplicableExceptionResolver<decimal>(node),
+                () => _exceptionResolverService.ConvertToDecimalExceptionResolver(node.InnerHtml)
+            };
 
-            _exceptionResolverService.HtmlNodeNullReferenceExceptionResolver(epsNode, commonExceptionSuffix);
-            _exceptionResolverService.HtmlNodeNotApplicableExceptionResolver(epsNode, commonExceptionSuffix);
-            decimal eps = _exceptionResolverService.ConvertToDecimalExceptionResolver(epsNode.InnerHtml, commonExceptionSuffix);
+            return node.ExecuteUntilFirstException(operations);
+        }
 
-            return eps;
+        private MethodResult<decimal> ResolveEPS(HtmlNode node)
+        {
+            node = node.SelectSingleNode("//li/span[text()=\"EPS (TTM)\"]/following-sibling::span[1]/fin-streamer");
+
+            Func<MethodResult<decimal>>[] operations = new Func<MethodResult<decimal>>[]
+            {
+                () => _exceptionResolverService.HtmlNodeNullReferenceExceptionResolver<decimal>(node),
+                () => _exceptionResolverService.HtmlNodeNotApplicableExceptionResolver<decimal>(node),
+                () => _exceptionResolverService.ConvertToDecimalExceptionResolver(node.InnerHtml)
+            };
+
+            return node.ExecuteUntilFirstException(operations);
         }
     }
 }

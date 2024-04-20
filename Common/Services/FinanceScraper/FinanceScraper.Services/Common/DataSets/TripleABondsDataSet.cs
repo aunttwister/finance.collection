@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FinanceScraper.Common.DataSets.Base;
+using FinanceScraper.Common.Propagation;
 
 namespace FinanceScraper.Common.DataSets
 {
     public class TripleABondsDataSet : IFinanceDataSet
     {
-        public decimal CurrentTripleABond { get; set; }
-        public decimal HistoricalAverageTripleABond { get; set; }
+        public MethodResult<decimal> CurrentTripleABond { get; set; }
+        public MethodResult<decimal> HistoricalAverageTripleABond { get; set; }
     }
 }

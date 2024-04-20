@@ -1,4 +1,5 @@
 ﻿using FinanceScraper.Common.DataSets.Base;
+using FinanceScraper.Common.Propagation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace FinanceScraper.Common.DataSets
 {
     public class StatisticsDataSet : IFinanceDataSet
     {
-        public decimal SharesOutstanding { get; set; }
+        public MethodResult<decimal> SharesOutstanding { get; set; }
     }
 }

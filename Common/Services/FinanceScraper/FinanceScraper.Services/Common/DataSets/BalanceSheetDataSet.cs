@@ -1,4 +1,5 @@
-﻿using FinanceScraper.Common.DataSets.Base;
+﻿using FinanceScraper.Common.CustomDataType;
+using FinanceScraper.Common.DataSets.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace FinanceScraper.Common.DataSets
     {
         public decimal TTMCashEquivalents { get; set; }
         public decimal TTMTotalDebt { get; set; }
-        public Dictionary<string,decimal> HistoricalCashEquivalents { get; set; }
-        public Dictionary<string, decimal> HistoricalTotalDebt { get; set; }
+        public DictionaryWithKeyValuePairExceptions<string,decimal> HistoricalCashEquivalents { get; set; }
+        public DictionaryWithKeyValuePairExceptions<string, decimal> HistoricalTotalDebt { get; set; }
     }
 }

@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FinanceScraper.Common.DataSets.Base;
+using FinanceScraper.Common.Propagation;
 
 namespace FinanceScraper.Common.DataSets
 {
     public class AnalysisDataSet : IFinanceDataSet
     {
-        public decimal FiveYearGrowth { get; set; }
+        public MethodResult<decimal> FiveYearGrowth { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using FinanceScraper.Common.Exceptions;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.Common.Extensions;
 using FinanceScraper.YahooFinance.AnalysisScraper.Commands;
+using FinanceScraper.Common.Propagation;
 
 namespace FinanceScraper.YahooFinance.AnalysisScraper
 {
@@ -17,32 +18,45 @@ namespace FinanceScraper.YahooFinance.AnalysisScraper
         }
         public async Task<AnalysisDataSet> ExecuteScrape(AnalysisScraperCommand request)
         {
-            HtmlNode node = await request.NodeResolverAsync();
+            HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
 
-            Task<decimal> fiveYearGrowth = Task.Run(() => GetFiveYearGrowth(node, request.Ticker));
+            Task<MethodResult<decimal>> fiveYearGrowth = Task.Run(() => GetFiveYearGrowth(node));
 
-            await Task.WhenAll(fiveYearGrowth);
+            await fiveYearGrowth.ConfigureAwait(false);
 
             return new AnalysisDataSet() { FiveYearGrowth = fiveYearGrowth.Result };
         }
 
-        private decimal GetFiveYearGrowth(HtmlNode node, string ticker)
+        [HandleMethodExecutionAspect]
+        private Task<MethodResult<decimal>> GetFiveYearGrowth(HtmlNode node)
         {
-            string commonExceptionSuffix = string.Format(" while attempting to acquire Growth Esimates for the next five years for the following ticker: {0}.", ticker);
+            try
+            {
+                return Task.Run(() => ResolveFiveYearGrowth(node));
+            }
+            catch (Exception)
+            {
 
-            HtmlNode growthFiveNode = node.SelectSingleNode("//span[text()='Next 5 Years (per annum)']/../following-sibling::td[1]");
+                throw;
+            }
+            
+        }
 
-            _exceptionResolverService.HtmlNodeNullReferenceExceptionResolver(growthFiveNode, commonExceptionSuffix);
-            _exceptionResolverService.HtmlNodeNotApplicableExceptionResolver(growthFiveNode, commonExceptionSuffix);
+        public MethodResult<decimal> ResolveFiveYearGrowth(HtmlNode node)
+        {
+            node = node.SelectSingleNode("//td[text()='Next 5 Years (per annum)']/following-sibling::td[1]");
 
             char splitChar = '%';
-            _exceptionResolverService.HtmlNodeKeyCharacterNotFoundExceptionResolver(growthFiveNode, splitChar, commonExceptionSuffix);
 
-            string growthFiveStr = growthFiveNode.InnerHtml.Split(splitChar)[0];
+            Func<MethodResult<decimal>>[] operations = new Func<MethodResult<decimal>>[]
+            {
+                () => _exceptionResolverService.HtmlNodeNullReferenceExceptionResolver<decimal>(node),
+                () => _exceptionResolverService.HtmlNodeNotApplicableExceptionResolver<decimal>(node),
+                () => _exceptionResolverService.HtmlNodeKeyCharacterNotFoundExceptionResolver<decimal>(node, splitChar),
+                () => _exceptionResolverService.ConvertToDecimalExceptionResolver(node.InnerHtml.Split(splitChar)[0])
+            };
 
-            decimal growthFive = _exceptionResolverService.ConvertToDecimalExceptionResolver(growthFiveStr, commonExceptionSuffix);
-
-            return growthFive;
+            return node.ExecuteUntilFirstException(operations);
         }
     }
 }

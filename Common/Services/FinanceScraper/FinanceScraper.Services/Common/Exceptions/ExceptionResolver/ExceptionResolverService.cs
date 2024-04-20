@@ -1,72 +1,113 @@
-﻿using HtmlAgilityPack;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using FinanceScraper.Common.Propagation;
+using HtmlAgilityPack;
+using System.Runtime.CompilerServices;
 
 namespace FinanceScraper.Common.Exceptions.ExceptionResolver
 {
     public class ExceptionResolverService : IExceptionResolverService
     {
-        public decimal ConvertToDecimalExceptionResolver(string toConvert, string commonExceptionSuffix)
+        public ApplicationException HandleException(Exception exception, string contextMessage) 
         {
-            decimal convertedValue;
+            return new ApplicationException(contextMessage, exception);
+        }
+        public MethodResult<decimal> ConvertToDecimalExceptionResolver(string toConvert)
+        {
             try
             {
-                convertedValue = Convert.ToDecimal(toConvert);
+                decimal data = Convert.ToDecimal(toConvert);
+                return new MethodResult<decimal>(data);
             }
-            catch (FormatException)
+            catch (Exception ex)
             {
-                string message = string.Format("Unable to convert the following value: {0}", toConvert) + commonExceptionSuffix;
-                throw new UnableToConvertException(message);
-            }
-
-            return convertedValue;
-        }
-
-        public void HtmlNodeKeyCharacterNotFoundExceptionResolver(HtmlNode toResolve, char keyCharacter, string commonExceptionSuffix)
-        {
-            string message;
-
-            if (toResolve is null)
-            {
-                message = string.Format("Unable to resolve Html Node") + commonExceptionSuffix;
-                throw new HtmlNodeNullReferenceException(message);
+                ApplicationException exception = HandleException(ex, $"Failed to convert '{toConvert}' to decimal.");
+                return new MethodResult<decimal>(0m, exception);
             }
         }
 
-        public void HtmlNodeNotApplicableExceptionResolver(HtmlNode toResolve, string commonExceptionSuffix)
+        public MethodResult<IEnumerable<decimal>> MultiConvertToDecimalExceptionResolver(IEnumerable<string> toConvert)
         {
-            string message;
-
-            if (toResolve.InnerHtml == "N/A")
+            List<decimal> data = new List<decimal>();
+            foreach (string value in toConvert)
             {
-                message = string.Format("Data is not scrapable because value \"N/A\" has been found") + commonExceptionSuffix;
-                throw new HtmlNodeNotApplicableException(message);
+                try
+                {
+                    decimal converted = Convert.ToDecimal(value);
+                    data.Add(converted);
+                }
+                catch (Exception ex)
+                {
+                    ApplicationException exception = HandleException(ex, $"Failed to convert '{value}' to decimal.");
+                    return new MethodResult<IEnumerable<decimal>>(data, exception);
+                }
+            }
+            return new MethodResult<IEnumerable<decimal>>(data);
+        }
+
+        public MethodResult<T> HtmlNodeKeyCharacterNotFoundExceptionResolver<T>(HtmlNode toResolve, char keyCharacter)
+        {
+            try
+            {
+                if (toResolve is null)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                return new MethodResult<T>();
+            }
+            catch (Exception ex)
+            {
+                ApplicationException exception = HandleException(ex, $"Failed to resolve Html Node. Key character: '{keyCharacter}' for split operation is missing.");
+                return new MethodResult<T>(exception);
             }
         }
 
-        public void HtmlNodeNullReferenceExceptionResolver(HtmlNode toResolve, string commonExceptionSuffix)
+        public MethodResult<T> HtmlNodeNotApplicableExceptionResolver<T>(HtmlNode toResolve)
         {
-            string message;
-
-            if (toResolve is null)
+            try
             {
-                message = string.Format("Unable to resolve Html Node") + commonExceptionSuffix;
-                throw new HtmlNodeNullReferenceException(message);
+                if (toResolve.InnerHtml == "N/A")
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                return new MethodResult<T>();
+            }
+            catch (Exception ex)
+            {
+                ApplicationException exception = HandleException(ex, "Failed to resolve Html Node. Data is not scrapable because value \"N/A\" has been found.");
+                return new MethodResult<T>(exception);
             }
         }
 
-        public void HtmlNodeCollectionNullReferenceExceptionResolver(HtmlNodeCollection toResolve, string commonExceptionSuffix)
+        public MethodResult<T> HtmlNodeNullReferenceExceptionResolver<T>(HtmlNode toResolve)
         {
-            string message;
-
-            if (toResolve is null)
+            try
             {
-                message = string.Format("Unable to resolve Html Node Collection") + commonExceptionSuffix;
-                throw new HtmlNodeNullReferenceException(message);
+                if (toResolve is null)
+                {
+                    throw new ArgumentNullException();
+                }
+                return new MethodResult<T>();
+            }
+            catch (Exception ex)
+            {
+                ApplicationException exception = HandleException(ex, $"Failed to resolve Html Node. XPath doesn't exist.");
+                return new MethodResult<T>(exception);
+            }
+        }
+
+        public MethodResult<T> HtmlNodeCollectionNullReferenceExceptionResolver<T>(HtmlNodeCollection toResolve)
+        {
+            try
+            {
+                if (toResolve is null)
+                {
+                    throw new ArgumentNullException();
+                }
+                return new MethodResult<T>();
+            }
+            catch (Exception ex)
+            {
+                ApplicationException exception = HandleException(ex, $"Failed to resolve Html Node Collection. XPath doesn't exist.");
+                return new MethodResult<T>(exception);
             }
         }
     }
