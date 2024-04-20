@@ -14,5 +14,7 @@ namespace FinanceScraper.Common.DataSets
         public SummaryDataSet Summary { get; set; }
         public AnalysisDataSet Analysis { get; set; }
         public CashFlowDataSet CashFlow { get; set; }
+        public BalanceSheetDataSet BalanceSheet { get; set; }
+        public StatisticsDataSet Statistics { get; set; }
     }
 }

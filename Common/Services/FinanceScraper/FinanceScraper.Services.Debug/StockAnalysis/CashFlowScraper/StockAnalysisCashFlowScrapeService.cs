@@ -1,23 +1,29 @@
-﻿using HtmlAgilityPack;
-using FinanceScraper.Common.Base;
+﻿using FinanceScraper.Common.Base;
+using FinanceScraper.Common.CustomDataType;
 using FinanceScraper.Common.DataSets;
-using FinanceScraper.Common.Exceptions;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.Common.Extensions;
-using FinanceScraper.YahooFinance.CashFlowScraper.Commands;
 using FinanceScraper.Common.Propagation;
-using FinanceScraper.Common.CustomDataType;
+using FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands;
+using FinanceScraper.StockAnalysis.CashFlowScraper.Commands;
+using HtmlAgilityPack;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace FinanceScraper.YahooFinance.CashFlowScraper
+namespace FinanceScraper.StockAnalysis.CashFlowScraper
 {
-    public class YahooFinanceCashFlowScrapeService : IScrapeServiceStrategy<YahooFinanceCashFlowScraperCommand, CashFlowDataSet>
+    public class StockAnalysisCashFlowScrapeService : IScrapeServiceStrategy<StockAnalysisCashFlowScraperCommand, CashFlowDataSet>
     {
         private readonly IExceptionResolverService _exceptionResolverService;
-        public YahooFinanceCashFlowScrapeService(IExceptionResolverService exceptionResolverService)
+        public StockAnalysisCashFlowScrapeService(IExceptionResolverService exceptionResolverService)
         {
             _exceptionResolverService = exceptionResolverService;
         }
-        public async Task<CashFlowDataSet> ExecuteScrape(YahooFinanceCashFlowScraperCommand request)
+        public async Task<CashFlowDataSet> ExecuteScrape(StockAnalysisCashFlowScraperCommand request)
         {
             HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
 
@@ -25,7 +31,10 @@ namespace FinanceScraper.YahooFinance.CashFlowScraper
 
             await historicalYearCashFlows.ConfigureAwait(false);
 
-            return new CashFlowDataSet() { HistoricalYearCashFlows =  historicalYearCashFlows.Result };
+            return new CashFlowDataSet()
+            {
+                HistoricalYearCashFlows = historicalYearCashFlows.Result
+            };
         }
 
         [HandleMethodExecutionAspect]
@@ -46,7 +55,7 @@ namespace FinanceScraper.YahooFinance.CashFlowScraper
                     return new DictionaryWithKeyValuePairExceptions<string, decimal>(null, exceptionPair);
 
                 Dictionary<string, decimal> dictionary = taskYears.Result.Data.Zip(taskCashFlows.Result.Data, (k, v) => new { k, v })
-                                                                       .ToDictionary(x => x.k, x => x.v / 100);
+                                                                       .ToDictionary(x => x.k, x => x.v);
 
                 return new DictionaryWithKeyValuePairExceptions<string, decimal>(dictionary, exceptionPair);
             }
@@ -55,12 +64,11 @@ namespace FinanceScraper.YahooFinance.CashFlowScraper
 
                 throw;
             }
-            
         }
 
         public MethodResult<IEnumerable<string>> ResolveYears(HtmlNode node)
         {
-            HtmlNodeCollection nodeCollection = node.SelectNodes("//div/span[text()=\"Breakdown\"]/parent::div/parent::div/div/span");
+            HtmlNodeCollection nodeCollection = node.SelectNodes("//th[text()=\"Year\"]/following-sibling::th");
 
             Func<MethodResult<IEnumerable<string>>>[] operations = new Func<MethodResult<IEnumerable<string>>>[]
             {
@@ -73,7 +81,7 @@ namespace FinanceScraper.YahooFinance.CashFlowScraper
                 return result;
 
             IEnumerable<string> data = nodeCollection.Nodes()
-                                            .Where(node => node.InnerHtml != "Breakdown")
+                                            .Where(node => !node.InnerHtml.Contains('-'))
                                             .Select(node => node.InnerHtml);
             result.AssignData(data);
 
@@ -82,15 +90,27 @@ namespace FinanceScraper.YahooFinance.CashFlowScraper
 
         public MethodResult<IEnumerable<decimal>> ResolveCashFlow(HtmlNode node)
         {
-            HtmlNodeCollection nodeCollection = node.SelectNodes("//div/span[text()=\"Free Cash Flow\"]/parent::div/parent::div/parent::div/div/span");
+            HtmlNodeCollection nodeCollection = node.SelectNodes("//td/span[text()=\"Free Cash Flow\"]/parent::td/following-sibling::td");
 
-            Func<MethodResult<IEnumerable<decimal>>> [] operations = new Func<MethodResult<IEnumerable<decimal>>>[]
+            Func<MethodResult<IEnumerable<decimal>>>[] operations = new Func<MethodResult<IEnumerable<decimal>>>[]
             {
                 () => _exceptionResolverService.HtmlNodeCollectionNullReferenceExceptionResolver<IEnumerable<decimal>>(nodeCollection),
-                () => _exceptionResolverService.MultiConvertToDecimalExceptionResolver(nodeCollection.Nodes().Select(node => node.InnerHtml))
+                () => _exceptionResolverService.MultiConvertToDecimalExceptionResolver(nodeCollection.Nodes().Where(node => !node.InnerHtml.Contains("Upgrade") && !node.InnerHtml.Contains(' ')).Select(node => node.InnerHtml))
             };
 
-            return nodeCollection.ExecuteUntilFirstException(operations);
+            MethodResult<IEnumerable<decimal>> result = nodeCollection.ExecuteUntilFirstException(operations);
+
+            List<decimal> updatedValue = new List<decimal>();
+
+            foreach (decimal value in result.Data)
+            {
+                decimal newValue = value * 1000;
+                updatedValue.Add(newValue);
+            }
+
+            result.AssignData(updatedValue);
+
+            return result;
         }
     }
 }

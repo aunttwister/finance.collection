@@ -16,6 +16,6 @@ namespace FinanceScraper.Common.Constants
         public const string MacroTrendsCashOnHandScraperPath = "/cash-on-hand";
         public const string StockAnalysisBalanceSpreadSheetPath = "/financials/balance-sheet/";
         public const string StockAnalysisStatisticsSheetPath = "/statistics";
-
+        public const string StockAnalysisCashFlowScraperPath = "/financials/cash-flow-statement";
     }
 }

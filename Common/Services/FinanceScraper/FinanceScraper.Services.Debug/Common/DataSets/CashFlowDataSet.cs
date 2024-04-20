@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FinanceScraper.Common.DataSets.Base;
-using FinanceScraper.Common.DataType;
+using FinanceScraper.Common.CustomDataType;
 
 namespace FinanceScraper.Common.DataSets
 {

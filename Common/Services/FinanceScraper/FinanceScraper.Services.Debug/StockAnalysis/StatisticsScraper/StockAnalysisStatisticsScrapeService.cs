@@ -10,17 +10,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FinanceScraper.Common.Propagation;
+using FinanceScraper.Common.CustomDataType;
 
 namespace FinanceScraper.StockAnalysis.StatisticsScraper
 {
-    public class StockAnalysisStatisticsScraperService : IScrapeServiceStrategy<StatisticsScraperCommand, StatisticsDataSet>
+    public class StockAnalysisStatisticsScrapeService : IScrapeServiceStrategy<StockAnalysisStatisticsScraperCommand, StatisticsDataSet>
     {
         private readonly IExceptionResolverService _exceptionResolverService;
-        public StockAnalysisStatisticsScraperService(IExceptionResolverService exceptionResolverService)
+        public StockAnalysisStatisticsScrapeService(IExceptionResolverService exceptionResolverService)
         {
             _exceptionResolverService = exceptionResolverService;
         }
-        public async Task<StatisticsDataSet> ExecuteScrape(StatisticsScraperCommand request)
+        public async Task<StatisticsDataSet> ExecuteScrape(StockAnalysisStatisticsScraperCommand request)
         {
             HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
 
@@ -52,17 +53,45 @@ namespace FinanceScraper.StockAnalysis.StatisticsScraper
         {
             node = node.SelectSingleNode("//td/span[contains(., 'Shares Outstanding')]/parent::td/parent::tr/td[2]");
 
-            char splitChar = 'M';
-
             Func<MethodResult<decimal>>[] operations = new Func<MethodResult<decimal>>[]
             {
                 () => _exceptionResolverService.HtmlNodeNullReferenceExceptionResolver<decimal>(node),
-                () => _exceptionResolverService.HtmlNodeNotApplicableExceptionResolver<decimal>(node),
-                () => _exceptionResolverService.HtmlNodeKeyCharacterNotFoundExceptionResolver<decimal>(node, splitChar),
-                () => _exceptionResolverService.ConvertToDecimalExceptionResolver(node.InnerHtml.Split(splitChar)[0])
+                () => _exceptionResolverService.HtmlNodeNotApplicableExceptionResolver<decimal>(node)
             };
 
-            return node.ExecuteUntilFirstException(operations);
+            MethodResult<decimal> result = node.ExecuteUntilFirstException(operations);
+
+            if (!result.IsSuccessful)
+                return result;
+
+            LargeNumber largeNumber = new LargeNumber()
+            {
+                SplitterDenominatorPair = new KeyValuePair<char, int>('M', 1000000)
+            };
+
+            switch (node.InnerHtml)
+            {
+                case string value2 when node.InnerHtml.ToLower().Contains('b'):
+                    largeNumber.SplitterDenominatorPair = new KeyValuePair<char, int>('B', 1000000000);
+                    break;
+                default:
+                    break;
+            }
+
+            operations = new Func<MethodResult<decimal>>[]
+            {
+                () => _exceptionResolverService.HtmlNodeKeyCharacterNotFoundExceptionResolver<decimal>(node, largeNumber.SplitterDenominatorPair.Key),
+                () => _exceptionResolverService.ConvertToDecimalExceptionResolver(node.InnerHtml.Split(largeNumber.SplitterDenominatorPair.Key)[0])
+            };
+
+            result = node.ExecuteUntilFirstException(operations);
+
+            if (!result.IsSuccessful)
+                return result;
+
+            result.AssignData(result.Data * largeNumber.SplitterDenominatorPair.Value);
+
+            return result;
         }
     }
 }

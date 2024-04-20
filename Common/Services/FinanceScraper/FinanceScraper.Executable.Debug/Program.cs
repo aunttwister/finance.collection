@@ -12,6 +12,10 @@ using FinanceScraper.YahooFinance.AnalysisScraper.Commands;
 using FinanceScraper.YahooFinance.CashFlowScraper.Commands;
 using FinanceScraper.YahooFinance.SummaryScraper.Commands;
 using FinanceScraper.YCharts.TripleABondYieldScraper.Commands;
+using FinanceScraper.StockAnalysis.CashFlowScraper.Commands;
+using FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands;
+using FinanceScraper.StockAnalysis.StatisticsScraper.Commands;
+using FinanceScraper.Common.CustomDataType;
 
 namespace Scraper.YahooFinanceScraper
 {
@@ -22,7 +26,7 @@ namespace Scraper.YahooFinanceScraper
             IServiceProvider serviceProvider = CreateHostBuilder().Build().Services;
             IMediator _mediator = serviceProvider.GetRequiredService<IMediator>();
 
-            string ticker = "DIS";
+            string ticker = "AXP";
 
             var startTime = DateTime.Now;
 
@@ -38,7 +42,8 @@ namespace Scraper.YahooFinanceScraper
                 Eps = dataSetStruct.TickerDataSet.Summary.Eps.Data,
                 FiveYearGrowth = dataSetStruct.TickerDataSet.Analysis.FiveYearGrowth.Data,
                 AverageBondYield = dataSetStruct.TripleABondsDataSet.HistoricalAverageTripleABond.Data,
-                CurrentBondYield = dataSetStruct.TripleABondsDataSet.CurrentTripleABond.Data
+                CurrentBondYield = dataSetStruct.TripleABondsDataSet.CurrentTripleABond.Data,
+                CurrentPrice = dataSetStruct.TickerDataSet.Summary.CurrentPrice.Data
             };
             grahamIntrinsicModelDataSet = await _mediator.Send(grahamIntrinsicModelRequest);
 
@@ -55,19 +60,27 @@ namespace Scraper.YahooFinanceScraper
             Console.WriteLine("\nExpected 5 year growth (Average):" + grahamIntrinsicModelDataSet.FiveYearGrowth + "%");
             Console.WriteLine("EPS:" + grahamIntrinsicModelDataSet.Eps);
 
-            if (dataSetStruct.TickerDataSet.CashFlow.HistoricalYearCashFlows.Dictionary is not null)
-            {
-                foreach (var item in dataSetStruct.TickerDataSet.CashFlow.HistoricalYearCashFlows.Dictionary)
-                {
-                    Console.WriteLine($"{item.Key} - ${item.Value}");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"\nExceptions occurred. {dataSetStruct.TickerDataSet.CashFlow.HistoricalYearCashFlows.KeyValuePairExceptions.Key}");
-                Console.WriteLine($"Exceptions occurred. {dataSetStruct.TickerDataSet.CashFlow.HistoricalYearCashFlows.KeyValuePairExceptions.Value}\n");
-            }
+            //Historical Cash Flow
+            Console.WriteLine("\nHistorical Cash Flow");
 
+            DisplayDictionaryWithExceptionsResults(dataSetStruct.TickerDataSet.CashFlow.HistoricalYearCashFlows);
+
+            //Balance Sheet
+            Console.WriteLine("\nBalance Sheet");
+            Console.WriteLine("\nHistorical Total Debt");
+            DisplayDictionaryWithExceptionsResults(dataSetStruct.TickerDataSet.BalanceSheet.HistoricalTotalDebt);
+            Console.WriteLine("\nHistorical Cash & Cash Equivalents");
+            DisplayDictionaryWithExceptionsResults(dataSetStruct.TickerDataSet.BalanceSheet.HistoricalCashEquivalents);
+
+            Console.WriteLine($"TTM Cash and Cash Equivalents: {dataSetStruct.TickerDataSet.BalanceSheet.TTMCashEquivalents}");
+            Console.WriteLine($"TTM Total Debt: {dataSetStruct.TickerDataSet.BalanceSheet.TTMTotalDebt}");
+
+            //Statistics
+            Console.WriteLine("\nStatistics");
+            Console.WriteLine($"Shares outstanding: {dataSetStruct.TickerDataSet.Statistics.SharesOutstanding.Data}");
+
+            //Performance
+            Console.WriteLine("\nPerformance");
             Console.WriteLine("run time: " + (DateTime.Now - startTime));
 
             Console.ReadLine();
@@ -86,8 +99,14 @@ namespace Scraper.YahooFinanceScraper
             //MacroTrendsCashFlowScraperCommand macroTrendsCashFlowRequest = new MacroTrendsCashFlowScraperCommand(ticker, UrlPathConstants.MacroTrendsCashFlowScraperPath);
             //tickerDataSet.CashFlow = await _mediator.Send(macroTrendsCashFlowRequest);
 
-            YahooFinanceCashFlowScraperCommand yahooCashFlowRequest = new YahooFinanceCashFlowScraperCommand(ticker, UrlPathConstants.YahooFinanceCashFlowScraperPath);
-            Task<CashFlowDataSet> cashFlowTask = _mediator.Send(yahooCashFlowRequest);
+            StockAnalysisCashFlowScraperCommand cashFlowRequest = new StockAnalysisCashFlowScraperCommand(ticker, UrlPathConstants.StockAnalysisCashFlowScraperPath);
+            Task<CashFlowDataSet> cashFlowTask = _mediator.Send(cashFlowRequest);
+
+            StockAnalysisBalanceSheetScraperCommand balanceSheetRequest = new StockAnalysisBalanceSheetScraperCommand(ticker, UrlPathConstants.StockAnalysisBalanceSpreadSheetPath);
+            Task<BalanceSheetDataSet> balanceSheerTask = _mediator.Send(balanceSheetRequest);
+
+            StockAnalysisStatisticsScraperCommand statisticsRequest = new StockAnalysisStatisticsScraperCommand(ticker, UrlPathConstants.StockAnalysisStatisticsSheetPath);
+            Task<StatisticsDataSet> statisticsTask = _mediator.Send(statisticsRequest);
 
             TripleABondYieldScraperCommand tripleABondYieldRequest = new TripleABondYieldScraperCommand();
             Task<TripleABondsDataSet> tripleABondYieldTask = _mediator.Send(tripleABondYieldRequest);
@@ -98,7 +117,9 @@ namespace Scraper.YahooFinanceScraper
             {
                 Summary = summaryTask.Result,
                 Analysis = analysisTask.Result, 
-                CashFlow = cashFlowTask.Result
+                CashFlow = cashFlowTask.Result,
+                BalanceSheet = balanceSheerTask.Result,
+                Statistics = statisticsTask.Result
             };
 
             TripleABondsDataSet tripleABondsDataSet = tripleABondYieldTask.Result;
@@ -119,6 +140,27 @@ namespace Scraper.YahooFinanceScraper
                            services.RegisterFinanceScraperServices();
                            services.RegisterIntrinsicCalculatorServices();
                        });
+        }
+
+        private static void DisplayDictionaryWithExceptionsResults(DictionaryWithKeyValuePairExceptions<string, decimal> dictionary)
+        {
+            if (dictionary == null)
+                return;
+            else
+            {
+                if (dictionary.Dictionary is not null)
+                {
+                    foreach (var item in dictionary.Dictionary)
+                    {
+                        Console.WriteLine($"{item.Key} - ${item.Value}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"\nExceptions occurred. {dictionary.KeyValuePairExceptions.Key}");
+                    Console.WriteLine($"Exceptions occurred. {dictionary.KeyValuePairExceptions.Value}\n");
+                }
+            }
         }
     }
 }

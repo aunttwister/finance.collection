@@ -18,6 +18,8 @@ using FinanceScraper.YahooFinance.SummaryScraper.Commands;
 using FinanceScraper.YCharts.TripleABondYieldScraper;
 using FinanceScraper.YCharts.TripleABondYieldScraper.Commands;
 using System.Reflection;
+using FinanceScraper.StockAnalysis.CashFlowScraper.Commands;
+using FinanceScraper.StockAnalysis.CashFlowScraper;
 
 
 namespace FinanceScraper.Common.Extensions
@@ -35,8 +37,9 @@ namespace FinanceScraper.Common.Extensions
             services.AddTransient<IScrapeServiceStrategy<AnalysisScraperCommand, AnalysisDataSet>, YahooFinanceAnalysisScrapeService>();
             services.AddTransient<IScrapeServiceStrategy<YahooFinanceCashFlowScraperCommand, CashFlowDataSet>, YahooFinanceCashFlowScrapeService>();
             services.AddTransient<IScrapeServiceStrategy<TripleABondYieldScraperCommand, TripleABondsDataSet>, YChartsTripleABondsScrapeService>();
-            services.AddTransient<IScrapeServiceStrategy<BalanceSheetScraperCommand, BalanceSheetDataSet>, StockAnalysisBalanceSheetScrapeService>();
-            services.AddTransient<IScrapeServiceStrategy<StatisticsScraperCommand, StatisticsDataSet>, StockAnalysisStatisticsScraperService>();
+            services.AddTransient<IScrapeServiceStrategy<StockAnalysisBalanceSheetScraperCommand, BalanceSheetDataSet>, StockAnalysisBalanceSheetScrapeService>();
+            services.AddTransient<IScrapeServiceStrategy<StockAnalysisStatisticsScraperCommand, StatisticsDataSet>, StockAnalysisStatisticsScrapeService>();
+            services.AddTransient<IScrapeServiceStrategy<StockAnalysisCashFlowScraperCommand, CashFlowDataSet>, StockAnalysisCashFlowScrapeService>();
         }
     }
 }

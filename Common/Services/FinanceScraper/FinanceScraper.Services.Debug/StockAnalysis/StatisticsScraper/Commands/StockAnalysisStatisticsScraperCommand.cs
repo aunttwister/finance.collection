@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace FinanceScraper.StockAnalysis.StatisticsScraper.Commands
 {
-    public class StatisticsScraperCommand : StockAnalysisScraperBaseCommand, IRequest<StatisticsDataSet>
+    public class StockAnalysisStatisticsScraperCommand : StockAnalysisScraperBaseCommand, IRequest<StatisticsDataSet>
     {
-        public StatisticsScraperCommand(string ticker, string path) : base (ticker, path) { }
+        public StockAnalysisStatisticsScraperCommand(string ticker, string path) : base (ticker, path) { }
     }
 }

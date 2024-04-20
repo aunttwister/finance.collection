@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands
 {
-    public class BalanceSheetScraperCommand : StockAnalysisScraperBaseCommand, IRequest<BalanceSheetDataSet>
+    public class StockAnalysisBalanceSheetScraperCommand : StockAnalysisScraperBaseCommand, IRequest<BalanceSheetDataSet>
     {
-        public BalanceSheetScraperCommand(string ticker, string path) : base(ticker, path) { }
+        public StockAnalysisBalanceSheetScraperCommand(string ticker, string path) : base(ticker, path) { }
     }
 }

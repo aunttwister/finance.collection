@@ -31,7 +31,7 @@ namespace FinanceScraper.Common.Exceptions.ExceptionResolver
             {
                 try
                 {
-                    decimal converted = Convert.ToDecimal(toConvert);
+                    decimal converted = Convert.ToDecimal(value);
                     data.Add(converted);
                 }
                 catch (Exception ex)

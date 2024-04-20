@@ -11,28 +11,29 @@ using System.Text;
 using System.Threading.Tasks;
 using FinanceScraper.Common.Propagation;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using FinanceScraper.Common.CustomDataType;
 
 namespace FinanceScraper.StockAnalysis.BalanceSheetScraper
 {
-    public class StockAnalysisBalanceSheetScrapeService : IScrapeServiceStrategy<BalanceSheetScraperCommand, BalanceSheetDataSet>
+    public class StockAnalysisBalanceSheetScrapeService : IScrapeServiceStrategy<StockAnalysisBalanceSheetScraperCommand, BalanceSheetDataSet>
     {
         private readonly IExceptionResolverService _exceptionResolverService;
         public StockAnalysisBalanceSheetScrapeService(IExceptionResolverService exceptionResolverService)
         {
             _exceptionResolverService = exceptionResolverService;
         }
-        public async Task<BalanceSheetDataSet> ExecuteScrape(BalanceSheetScraperCommand request)
+        public async Task<BalanceSheetDataSet> ExecuteScrape(StockAnalysisBalanceSheetScraperCommand request)
         {
             HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
 
-            Task<Dictionary<string, decimal>> HistoricalCashEquivalents = GetHistoricalCashEquivalents(node);
+            Task<DictionaryWithKeyValuePairExceptions<string, decimal>> HistoricalCashEquivalents = GetHistoricalCashEquivalents(node);
 
-            Task<Dictionary<string, decimal>> HistoricalTotalDebt = GetHistoricalTotalDebt(node);
+            Task<DictionaryWithKeyValuePairExceptions<string, decimal>> HistoricalTotalDebt = GetHistoricalTotalDebt(node);
 
             await Task.WhenAll(HistoricalCashEquivalents, HistoricalTotalDebt).ConfigureAwait(false);
 
-            decimal ttmCashEquivalents = HistoricalCashEquivalents.Result.First(cashEquivalents => cashEquivalents.Key.Equals("2023")).Value;
-            decimal ttmTotalDebt = HistoricalTotalDebt.Result.First(cashEquivalents => cashEquivalents.Key.Equals("2023")).Value;
+            decimal ttmCashEquivalents = HistoricalCashEquivalents.Result.Dictionary.First().Value;
+            decimal ttmTotalDebt = HistoricalTotalDebt.Result.Dictionary.First().Value;
 
             return new BalanceSheetDataSet()
             {
@@ -44,7 +45,7 @@ namespace FinanceScraper.StockAnalysis.BalanceSheetScraper
         }
 
         [HandleMethodExecutionAspect]
-        private async Task<Dictionary<string, decimal>> GetHistoricalCashEquivalents(HtmlNode node)
+        private async Task<DictionaryWithKeyValuePairExceptions<string, decimal>> GetHistoricalCashEquivalents(HtmlNode node)
         {
             Task<MethodResult<IEnumerable<string>>> taskYears = Task.Run(() => ResolveYears(node));
 
@@ -52,12 +53,19 @@ namespace FinanceScraper.StockAnalysis.BalanceSheetScraper
 
             await Task.WhenAll(taskYears, taskCashEquivalents).ConfigureAwait(false);
 
-            return taskYears.Result.Data.Zip(taskCashEquivalents.Result.Data, (k, v) => new { k, v })
-                .ToDictionary(x => x.k, x => x.v);
+            KeyValuePair<Exception, Exception> exceptionPair = new KeyValuePair<Exception, Exception>(taskYears.Result.Exception, taskCashEquivalents.Result.Exception);
+
+            if (!taskYears.Result.IsSuccessful || !taskCashEquivalents.Result.IsSuccessful)
+                return new DictionaryWithKeyValuePairExceptions<string, decimal>(null, exceptionPair);
+
+            Dictionary<string, decimal> dictionary = taskYears.Result.Data.Zip(taskCashEquivalents.Result.Data, (k, v) => new { k, v })
+                                                                   .ToDictionary(x => x.k, x => x.v);
+
+            return new DictionaryWithKeyValuePairExceptions<string, decimal>(dictionary, exceptionPair);
         }
 
         [HandleMethodExecutionAspect]
-        public async Task<Dictionary<string, decimal>> GetHistoricalTotalDebt(HtmlNode node)
+        public async Task<DictionaryWithKeyValuePairExceptions<string, decimal>> GetHistoricalTotalDebt(HtmlNode node)
         {
 
             Task<MethodResult<IEnumerable<string>>> taskYears = Task.Run(() => ResolveYears(node));
@@ -66,8 +74,15 @@ namespace FinanceScraper.StockAnalysis.BalanceSheetScraper
 
             await Task.WhenAll(taskYears, taskTotalDebt).ConfigureAwait(false);
 
-            return taskYears.Result.Data.Zip(taskTotalDebt.Result.Data, (k, v) => new { k, v })
-                .ToDictionary(x => x.k, x => x.v);
+            KeyValuePair<Exception, Exception> exceptionPair = new KeyValuePair<Exception, Exception>(taskYears.Result.Exception, taskTotalDebt.Result.Exception);
+
+            if (!taskYears.Result.IsSuccessful || !taskTotalDebt.Result.IsSuccessful)
+                return new DictionaryWithKeyValuePairExceptions<string, decimal>(null, exceptionPair);
+
+            Dictionary<string, decimal> dictionary = taskYears.Result.Data.Zip(taskTotalDebt.Result.Data, (k, v) => new { k, v })
+                                                                   .ToDictionary(x => x.k, x => x.v);
+
+            return new DictionaryWithKeyValuePairExceptions<string, decimal>(dictionary, exceptionPair);
         }
 
         public MethodResult<IEnumerable<string>> ResolveYears(HtmlNode node)

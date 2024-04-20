@@ -12,6 +12,7 @@ namespace IntrinsicValue.Calculation.GrahamIntrinsicModel
 
             return new GrahamIntrinsicModelDataSet()
             {
+                CurrentPrice = request.CurrentPrice,
                 Eps = request.Eps,
                 FiveYearGrowth = request.FiveYearGrowth,
                 AverageBondYield = request.AverageBondYield,

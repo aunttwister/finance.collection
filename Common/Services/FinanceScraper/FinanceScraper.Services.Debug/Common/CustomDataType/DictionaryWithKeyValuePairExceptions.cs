@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinanceScraper.Common.DataType
+namespace FinanceScraper.Common.CustomDataType
 {
     public class DictionaryWithKeyValuePairExceptions<T1, T2>
     {
