@@ -26,7 +26,7 @@ namespace Scraper.YahooFinanceScraper
             IServiceProvider serviceProvider = CreateHostBuilder().Build().Services;
             IMediator _mediator = serviceProvider.GetRequiredService<IMediator>();
 
-            string ticker = "AXP";
+            string ticker = "IBTA";
 
             var startTime = DateTime.Now;
 
@@ -59,6 +59,8 @@ namespace Scraper.YahooFinanceScraper
             //Console.WriteLine("Price difference:" + priceDiff + "%");
             Console.WriteLine("\nExpected 5 year growth (Average):" + grahamIntrinsicModelDataSet.FiveYearGrowth + "%");
             Console.WriteLine("EPS:" + grahamIntrinsicModelDataSet.Eps);
+            Console.WriteLine($"{dataSetStruct.TickerDataSet.Summary.Eps.Exception}");
+            Console.WriteLine($"{dataSetStruct.TickerDataSet.Summary.CurrentPrice.Exception}");
 
             //Historical Cash Flow
             Console.WriteLine("\nHistorical Cash Flow");
