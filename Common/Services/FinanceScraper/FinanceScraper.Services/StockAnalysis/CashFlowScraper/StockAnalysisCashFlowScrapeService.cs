@@ -27,18 +27,18 @@ namespace FinanceScraper.StockAnalysis.CashFlowScraper
         {
             HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
 
-            Task<DictionaryWithKeyValuePairExceptions<string, decimal>> historicalYearCashFlows = GetHistoricalYearCashFlow(node);
+            Task<MethodResultDictionary<string, decimal>> historicalYearCashFlows = GetHistoricalYearCashFlow(node);
 
             await historicalYearCashFlows.ConfigureAwait(false);
 
             return new CashFlowDataSet()
             {
-                HistoricalYearCashFlows = historicalYearCashFlows.Result
+                HistoricalCashFlows = historicalYearCashFlows.Result
             };
         }
 
         [HandleMethodExecutionAspect]
-        private async Task<DictionaryWithKeyValuePairExceptions<string, decimal>> GetHistoricalYearCashFlow(HtmlNode node)
+        private async Task<MethodResultDictionary<string, decimal>> GetHistoricalYearCashFlow(HtmlNode node)
         {
             try
             {
@@ -52,12 +52,12 @@ namespace FinanceScraper.StockAnalysis.CashFlowScraper
                 KeyValuePair<Exception, Exception> exceptionPair = new KeyValuePair<Exception, Exception>(taskYears.Result.Exception, taskCashFlows.Result.Exception);
 
                 if (!taskYears.Result.IsSuccessful || !taskCashFlows.Result.IsSuccessful)
-                    return new DictionaryWithKeyValuePairExceptions<string, decimal>(null, exceptionPair);
+                    return new MethodResultDictionary<string, decimal>(null, exceptionPair);
 
                 Dictionary<string, decimal> dictionary = taskYears.Result.Data.Zip(taskCashFlows.Result.Data, (k, v) => new { k, v })
                                                                        .ToDictionary(x => x.k, x => x.v);
 
-                return new DictionaryWithKeyValuePairExceptions<string, decimal>(dictionary, exceptionPair);
+                return new MethodResultDictionary<string, decimal>(dictionary, exceptionPair);
             }
             catch (Exception)
             {
@@ -104,7 +104,7 @@ namespace FinanceScraper.StockAnalysis.CashFlowScraper
 
             foreach (decimal value in result.Data)
             {
-                decimal newValue = value * 1000;
+                decimal newValue = value * 1000000;
                 updatedValue.Add(newValue);
             }
 

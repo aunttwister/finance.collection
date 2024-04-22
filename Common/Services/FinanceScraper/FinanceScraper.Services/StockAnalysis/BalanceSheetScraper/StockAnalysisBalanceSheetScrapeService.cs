@@ -26,14 +26,14 @@ namespace FinanceScraper.StockAnalysis.BalanceSheetScraper
         {
             HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
 
-            Task<DictionaryWithKeyValuePairExceptions<string, decimal>> HistoricalCashEquivalents = GetHistoricalCashEquivalents(node);
+            Task<MethodResultDictionary<string, decimal>> HistoricalCashEquivalents = GetHistoricalCashEquivalents(node);
 
-            Task<DictionaryWithKeyValuePairExceptions<string, decimal>> HistoricalTotalDebt = GetHistoricalTotalDebt(node);
+            Task<MethodResultDictionary<string, decimal>> HistoricalTotalDebt = GetHistoricalTotalDebt(node);
 
             await Task.WhenAll(HistoricalCashEquivalents, HistoricalTotalDebt).ConfigureAwait(false);
 
-            decimal ttmCashEquivalents = HistoricalCashEquivalents.Result.Dictionary.First().Value;
-            decimal ttmTotalDebt = HistoricalTotalDebt.Result.Dictionary.First().Value;
+            decimal ttmCashEquivalents = HistoricalCashEquivalents.Result.Data.First().Value;
+            decimal ttmTotalDebt = HistoricalTotalDebt.Result.Data.First().Value;
 
             return new BalanceSheetDataSet()
             {
@@ -45,7 +45,7 @@ namespace FinanceScraper.StockAnalysis.BalanceSheetScraper
         }
 
         [HandleMethodExecutionAspect]
-        private async Task<DictionaryWithKeyValuePairExceptions<string, decimal>> GetHistoricalCashEquivalents(HtmlNode node)
+        private async Task<MethodResultDictionary<string, decimal>> GetHistoricalCashEquivalents(HtmlNode node)
         {
             Task<MethodResult<IEnumerable<string>>> taskYears = Task.Run(() => ResolveYears(node));
 
@@ -56,16 +56,16 @@ namespace FinanceScraper.StockAnalysis.BalanceSheetScraper
             KeyValuePair<Exception, Exception> exceptionPair = new KeyValuePair<Exception, Exception>(taskYears.Result.Exception, taskCashEquivalents.Result.Exception);
 
             if (!taskYears.Result.IsSuccessful || !taskCashEquivalents.Result.IsSuccessful)
-                return new DictionaryWithKeyValuePairExceptions<string, decimal>(null, exceptionPair);
+                return new MethodResultDictionary<string, decimal>(null, exceptionPair);
 
             Dictionary<string, decimal> dictionary = taskYears.Result.Data.Zip(taskCashEquivalents.Result.Data, (k, v) => new { k, v })
                                                                    .ToDictionary(x => x.k, x => x.v);
 
-            return new DictionaryWithKeyValuePairExceptions<string, decimal>(dictionary, exceptionPair);
+            return new MethodResultDictionary<string, decimal>(dictionary, exceptionPair);
         }
 
         [HandleMethodExecutionAspect]
-        public async Task<DictionaryWithKeyValuePairExceptions<string, decimal>> GetHistoricalTotalDebt(HtmlNode node)
+        public async Task<MethodResultDictionary<string, decimal>> GetHistoricalTotalDebt(HtmlNode node)
         {
 
             Task<MethodResult<IEnumerable<string>>> taskYears = Task.Run(() => ResolveYears(node));
@@ -77,12 +77,12 @@ namespace FinanceScraper.StockAnalysis.BalanceSheetScraper
             KeyValuePair<Exception, Exception> exceptionPair = new KeyValuePair<Exception, Exception>(taskYears.Result.Exception, taskTotalDebt.Result.Exception);
 
             if (!taskYears.Result.IsSuccessful || !taskTotalDebt.Result.IsSuccessful)
-                return new DictionaryWithKeyValuePairExceptions<string, decimal>(null, exceptionPair);
+                return new MethodResultDictionary<string, decimal>(null, exceptionPair);
 
             Dictionary<string, decimal> dictionary = taskYears.Result.Data.Zip(taskTotalDebt.Result.Data, (k, v) => new { k, v })
                                                                    .ToDictionary(x => x.k, x => x.v);
 
-            return new DictionaryWithKeyValuePairExceptions<string, decimal>(dictionary, exceptionPair);
+            return new MethodResultDictionary<string, decimal>(dictionary, exceptionPair);
         }
 
         public MethodResult<IEnumerable<string>> ResolveYears(HtmlNode node)

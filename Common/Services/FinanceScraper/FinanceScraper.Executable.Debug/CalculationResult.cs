@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace StockPortfolio.FinanceScraper.Executable
 {
-    public struct ScraperDataSetStruct
+    public class CalculationResult
     {
         public TickerDataSet TickerDataSet { get; set; }
         public TripleABondsDataSet TripleABondsDataSet { get; set;}

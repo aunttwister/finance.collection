@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinanceScraper.Common.CustomDataType
+namespace FinanceScraper.Common.Propagation
 {
-    public class DictionaryWithKeyValuePairExceptions<T1, T2>
+    public class MethodResultDictionary<T1, T2>
     {
-        public Dictionary<T1, T2> Dictionary { get; set; }
+        public Dictionary<T1, T2> Data { get; set; }
         public KeyValuePair<Exception, Exception> KeyValuePairExceptions { get; set; }
-        public DictionaryWithKeyValuePairExceptions(
-            Dictionary<T1, T2> dictionary, 
+        public MethodResultDictionary(
+            Dictionary<T1, T2> data, 
             KeyValuePair<Exception, Exception> keyValuePairExceptions)
         {
-            Dictionary = dictionary;
+            Data = data;
             KeyValuePairExceptions = keyValuePairExceptions;
         }
     }

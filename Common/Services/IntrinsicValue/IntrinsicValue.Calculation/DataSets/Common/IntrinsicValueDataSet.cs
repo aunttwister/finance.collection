@@ -8,6 +8,11 @@ namespace IntrinsicValue.Calculation.DataSets.Common
 {
     public class IntrinsicValueDataSet
     {
+        public IntrinsicValueDataSet(decimal value)
+        {
+            Value = value;
+            Date = DateTime.Now;
+        }
         public decimal Value { get; set; }
         public DateTime Date { get; set; }
     }

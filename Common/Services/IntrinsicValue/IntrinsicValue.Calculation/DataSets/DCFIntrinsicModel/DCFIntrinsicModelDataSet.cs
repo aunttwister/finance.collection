@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IntrinsicValue.Calculation.DataSets.Common;
+using IntrinsicValue.Calculation.DCFIntrinsicModel.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,18 +10,49 @@ namespace IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel
 {
     public class DCFIntrinsicModelDataSet : BaseIntrinsicModelDataSet
     {
-        public decimal DiscountedCashFlowValue { get; set; }
+        public DCFIntrinsicModelDataSet(
+            DCFIntrinsicModelCommand request, 
+            decimal discountedCashFlow,
+            decimal equity,
+            decimal sumFutureCashFlow,
+            List<FutureCashFlowDataSet> futureCashFlowDataSet,
+            AverageGrowthRateDataSet averageGrowthRateDataSet,
+            List<HistoricalGrowthRateDataSet> historicalGrowthRates)
+        {
+            //Data passed from request
+            SharesOutstanding = request.SharesOutstanding;
+            TTMCashAndCashEquivalents = request.TTMCashAndCashEquivalents;
+            TTMTotalDebt = request.TTMTotalDebt;
+            CurrentPrice = request.CurrentPrice;
+            Ticker = request.Ticker;
+            HistoricalCashFlow = request.HistoricalCashFlow;
+            DiscountRate = request.DiscountRate;
+            PerpetualRate = request.PerpetualRate;
+            HistoricalCashAndCashEquivalents = request.HistoricalCashAndCashEquivalents;
+            HistoricalTotalDebt = request.HistoricalTotalDebt;
+
+            //Newly calculated data
+            DiscountedCashFlowValue = new IntrinsicValueDataSet(discountedCashFlow);
+            EquityValue = equity;
+            SumFutureCashFlowValue = sumFutureCashFlow;
+            FutureCashFlowDataSet = futureCashFlowDataSet;
+            AverageGrowthRateDataSet = averageGrowthRateDataSet;
+            HistoricalGrowthRate = historicalGrowthRates;
+
+        }
+        public IntrinsicValueDataSet DiscountedCashFlowValue { get; set; }
         public decimal EquityValue { get; set; }
         public decimal SharesOutstanding { get; set; }
-        public decimal CashAndCashEquivalents { get; set; }
-        public decimal TotalDebt { get; set; }
-        public decimal SumPresentFutureCashFlowValue { get; set; }
+        public decimal TTMCashAndCashEquivalents { get; set; }
+        public decimal TTMTotalDebt { get; set; }
+        public decimal SumFutureCashFlowValue { get; set; }
         public ICollection<FutureCashFlowDataSet> FutureCashFlowDataSet { get; set; }
-        public IDictionary<string, decimal> FutureCashFlows { get; set; }
         public AverageGrowthRateDataSet AverageGrowthRateDataSet { get; set; }
-        public IDictionary<string, decimal> HistoricalGrowthRates { get; set; }
-        public IDictionary<string, decimal> HistoricalCashFlows { get; set; }
+        public ICollection<HistoricalGrowthRateDataSet> HistoricalGrowthRate { get; set; }
+        public IDictionary<string, decimal> HistoricalCashFlow { get; set; }
         public decimal DiscountRate { get; set; }
         public decimal PerpetualRate { get; set; }
+        public IDictionary<string, decimal> HistoricalCashAndCashEquivalents { get; set; }
+        public IDictionary<string, decimal> HistoricalTotalDebt { get; set; }
     }
 }
