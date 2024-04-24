@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using FinanceScraper.Common.Base;
-using FinanceScraper.Common.DataSets;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 using System;
 using System.Collections.Generic;
 using System.Linq;

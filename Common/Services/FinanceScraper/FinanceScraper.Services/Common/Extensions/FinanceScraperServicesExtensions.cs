@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using FinanceScraper.Common.Base;
-using FinanceScraper.Common.DataSets;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.MacroTrends.CashFlow;
 using FinanceScraper.MacroTrends.CashFlow.Commands;
@@ -40,6 +40,8 @@ namespace FinanceScraper.Common.Extensions
             services.AddTransient<IScrapeServiceStrategy<StockAnalysisBalanceSheetScraperCommand, BalanceSheetDataSet>, StockAnalysisBalanceSheetScrapeService>();
             services.AddTransient<IScrapeServiceStrategy<StockAnalysisStatisticsScraperCommand, StatisticsDataSet>, StockAnalysisStatisticsScrapeService>();
             services.AddTransient<IScrapeServiceStrategy<StockAnalysisCashFlowScraperCommand, CashFlowDataSet>, StockAnalysisCashFlowScrapeService>();
+
+
         }
     }
 }

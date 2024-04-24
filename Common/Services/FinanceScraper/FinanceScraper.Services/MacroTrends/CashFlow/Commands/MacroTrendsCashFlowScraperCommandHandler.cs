@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FinanceScraper.Common.DataSets;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.Common.Base;
 
 namespace FinanceScraper.MacroTrends.CashFlow.Commands

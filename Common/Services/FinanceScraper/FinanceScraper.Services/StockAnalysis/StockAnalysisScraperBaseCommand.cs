@@ -1,5 +1,5 @@
 ﻿using FinanceScraper.Common.Base;
-using FinanceScraper.Common.Constants;
+using Finance.Collection.Domain.FinanceScraper.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;

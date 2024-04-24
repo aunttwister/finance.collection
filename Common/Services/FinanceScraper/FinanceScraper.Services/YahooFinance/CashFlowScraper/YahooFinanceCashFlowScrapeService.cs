@@ -1,12 +1,12 @@
 ﻿using HtmlAgilityPack;
 using FinanceScraper.Common.Base;
-using FinanceScraper.Common.DataSets;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.Common.Exceptions;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.Common.Extensions;
 using FinanceScraper.YahooFinance.CashFlowScraper.Commands;
-using FinanceScraper.Common.Propagation;
-using FinanceScraper.Common.CustomDataType;
+using Finance.Collection.Domain.FinanceScraper.Propagation;
+using Finance.Collection.Domain.FinanceScraper.CustomDataType;
 
 namespace FinanceScraper.YahooFinance.CashFlowScraper
 {

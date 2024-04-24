@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FinanceScraper.Common.Base;
-using FinanceScraper.Common.Constants;
+using Finance.Collection.Domain.FinanceScraper.Constants;
 
 namespace FinanceScraper.YahooFinance
 {

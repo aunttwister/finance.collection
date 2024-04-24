@@ -1,9 +1,9 @@
 ﻿using FinanceScraper.Common.Base;
-using FinanceScraper.Common.CustomDataType;
-using FinanceScraper.Common.DataSets;
+using Finance.Collection.Domain.FinanceScraper.CustomDataType;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.Common.Extensions;
-using FinanceScraper.Common.Propagation;
+using Finance.Collection.Domain.FinanceScraper.Propagation;
 using FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands;
 using FinanceScraper.StockAnalysis.CashFlowScraper.Commands;
 using HtmlAgilityPack;
@@ -99,6 +99,9 @@ namespace FinanceScraper.StockAnalysis.CashFlowScraper
             };
 
             MethodResult<IEnumerable<decimal>> result = nodeCollection.ExecuteUntilFirstException(operations);
+
+            if (!result.IsSuccessful) 
+                return result;
 
             List<decimal> updatedValue = new List<decimal>();
 

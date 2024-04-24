@@ -1,9 +1,9 @@
-﻿using FinanceScraper.Common.Constants;
-using FinanceScraper.Common.DataSets.Results;
+﻿using Finance.Collection.Domain.FinanceScraper.Constants;
+using Finance.Collection.Domain.FinanceScraper.Results;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.Common.Init.ExecutionStrategy;
 using FinanceScraper.Common.Init.ExecutionStrategy.Factory;
-using FinanceScraper.Common.Propagation;
+using Finance.Collection.Domain.FinanceScraper.Propagation;
 using HtmlAgilityPack;
 using MediatR;
 using System;
@@ -16,25 +16,22 @@ namespace FinanceScraper.Common.Init.Commands
 {
     public class InitCommandHandler : IRequestHandler<InitCommand, MethodResult<IScrapeResult>>
     {
-        private IExecutionScrapeStrategy _executionStrategy;
+        private IScrapeExecutionStrategy _executionStrategy;
         private readonly IMediator _mediator;
         public InitCommandHandler(IMediator mediator)
         {
             _mediator = mediator;
         }
-
-        public InitCommandHandler(IExceptionResolverService exceptionResolverService) { }
-        [HandleMethodExecutionAspect]
         public async Task<MethodResult<IScrapeResult>> Handle(InitCommand request, CancellationToken cancellationToken)
         {
-            MethodResult<string> validationResult = await ValidateTicker(request);
+            MethodResult<string> validationResult = await ValidateTicker(request).ConfigureAwait(false);
             if (!validationResult.IsSuccessful)
             {
-                ApplicationException exception = new ApplicationException("Invalid ticker.");
+                ApplicationException exception = new ApplicationException(validationResult.Exception.Message);
                 return new MethodResult<IScrapeResult>(null, exception);
             }
 
-            MethodResult<IExecutionScrapeStrategy> strategyResolveResult = SwitchStrategy(request, _mediator);
+            MethodResult<IScrapeExecutionStrategy> strategyResolveResult = SwitchStrategy(request, _mediator);
             if (!strategyResolveResult.IsSuccessful)
             {
                 return new MethodResult<IScrapeResult>(
@@ -46,11 +43,12 @@ namespace FinanceScraper.Common.Init.Commands
             return await _executionStrategy.ExecuteScrapeStrategy();
         }
 
-        private MethodResult<IExecutionScrapeStrategy> SwitchStrategy(InitCommand request, IMediator _mediator)
+        private MethodResult<IScrapeExecutionStrategy> SwitchStrategy(InitCommand request, IMediator _mediator)
         {
-            var factory = new ScrapeStrategyFactory(_mediator, request.Ticker);
-            return factory.GetStrategy(request);
+            var factory = new ScrapeExecutionStrategyFactory(_mediator, request.Ticker);
+            return factory.GetScrapeExecutionStrategy(request);
         }
+        [HandleMethodExecutionAspect]
         private async Task<MethodResult<string>> ValidateTicker(InitCommand request)
         {
             // Simplify by directly handling the no-operation scenario

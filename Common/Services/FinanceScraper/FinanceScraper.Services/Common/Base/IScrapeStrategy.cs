@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
-using FinanceScraper.Common.DataSets.Base;
+using Finance.Collection.Domain.FinanceScraper.DataSets.Base;
 
 namespace FinanceScraper.Common.Base
 {

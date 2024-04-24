@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
 using FinanceScraper.Common.Base;
-using FinanceScraper.Common.DataSets;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.Common.Extensions;
 using FinanceScraper.MacroTrends.CashFlow.Commands;
 

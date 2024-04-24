@@ -1,5 +1,5 @@
-﻿using FinanceScraper.Common.DataSets.Results;
-using FinanceScraper.Common.Propagation;
+﻿using Finance.Collection.Domain.FinanceScraper.Propagation;
+using Finance.Collection.Domain.FinanceScraper.Results;
 using MediatR;
 using System;
 using System.Collections.Generic;

@@ -1,11 +1,11 @@
 ﻿using HtmlAgilityPack;
 using FinanceScraper.Common.Base;
-using FinanceScraper.Common.DataSets;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.Common.Exceptions;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.Common.Extensions;
 using FinanceScraper.YahooFinance.AnalysisScraper.Commands;
-using FinanceScraper.Common.Propagation;
+using Finance.Collection.Domain.FinanceScraper.Propagation;
 
 namespace FinanceScraper.YahooFinance.AnalysisScraper
 {

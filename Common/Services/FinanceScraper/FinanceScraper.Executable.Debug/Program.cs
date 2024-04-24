@@ -3,8 +3,8 @@ using IntrinsicValue.Calculation.GrahamIntrinsicModel.Commands;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FinanceScraper.Common.Constants;
-using FinanceScraper.Common.DataSets;
+using Finance.Collection.Domain.FinanceScraper.Constants;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.Common.Extensions;
 using StockPortfolio.FinanceScraper.Executable;
 using FinanceScraper.YahooFinance.AnalysisScraper.Commands;
@@ -14,10 +14,10 @@ using FinanceScraper.YCharts.TripleABondYieldScraper.Commands;
 using FinanceScraper.StockAnalysis.CashFlowScraper.Commands;
 using FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands;
 using FinanceScraper.StockAnalysis.StatisticsScraper.Commands;
-using FinanceScraper.Common.CustomDataType;
-using FinanceScraper.Common.DataSets.Results;
+using Finance.Collection.Domain.FinanceScraper.CustomDataType;
+using Finance.Collection.Domain.FinanceScraper.Results;
 using IntrinsicValue.Calculation.DCFIntrinsicModel.Commands;
-using FinanceScraper.Common.Propagation;
+using Finance.Collection.Domain.FinanceScraper.Propagation;
 using ConsoleTables;
 using IntrinsicValue.Calculation.DataSets.Results;
 
@@ -65,7 +65,7 @@ namespace Scraper.YahooFinanceScraper
                 GrahamIntrinsicResult resultData = await grahamCalculationResultData.ConfigureAwait(false);
 
                 DisplayGrahamIntrinsicValueResult(resultData, startTime);
-            }  
+            }
 
             Console.ReadLine();
         }
@@ -141,20 +141,20 @@ namespace Scraper.YahooFinanceScraper
                 scrapeData.GrahamIntrinsicScrapeResult.TripleABonds.CurrentTripleABond.Data
                 );
 
-            return await _mediator.Send(grahamIntrinsicModelRequest); 
+            return await _mediator.Send(grahamIntrinsicModelRequest);
         }
 
         private async static Task<DCFIntrinsicResult> CalculateDCFIntrinsicValueModel(IMediator _mediator, string ticker, DateTime startTime, ScrapeResult scrapeData)
         {
-            /*if (scrapeData.DCFIntrinsicScrapeResult.Summary.Eps.Exception is not null)
+            if (scrapeData.GrahamIntrinsicScrapeResult.Summary.Eps.Exception is not null)
                 Console.WriteLine($"{scrapeData.GrahamIntrinsicScrapeResult.Summary.Eps.Exception}");
             if (scrapeData.GrahamIntrinsicScrapeResult.Summary.CurrentPrice.Exception is not null)
-                Console.WriteLine($"{scrapeData.GrahamIntrinsicScrapeResult.Summary.CurrentPrice.Exception}");*/
+                Console.WriteLine($"{scrapeData.GrahamIntrinsicScrapeResult.Summary.CurrentPrice.Exception}");
 
             //Calculate
 
             DCFIntrinsicModelCommand dcfIntrinsicModelRequest = new DCFIntrinsicModelCommand(
-                ticker, 
+                ticker,
                 scrapeData.GrahamIntrinsicScrapeResult.Summary.CurrentPrice.Data,
                 scrapeData.DCFIntrinsicScrapeResult.CashFlow.HistoricalCashFlows.Data,
                 scrapeData.DCFIntrinsicScrapeResult.BalanceSheet.TTMCashEquivalents,

@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 /Financial.Collection.Api/Financial.Collection.Api.csproj
 /Financial.Collection.Api/Financial.Collection.Api.csproj
+/Common/Services/FinanceScraper/FinanceScraper.Executable.TempDebug/FinanceScraper.Executable.ScrapePerfTest.csproj
+/Common/Services/FinanceScraper/FinanceScraper.Executable.ScrapePerfTesting/FinanceScraper.Executable.ScrapePerfTest.csproj
+/Common/Services/FinanceScraper/FinanceScrape.Executable.InitDebug/FinanceScrape.Executable.InitDebug.csproj

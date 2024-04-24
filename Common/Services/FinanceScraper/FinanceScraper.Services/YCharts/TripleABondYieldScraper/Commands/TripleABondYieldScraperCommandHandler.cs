@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using FinanceScraper.Common.Base;
-using FinanceScraper.Common.DataSets;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 
 namespace FinanceScraper.YCharts.TripleABondYieldScraper.Commands
 {
