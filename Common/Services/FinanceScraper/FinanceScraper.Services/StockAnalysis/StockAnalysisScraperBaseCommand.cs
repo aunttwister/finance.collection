@@ -1,4 +1,5 @@
 ﻿using FinanceScraper.Common.Base;
+using FinanceScraper.Common.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace FinanceScraper.StockAnalysis
     {
         public StockAnalysisScraperBaseCommand(string ticker, string path) : base(ticker, path)
         {
-            BaseUrl = "https://stockanalysis.com/stocks/";
+            BaseUrl = BaseUrlConstants.StockAnalysis;
             ResolveUrl();
         }
         public override void ResolveUrl()

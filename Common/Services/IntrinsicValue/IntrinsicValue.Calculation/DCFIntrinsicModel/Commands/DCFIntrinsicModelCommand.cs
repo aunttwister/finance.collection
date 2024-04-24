@@ -1,4 +1,4 @@
-﻿using IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel;
+﻿using IntrinsicValue.Calculation.DataSets.Results;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IntrinsicValue.Calculation.DCFIntrinsicModel.Commands
 {
-    public class DCFIntrinsicModelCommand : BaseIntrinsicModelCommand, IRequest<DCFIntrinsicModelDataSet>
+    public class DCFIntrinsicModelCommand : BaseIntrinsicModelCommand, IRequest<DCFIntrinsicResult>
     {
         public DCFIntrinsicModelCommand(
             string ticker, 

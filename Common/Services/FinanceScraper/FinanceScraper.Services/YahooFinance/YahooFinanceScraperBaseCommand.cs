@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FinanceScraper.Common.Base;
+using FinanceScraper.Common.Constants;
 
 namespace FinanceScraper.YahooFinance
 {
@@ -11,7 +12,7 @@ namespace FinanceScraper.YahooFinance
     {
         public YahooFinanceScraperBaseCommand(string ticker) : base(ticker) 
         {
-            BaseUrl = "https://finance.yahoo.com/quote/";
+            BaseUrl = BaseUrlConstants.YahooFinance;
             ResolveUrl();
         }
         public YahooFinanceScraperBaseCommand(string ticker, string path) : base(ticker, path)

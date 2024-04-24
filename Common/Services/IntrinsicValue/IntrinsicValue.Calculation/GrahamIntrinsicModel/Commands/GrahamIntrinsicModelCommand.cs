@@ -1,4 +1,4 @@
-﻿using IntrinsicValue.Calculation.DataSets.GrahamIntrinsicModel;
+﻿using IntrinsicValue.Calculation.DataSets.Results;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IntrinsicValue.Calculation.GrahamIntrinsicModel.Commands
 {
-    public class GrahamIntrinsicModelCommand : BaseIntrinsicModelCommand, IRequest<GrahamIntrinsicModelDataSet>
+    public class GrahamIntrinsicModelCommand : BaseIntrinsicModelCommand, IRequest<GrahamIntrinsicResult>
     {
         public GrahamIntrinsicModelCommand(
             string ticker, 

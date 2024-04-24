@@ -1,16 +1,16 @@
-﻿using IntrinsicValue.Calculation.DataSets.GrahamIntrinsicModel;
+﻿using IntrinsicValue.Calculation.DataSets.Results;
 using MediatR;
 
 namespace IntrinsicValue.Calculation.GrahamIntrinsicModel.Commands
 {
-    public class GrahamIntrinsicModelCommandHandler : IRequestHandler<GrahamIntrinsicModelCommand, GrahamIntrinsicModelDataSet>
+    public class GrahamIntrinsicModelCommandHandler : IRequestHandler<GrahamIntrinsicModelCommand, GrahamIntrinsicResult>
     {
-        public readonly ICalculateIntrinsicServiceStrategy<GrahamIntrinsicModelCommand, GrahamIntrinsicModelDataSet> _calculateIntrinsicService;
-        public GrahamIntrinsicModelCommandHandler(ICalculateIntrinsicServiceStrategy<GrahamIntrinsicModelCommand, GrahamIntrinsicModelDataSet> calculateIntrinsicService)
+        public readonly ICalculateIntrinsicServiceStrategy<GrahamIntrinsicModelCommand, GrahamIntrinsicResult> _calculateIntrinsicService;
+        public GrahamIntrinsicModelCommandHandler(ICalculateIntrinsicServiceStrategy<GrahamIntrinsicModelCommand, GrahamIntrinsicResult> calculateIntrinsicService)
         {
             _calculateIntrinsicService = calculateIntrinsicService;
         }
-        public Task<GrahamIntrinsicModelDataSet> Handle(GrahamIntrinsicModelCommand request, CancellationToken cancellationToken)
+        public Task<GrahamIntrinsicResult> Handle(GrahamIntrinsicModelCommand request, CancellationToken cancellationToken)
         {
             return Task.FromResult(_calculateIntrinsicService.Calculate(request));
         }

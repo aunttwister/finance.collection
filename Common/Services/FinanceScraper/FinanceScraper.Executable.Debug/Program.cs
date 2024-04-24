@@ -1,5 +1,4 @@
 ﻿using IntrinsicValue.Calculation;
-using IntrinsicValue.Calculation.DataSets.GrahamIntrinsicModel;
 using IntrinsicValue.Calculation.GrahamIntrinsicModel.Commands;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,10 +16,10 @@ using FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands;
 using FinanceScraper.StockAnalysis.StatisticsScraper.Commands;
 using FinanceScraper.Common.CustomDataType;
 using FinanceScraper.Common.DataSets.Results;
-using IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel;
 using IntrinsicValue.Calculation.DCFIntrinsicModel.Commands;
 using FinanceScraper.Common.Propagation;
 using ConsoleTables;
+using IntrinsicValue.Calculation.DataSets.Results;
 
 namespace Scraper.YahooFinanceScraper
 {
@@ -31,7 +30,7 @@ namespace Scraper.YahooFinanceScraper
             IServiceProvider serviceProvider = CreateHostBuilder().Build().Services;
             IMediator _mediator = serviceProvider.GetRequiredService<IMediator>();
 
-            string ticker = "CVLG";
+            string ticker = "V";
             bool executeDCF = true;
 
             var startTime = DateTime.Now;
@@ -47,8 +46,8 @@ namespace Scraper.YahooFinanceScraper
                 scrapeData.GrahamIntrinsicScrapeResult = grahamIntrinsicScrapeData.Result;
                 scrapeData.DCFIntrinsicScrapeResult = dcfIntrinsicScrapeResult.Result;
 
-                Task<GrahamIntrinsicModelDataSet> grahamCalculationResultData = CalculateGrahamIntrinsicValueModel(_mediator, ticker, startTime, scrapeData);
-                Task<DCFIntrinsicModelDataSet> dcfCalculationResultData = CalculateDCFIntrinsicValueModel(_mediator, ticker, startTime, scrapeData);
+                Task<GrahamIntrinsicResult> grahamCalculationResultData = CalculateGrahamIntrinsicValueModel(_mediator, ticker, startTime, scrapeData);
+                Task<DCFIntrinsicResult> dcfCalculationResultData = CalculateDCFIntrinsicValueModel(_mediator, ticker, startTime, scrapeData);
 
                 await Task.WhenAll(grahamCalculationResultData, dcfCalculationResultData).ConfigureAwait(false);
 
@@ -61,9 +60,9 @@ namespace Scraper.YahooFinanceScraper
 
                 scrapeData.GrahamIntrinsicScrapeResult = grahamIntrinsicScrapeData.Result;
 
-                Task<GrahamIntrinsicModelDataSet> grahamCalculationResultData = CalculateGrahamIntrinsicValueModel(_mediator, ticker, startTime, scrapeData);
+                Task<GrahamIntrinsicResult> grahamCalculationResultData = CalculateGrahamIntrinsicValueModel(_mediator, ticker, startTime, scrapeData);
 
-                GrahamIntrinsicModelDataSet resultData = await grahamCalculationResultData.ConfigureAwait(false);
+                GrahamIntrinsicResult resultData = await grahamCalculationResultData.ConfigureAwait(false);
 
                 DisplayGrahamIntrinsicValueResult(resultData, startTime);
             }  
@@ -101,7 +100,6 @@ namespace Scraper.YahooFinanceScraper
                 Analysis = analysisTask.Result,
                 TripleABonds = tripleABondYieldTask.Result
             };
-
         }
 
         public async static Task<DCFIntrinsicScrapeResult> RunDCFIntrinsicScrapersAsync(string ticker, IMediator _mediator)
@@ -123,10 +121,9 @@ namespace Scraper.YahooFinanceScraper
                 BalanceSheet = balanceSheetTask.Result,
                 Statistics = statisticsTask.Result
             };
-
         }
 
-        private async static Task<GrahamIntrinsicModelDataSet> CalculateGrahamIntrinsicValueModel(IMediator _mediator, string ticker, DateTime startTime, ScrapeResult scrapeData)
+        private async static Task<GrahamIntrinsicResult> CalculateGrahamIntrinsicValueModel(IMediator _mediator, string ticker, DateTime startTime, ScrapeResult scrapeData)
         {
             if (scrapeData.GrahamIntrinsicScrapeResult.Summary.Eps.Exception is not null)
                 Console.WriteLine($"{scrapeData.GrahamIntrinsicScrapeResult.Summary.Eps.Exception}");
@@ -147,7 +144,7 @@ namespace Scraper.YahooFinanceScraper
             return await _mediator.Send(grahamIntrinsicModelRequest); 
         }
 
-        private async static Task<DCFIntrinsicModelDataSet> CalculateDCFIntrinsicValueModel(IMediator _mediator, string ticker, DateTime startTime, ScrapeResult scrapeData)
+        private async static Task<DCFIntrinsicResult> CalculateDCFIntrinsicValueModel(IMediator _mediator, string ticker, DateTime startTime, ScrapeResult scrapeData)
         {
             /*if (scrapeData.DCFIntrinsicScrapeResult.Summary.Eps.Exception is not null)
                 Console.WriteLine($"{scrapeData.GrahamIntrinsicScrapeResult.Summary.Eps.Exception}");
@@ -169,7 +166,7 @@ namespace Scraper.YahooFinanceScraper
             return await _mediator.Send(dcfIntrinsicModelRequest);
         }
 
-        public static void DisplayDCFIntrinsicValueResult(DCFIntrinsicModelDataSet result, DateTime startTime)
+        public static void DisplayDCFIntrinsicValueResult(DCFIntrinsicResult result, DateTime startTime)
         {
             Console.WriteLine("\nDCF Intrinsic Value Calculation Results\n");
             Console.WriteLine(result.Ticker);
@@ -206,7 +203,7 @@ namespace Scraper.YahooFinanceScraper
             Console.WriteLine("run time: " + (DateTime.Now - startTime));
         }
 
-        public static void DisplayGrahamIntrinsicValueResult(GrahamIntrinsicModelDataSet result, DateTime startTime)
+        public static void DisplayGrahamIntrinsicValueResult(GrahamIntrinsicResult result, DateTime startTime)
         {
             Console.WriteLine("Displaying Graham Intrinsic Value Calculation Result\n");
             Console.WriteLine(result.Ticker);

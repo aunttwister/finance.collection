@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FinanceScraper.Common.DataSets.Results
 {
-    public class GrahamIntrinsicScrapeResult
+    public class GrahamIntrinsicScrapeResult : IScrapeResult
     {
         public SummaryDataSet Summary { get; set; }
         public AnalysisDataSet Analysis { get; set; }

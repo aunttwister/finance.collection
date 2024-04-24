@@ -1,5 +1,4 @@
-﻿using IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel;
-using IntrinsicValue.Calculation.DataSets.GrahamIntrinsicModel;
+﻿using IntrinsicValue.Calculation.DataSets.Results;
 using IntrinsicValue.Calculation.DCFIntrinsicModel;
 using IntrinsicValue.Calculation.DCFIntrinsicModel.Commands;
 using IntrinsicValue.Calculation.GrahamIntrinsicModel;
@@ -20,8 +19,8 @@ namespace IntrinsicValue.Calculation
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 
-            services.AddTransient<ICalculateIntrinsicServiceStrategy<GrahamIntrinsicModelCommand, GrahamIntrinsicModelDataSet>, GrahamIntrinsicModelService>();
-            services.AddTransient<ICalculateIntrinsicServiceStrategy<DCFIntrinsicModelCommand, DCFIntrinsicModelDataSet>, DCFIntrinsicModelService>();
+            services.AddTransient<ICalculateIntrinsicServiceStrategy<GrahamIntrinsicModelCommand, GrahamIntrinsicResult>, GrahamIntrinsicModelService>();
+            services.AddTransient<ICalculateIntrinsicServiceStrategy<DCFIntrinsicModelCommand, DCFIntrinsicResult>, DCFIntrinsicModelService>();
         }
     }
 }

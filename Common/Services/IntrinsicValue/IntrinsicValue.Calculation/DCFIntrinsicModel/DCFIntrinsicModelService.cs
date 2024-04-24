@@ -1,13 +1,14 @@
 ﻿using IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel;
+using IntrinsicValue.Calculation.DataSets.Results;
 using IntrinsicValue.Calculation.DCFIntrinsicModel.Commands;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
 
 namespace IntrinsicValue.Calculation.DCFIntrinsicModel
 {
-    public class DCFIntrinsicModelService : ICalculateIntrinsicServiceStrategy<DCFIntrinsicModelCommand, DCFIntrinsicModelDataSet>
+    public class DCFIntrinsicModelService : ICalculateIntrinsicServiceStrategy<DCFIntrinsicModelCommand, DCFIntrinsicResult>
     {
-        public DCFIntrinsicModelDataSet Calculate(DCFIntrinsicModelCommand request)
+        public DCFIntrinsicResult Calculate(DCFIntrinsicModelCommand request)
         {
             IDictionary<string, decimal> historicalCashFlow = request.HistoricalCashFlow;
             List<HistoricalGrowthRateDataSet> historicalGrowthRates = CalculateHistoricalGrowthRateTotal(historicalCashFlow);
@@ -29,7 +30,7 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel
 
             decimal discountedCashFlowValue = CalculateDiscountedCashFlowValue(equityValue, request.SharesOutstanding);
 
-            return new DCFIntrinsicModelDataSet(
+            return new DCFIntrinsicResult(
                 request,
                 discountedCashFlowValue,
                 equityValue,

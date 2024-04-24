@@ -1,4 +1,5 @@
 ﻿using IntrinsicValue.Calculation.DataSets.Common;
+using IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel;
 using IntrinsicValue.Calculation.DCFIntrinsicModel.Commands;
 using System;
 using System.Collections.Generic;
@@ -6,12 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel
+namespace IntrinsicValue.Calculation.DataSets.Results
 {
-    public class DCFIntrinsicModelDataSet : BaseIntrinsicModelDataSet
+    public class DCFIntrinsicResult : BaseIntrinsicModelDataSet
     {
-        public DCFIntrinsicModelDataSet(
-            DCFIntrinsicModelCommand request, 
+        public DCFIntrinsicResult(
+            DCFIntrinsicModelCommand request,
             decimal discountedCashFlow,
             decimal equity,
             decimal sumFutureCashFlow,

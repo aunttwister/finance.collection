@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FinanceScraper.Common.DataSets.Results
 {
-    public class DCFIntrinsicScrapeResult
+    public class DCFIntrinsicScrapeResult : IScrapeResult
     {
         public CashFlowDataSet CashFlow { get; set; }
         public BalanceSheetDataSet BalanceSheet { get; set; }

@@ -6,12 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IntrinsicValue.Calculation.DataSets.GrahamIntrinsicModel
+namespace IntrinsicValue.Calculation.DataSets.Results
 {
-    public class GrahamIntrinsicModelDataSet : BaseIntrinsicModelDataSet
+    public class GrahamIntrinsicResult : BaseIntrinsicModelDataSet
     {
-        public GrahamIntrinsicModelDataSet(
-            GrahamIntrinsicModelCommand request, 
+        public GrahamIntrinsicResult(
+            GrahamIntrinsicModelCommand request,
             decimal intrinsicValue,
             decimal safetyMargin = 0.65m)
         {
