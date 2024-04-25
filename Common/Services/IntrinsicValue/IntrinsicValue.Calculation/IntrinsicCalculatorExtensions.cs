@@ -19,8 +19,8 @@ namespace IntrinsicValue.Calculation
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 
-            services.AddTransient<ICalculateIntrinsicServiceStrategy<GrahamIntrinsicModelCommand, GrahamIntrinsicResult>, GrahamIntrinsicModelService>();
-            services.AddTransient<ICalculateIntrinsicServiceStrategy<DCFIntrinsicModelCommand, DCFIntrinsicResult>, DCFIntrinsicModelService>();
+            services.AddTransient<ICalculateIntrinsicServiceStrategy<GrahamIntrinsicModelCommand, GrahamCalculationResult>, GrahamIntrinsicModelService>();
+            services.AddTransient<ICalculateIntrinsicServiceStrategy<DCFIntrinsicModelCommand, DCFCalculationResult>, DCFIntrinsicModelService>();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Finance.Collection.Domain.FinanceScraper.Propagation;
+﻿using Finance.Collection.Domain.Common.Propagation;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;

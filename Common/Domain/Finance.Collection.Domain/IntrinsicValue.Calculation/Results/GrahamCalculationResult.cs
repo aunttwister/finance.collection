@@ -1,5 +1,6 @@
-﻿using IntrinsicValue.Calculation.DataSets.Common;
-using IntrinsicValue.Calculation.GrahamIntrinsicModel.Commands;
+﻿using Finance.Collection.Domain.IntrinsicValue.Calculation.DataSets.Base;
+using Finance.Collection.Domain.IntrinsicValue.Calculation.Results;
+using IntrinsicValue.Calculation.DataSets.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace IntrinsicValue.Calculation.DataSets.Results
 {
-    public class GrahamIntrinsicResult : BaseIntrinsicModelDataSet
+    public class GrahamCalculationResult : BaseIntrinsicModelDataSet, ICalculationResult
     {
-        public GrahamIntrinsicResult(
+        public GrahamCalculationResult(
             GrahamIntrinsicModelCommand request,
             decimal intrinsicValue,
             decimal safetyMargin = 0.65m)
@@ -26,7 +27,6 @@ namespace IntrinsicValue.Calculation.DataSets.Results
             BuyPrice = Math.Round(intrinsicValue * safetyMargin, 2);
             PriceDifference = BuyPrice > 0 ? Math.Round((BuyPrice - CurrentPrice) / BuyPrice * 100, 2) : Math.Round((BuyPrice - CurrentPrice) / BuyPrice * -100, 2);
         }
-        public string Ticker { get; set; }
         public decimal Eps { get; set; }
         public decimal FiveYearGrowth { get; set; }
         public decimal AverageBondYield { get; set; }

@@ -1,5 +1,4 @@
 ﻿using FinanceScraper.Common.Base;
-using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands;
 using MediatR;
 using System;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 
 namespace FinanceScraper.StockAnalysis.CashFlowScraper.Commands
 {

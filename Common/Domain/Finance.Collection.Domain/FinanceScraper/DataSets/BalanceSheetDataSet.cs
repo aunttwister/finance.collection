@@ -1,11 +1,11 @@
-﻿using Finance.Collection.Domain.FinanceScraper.CustomDataType;
-using Finance.Collection.Domain.FinanceScraper.DataSets.Base;
-using Finance.Collection.Domain.FinanceScraper.Propagation;
+﻿using Finance.Collection.Domain.Common.Propagation;
+using Finance.Collection.Domain.Common.CustomDataType;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Finance.Collection.Domain.FinanceScraper.DataSets.Base;
 
 namespace Finance.Collection.Domain.FinanceScraper.DataSets
 {
@@ -13,7 +13,7 @@ namespace Finance.Collection.Domain.FinanceScraper.DataSets
     {
         public decimal TTMCashEquivalents { get; set; }
         public decimal TTMTotalDebt { get; set; }
-        public MethodResultDictionary<string,decimal> HistoricalCashEquivalents { get; set; }
+        public MethodResultDictionary<string, decimal> HistoricalCashEquivalents { get; set; }
         public MethodResultDictionary<string, decimal> HistoricalTotalDebt { get; set; }
     }
 }

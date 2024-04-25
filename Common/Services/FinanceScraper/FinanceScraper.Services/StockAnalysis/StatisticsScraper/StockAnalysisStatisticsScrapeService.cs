@@ -1,6 +1,5 @@
 ﻿using HtmlAgilityPack;
 using FinanceScraper.Common.Base;
-using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.Common.Extensions;
 using FinanceScraper.StockAnalysis.StatisticsScraper.Commands;
@@ -9,8 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Finance.Collection.Domain.FinanceScraper.Propagation;
-using Finance.Collection.Domain.FinanceScraper.CustomDataType;
+using Finance.Collection.Domain.Common.Propagation;
+using Finance.Collection.Domain.Common.CustomDataType;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 
 namespace FinanceScraper.StockAnalysis.StatisticsScraper
 {

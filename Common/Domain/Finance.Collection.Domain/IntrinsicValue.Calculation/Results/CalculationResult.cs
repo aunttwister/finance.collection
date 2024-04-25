@@ -8,7 +8,7 @@ namespace IntrinsicValue.Calculation.DataSets.Results
 {
     public class CalculationResult
     {
-        public DCFIntrinsicResult DCFResult { get; set; }
-        public GrahamIntrinsicResult GrahamResult { get; set; }
+        public DCFCalculationResult DCFResult { get; set; }
+        public GrahamCalculationResult GrahamResult { get; set; }
     }
 }

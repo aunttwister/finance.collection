@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IntrinsicValue.Calculation.DataSets
+namespace Finance.Collection.Domain.IntrinsicValue.Calculation.DataSets.Base
 {
     public class BaseIntrinsicModelDataSet
     {

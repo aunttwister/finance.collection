@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using FinanceScraper.Common.Extensions;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
-using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.Common.Base;
-using Finance.Collection.Domain.FinanceScraper.Propagation;
+using Finance.Collection.Domain.Common.Propagation;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 
 namespace FinanceScraper.YCharts.TripleABondYieldScraper
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Finance.Collection.Domain.FinanceScraper.Propagation
+namespace Finance.Collection.Domain.Common.Propagation
 {
     public class MethodResult<T>
     {
@@ -14,7 +14,7 @@ namespace Finance.Collection.Domain.FinanceScraper.Propagation
 
         public MethodResult()
         {
-            
+
         }
         public MethodResult(T data)
         {

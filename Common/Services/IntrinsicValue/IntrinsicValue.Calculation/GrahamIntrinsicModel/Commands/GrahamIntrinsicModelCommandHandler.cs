@@ -3,14 +3,14 @@ using MediatR;
 
 namespace IntrinsicValue.Calculation.GrahamIntrinsicModel.Commands
 {
-    public class GrahamIntrinsicModelCommandHandler : IRequestHandler<GrahamIntrinsicModelCommand, GrahamIntrinsicResult>
+    public class GrahamIntrinsicModelCommandHandler : IRequestHandler<GrahamIntrinsicModelCommand, GrahamCalculationResult>
     {
-        public readonly ICalculateIntrinsicServiceStrategy<GrahamIntrinsicModelCommand, GrahamIntrinsicResult> _calculateIntrinsicService;
-        public GrahamIntrinsicModelCommandHandler(ICalculateIntrinsicServiceStrategy<GrahamIntrinsicModelCommand, GrahamIntrinsicResult> calculateIntrinsicService)
+        public readonly ICalculateIntrinsicServiceStrategy<GrahamIntrinsicModelCommand, GrahamCalculationResult> _calculateIntrinsicService;
+        public GrahamIntrinsicModelCommandHandler(ICalculateIntrinsicServiceStrategy<GrahamIntrinsicModelCommand, GrahamCalculationResult> calculateIntrinsicService)
         {
             _calculateIntrinsicService = calculateIntrinsicService;
         }
-        public Task<GrahamIntrinsicResult> Handle(GrahamIntrinsicModelCommand request, CancellationToken cancellationToken)
+        public Task<GrahamCalculationResult> Handle(GrahamIntrinsicModelCommand request, CancellationToken cancellationToken)
         {
             return Task.FromResult(_calculateIntrinsicService.Calculate(request));
         }

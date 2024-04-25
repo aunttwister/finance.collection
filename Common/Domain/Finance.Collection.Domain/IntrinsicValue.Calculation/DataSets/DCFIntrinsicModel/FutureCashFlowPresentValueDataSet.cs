@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel
 {
-    public class FutureCashFlowDataSet
+    public class FutureCashFlowPresentValueDataSet
     {
         public string Year { get; set; }
         public decimal CashFlow { get; set; }

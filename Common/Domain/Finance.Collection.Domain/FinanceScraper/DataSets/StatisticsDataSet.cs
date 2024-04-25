@@ -1,5 +1,5 @@
-﻿using Finance.Collection.Domain.FinanceScraper.DataSets.Base;
-using Finance.Collection.Domain.FinanceScraper.Propagation;
+﻿using Finance.Collection.Domain.Common.Propagation;
+using Finance.Collection.Domain.FinanceScraper.DataSets.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;

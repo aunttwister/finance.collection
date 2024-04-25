@@ -1,12 +1,10 @@
-﻿using MediatR;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.Common.Base;
-using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
-using FinanceScraper.MacroTrends.CashFlow;
-using FinanceScraper.MacroTrends.CashFlow.Commands;
 using FinanceScraper.StockAnalysis.BalanceSheetScraper;
 using FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands;
+using FinanceScraper.StockAnalysis.CashFlowScraper;
+using FinanceScraper.StockAnalysis.CashFlowScraper.Commands;
 using FinanceScraper.StockAnalysis.StatisticsScraper;
 using FinanceScraper.StockAnalysis.StatisticsScraper.Commands;
 using FinanceScraper.YahooFinance.AnalysisScraper;
@@ -17,9 +15,9 @@ using FinanceScraper.YahooFinance.SummaryScraper;
 using FinanceScraper.YahooFinance.SummaryScraper.Commands;
 using FinanceScraper.YCharts.TripleABondYieldScraper;
 using FinanceScraper.YCharts.TripleABondYieldScraper.Commands;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using FinanceScraper.StockAnalysis.CashFlowScraper.Commands;
-using FinanceScraper.StockAnalysis.CashFlowScraper;
 
 
 namespace FinanceScraper.Common.Extensions

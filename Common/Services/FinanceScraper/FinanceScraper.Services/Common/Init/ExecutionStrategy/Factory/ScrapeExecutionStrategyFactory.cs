@@ -1,11 +1,11 @@
 ﻿using FinanceScraper.Common.Init.Commands;
-using Finance.Collection.Domain.FinanceScraper.Propagation;
 using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Finance.Collection.Domain.Common.Propagation;
 
 namespace FinanceScraper.Common.Init.ExecutionStrategy.Factory
 {
@@ -41,13 +41,13 @@ namespace FinanceScraper.Common.Init.ExecutionStrategy.Factory
             {
                 return new MethodResult<IScrapeExecutionStrategy>(
                     null,
-                    new ApplicationException("Unable to resolve execution strategy. Please try again."));
+                    new ApplicationException("Unable to resolve scrape execution strategy. Please try again."));
             }
 
             // Use a composite strategy if more than one strategy is selected
             if (selectedStrategies.Count > 1)
             {
-                return new MethodResult<IScrapeExecutionStrategy>(new CompositeScrapeExecutionStrategy(selectedStrategies, _ticker));
+                return new MethodResult<IScrapeExecutionStrategy>(new CompositeScrapeExecutionStrategy(selectedStrategies));
             }
 
             // Only one strategy is selected

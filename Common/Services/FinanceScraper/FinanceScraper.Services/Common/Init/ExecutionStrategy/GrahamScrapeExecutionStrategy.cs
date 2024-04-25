@@ -1,8 +1,6 @@
 ﻿using Finance.Collection.Domain.FinanceScraper.Constants;
-using Finance.Collection.Domain.FinanceScraper.DataSets;
 using Finance.Collection.Domain.FinanceScraper.Results;
 using FinanceScraper.Common.Init.Commands;
-using Finance.Collection.Domain.FinanceScraper.Propagation;
 using FinanceScraper.YahooFinance.AnalysisScraper.Commands;
 using FinanceScraper.YahooFinance.SummaryScraper.Commands;
 using FinanceScraper.YCharts.TripleABondYieldScraper.Commands;
@@ -12,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Finance.Collection.Domain.Common.Propagation;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 
 namespace FinanceScraper.Common.Init.ExecutionStrategy
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Finance.Collection.Domain.FinanceScraper.Propagation
+namespace Finance.Collection.Domain.Common.Propagation
 {
     public interface IOperationResult
     {

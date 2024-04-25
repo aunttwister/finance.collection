@@ -12,8 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Init\Commands\" />
-    <Folder Include="Init\ExecutionStrategy\" />
+    <ProjectReference Include="..\..\..\Domain\Finance.Collection.Domain\Finance.Collection.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DataSets\Results\" />
   </ItemGroup>
 
 </Project>

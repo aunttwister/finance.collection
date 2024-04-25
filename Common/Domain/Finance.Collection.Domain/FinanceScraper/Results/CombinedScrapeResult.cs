@@ -30,5 +30,9 @@ namespace Finance.Collection.Domain.FinanceScraper.Results
             }
             return default(T);
         }
+        public IEnumerable<Type> GetResultTypes()
+        {
+            return _results.Keys.AsEnumerable();
+        }
     }
 }

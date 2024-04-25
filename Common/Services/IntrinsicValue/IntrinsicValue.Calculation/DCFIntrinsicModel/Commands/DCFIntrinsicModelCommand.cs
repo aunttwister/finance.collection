@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IntrinsicValue.Calculation.DCFIntrinsicModel.Commands
 {
-    public class DCFIntrinsicModelCommand : BaseIntrinsicModelCommand, IRequest<DCFIntrinsicResult>
+    public class DCFIntrinsicModelCommand : BaseIntrinsicModelCommand, IRequest<DCFCalculationResult>
     {
         public DCFIntrinsicModelCommand(
             string ticker, 
@@ -17,8 +17,8 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel.Commands
             decimal ttmCashAndCashEquivalents,
             decimal ttmTotalDebt,
             decimal sharesOutstanding,
-            decimal discountRate = 8m,
-            decimal perpetualRate = 2.5m,
+            decimal discountRate = 0.08m,
+            decimal perpetualRate = 0.025m,
             decimal safetyMargin = 0.75m) : base(ticker, currentPrice) 
         { 
             HistoricalCashFlow = historicalCashFlow;
@@ -38,8 +38,8 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel.Commands
             decimal sharesOutstanding,
             Dictionary<string, decimal> historicalCashAndCashEquivalents,
             Dictionary<string, decimal> historicalTotalDebt,
-            decimal discountRate = 8m,
-            decimal perpetualRate = 2.5m,
+            decimal discountRate = 0.08m,
+            decimal perpetualRate = 0.025m,
             decimal safetyMargin = 0.75m) : base(ticker, currentPrice)
         {
             HistoricalCashFlow = historicalCashFlow;

@@ -1,12 +1,12 @@
 ﻿using HtmlAgilityPack;
 using FinanceScraper.Common.Base;
-using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.Common.Exceptions;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.Common.Extensions;
 using FinanceScraper.YahooFinance.SummaryScraper.Commands;
 using System.Xml.Linq;
-using Finance.Collection.Domain.FinanceScraper.Propagation;
+using Finance.Collection.Domain.Common.Propagation;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 
 namespace FinanceScraper.YahooFinance.SummaryScraper
 {

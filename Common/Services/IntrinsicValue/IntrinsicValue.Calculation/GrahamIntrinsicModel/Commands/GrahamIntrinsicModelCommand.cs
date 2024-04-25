@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IntrinsicValue.Calculation.GrahamIntrinsicModel.Commands
 {
-    public class GrahamIntrinsicModelCommand : BaseIntrinsicModelCommand, IRequest<GrahamIntrinsicResult>
+    public class GrahamIntrinsicModelCommand : BaseIntrinsicModelCommand, IRequest<GrahamCalculationResult>
     {
         public GrahamIntrinsicModelCommand(
             string ticker, 

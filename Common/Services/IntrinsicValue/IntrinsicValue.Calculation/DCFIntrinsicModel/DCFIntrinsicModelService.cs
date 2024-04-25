@@ -1,4 +1,5 @@
-﻿using IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel;
+﻿using Finance.Collection.Domain.IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel;
+using IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel;
 using IntrinsicValue.Calculation.DataSets.Results;
 using IntrinsicValue.Calculation.DCFIntrinsicModel.Commands;
 using System.ComponentModel.DataAnnotations;
@@ -6,10 +7,14 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace IntrinsicValue.Calculation.DCFIntrinsicModel
 {
-    public class DCFIntrinsicModelService : ICalculateIntrinsicServiceStrategy<DCFIntrinsicModelCommand, DCFIntrinsicResult>
+    public class DCFIntrinsicModelService : ICalculateIntrinsicServiceStrategy<DCFIntrinsicModelCommand, DCFCalculationResult>
     {
-        public DCFIntrinsicResult Calculate(DCFIntrinsicModelCommand request)
+        public DCFCalculationResult Calculate(DCFIntrinsicModelCommand request)
         {
+            AssetsDataSet assetsDataSet = new AssetsDataSet(request.TTMCashAndCashEquivalents, request.HistoricalCashAndCashEquivalents);
+            LiabilitiesDataSet liabilitiesDataSet = new LiabilitiesDataSet(request.TTMTotalDebt, request.HistoricalTotalDebt);
+            ConfigurationDataSet configurationDataSet = new ConfigurationDataSet(request.DiscountRate, request.PerpetualRate, request.SafetyMargin);
+
             IDictionary<string, decimal> historicalCashFlow = request.HistoricalCashFlow;
             List<HistoricalGrowthRateDataSet> historicalGrowthRates = CalculateHistoricalGrowthRateTotal(historicalCashFlow);
 
@@ -17,27 +22,44 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel
             IEnumerable<decimal> growthRates = historicalGrowthRates.Where(x => x.GrowthRate is not null)
                                                                     .Select(x => x.GrowthRate.Value);
 
-            AverageGrowthRateDataSet averageGrowthRateDataSet = CalculateAverageGrowthRate(years, growthRates, request.SafetyMargin);
+            (string, decimal) averageGrowthRate = CalculateAverageGrowthRate(years, growthRates, request.SafetyMargin);
 
-            decimal averageGrowthRate = averageGrowthRateDataSet.Value;
             decimal latestCashFlow = historicalCashFlow.First().Value;
 
-            Dictionary<string, decimal> futureCashFlow = CalculateFutureCashFlow(averageGrowthRate, latestCashFlow);
-            List<FutureCashFlowDataSet> futureCashFlowDataSet = PresentValueFacade(futureCashFlow);
-            decimal sumFutureCashFlowValue = futureCashFlowDataSet.Select(fcf => fcf.PresentValue).Sum();
+            GrowthRateDataSet growthRateDataSet = new GrowthRateDataSet()
+            {
+                Period = averageGrowthRate.Item1,
+                AverageGrowthRate = averageGrowthRate.Item2,
+                HistoricalGrowthRate = historicalGrowthRates
+            };
 
-            decimal equityValue = CalculateEquityValue(sumFutureCashFlowValue, request.TTMCashAndCashEquivalents, request.TTMTotalDebt);
+            Dictionary<string, decimal> futureCashFlow = CalculateFutureCashFlow(averageGrowthRate.Item2, latestCashFlow);
+            List<FutureCashFlowPresentValueDataSet> futureCashFlowPresentValue = PresentValueFacade(futureCashFlow);
+            decimal presentValueSum = futureCashFlowPresentValue.Select(fcf => fcf.PresentValue).Sum();
+
+            CashFlowDataSet cashFlowDataSet = new CashFlowDataSet()
+            {
+                FutureCashFlowPresentValue = futureCashFlowPresentValue,
+                HistoricalCashFlow = historicalCashFlow,
+                PresentValueSum = presentValueSum
+            };
+
+            decimal equityValue = CalculateEquityValue(presentValueSum, request.TTMCashAndCashEquivalents, request.TTMTotalDebt);
 
             decimal discountedCashFlowValue = CalculateDiscountedCashFlowValue(equityValue, request.SharesOutstanding);
 
-            return new DCFIntrinsicResult(
-                request,
-                discountedCashFlowValue,
-                equityValue,
-                sumFutureCashFlowValue,
-                futureCashFlowDataSet,
-                averageGrowthRateDataSet,
-                historicalGrowthRates);
+            ValuationDataSet valuationDataSet = new ValuationDataSet(equityValue, discountedCashFlowValue);
+
+            return new DCFCalculationResult(
+                request.Ticker,
+                request.CurrentPrice,
+                request.SharesOutstanding,
+                valuationDataSet,
+                assetsDataSet,
+                liabilitiesDataSet,
+                cashFlowDataSet,
+                growthRateDataSet,
+                configurationDataSet);
         }
         public List<HistoricalGrowthRateDataSet> CalculateHistoricalGrowthRateTotal(IDictionary<string, decimal> HistoricalCashFlows)
         {
@@ -63,18 +85,17 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel
 
 
 
-        public AverageGrowthRateDataSet CalculateAverageGrowthRate(IEnumerable<string> years, IEnumerable<decimal> growthRates, decimal margin = 0.65m)
+        public (string, decimal) CalculateAverageGrowthRate(IEnumerable<string> years, IEnumerable<decimal> growthRates, decimal margin = 0.65m)
         {
             string firstYear = years.First();
             string lastYear = years.Last();
 
             decimal averageGrowthRate = growthRates.Average();
 
-            return new AverageGrowthRateDataSet()
-            {
-                Period = firstYear + "-" + lastYear, 
-                Value = Math.Round(averageGrowthRate * margin / 100, 2)
-            };
+            string period = firstYear + "-" + lastYear;
+            decimal value = Math.Round(averageGrowthRate * margin / 100, 2);
+            
+            return (period, value);
         }
 
         public Dictionary<string, decimal> CalculateFutureCashFlow(decimal averageGrowthRate, decimal cashFlow, int numberOfYears = 10)
@@ -97,14 +118,14 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel
         public decimal CalculateTerminalValue(decimal lastYearCashFlow, decimal perpetualRate = 2.5m, decimal discountRate = 8m) =>
             lastYearCashFlow * (1 + perpetualRate) / (discountRate - perpetualRate);
 
-        public List<FutureCashFlowDataSet> PresentValueFacade(Dictionary<string, decimal> yearCashFlowPairs, decimal discountRate = 0.08m)
+        public List<FutureCashFlowPresentValueDataSet> PresentValueFacade(Dictionary<string, decimal> yearCashFlowPairs, decimal discountRate = 0.08m)
         {
-            List<FutureCashFlowDataSet> yearFutureCashFlow = new List<FutureCashFlowDataSet>();
+            List<FutureCashFlowPresentValueDataSet> yearFutureCashFlow = new List<FutureCashFlowPresentValueDataSet>();
             int multiplier = 1;
             foreach (var yearCashFlow in yearCashFlowPairs)
             {
                 decimal presentValue = CalculatePresentValue(yearCashFlow.Value, discountRate, multiplier);
-                FutureCashFlowDataSet yearlyFutureCashFlow = new FutureCashFlowDataSet()
+                FutureCashFlowPresentValueDataSet yearlyFutureCashFlow = new FutureCashFlowPresentValueDataSet()
                 {
                     Year = yearCashFlow.Key,
                     CashFlow = yearCashFlow.Value,
