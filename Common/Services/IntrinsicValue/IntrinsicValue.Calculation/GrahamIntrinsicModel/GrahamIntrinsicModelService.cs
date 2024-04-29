@@ -10,7 +10,15 @@ namespace IntrinsicValue.Calculation.GrahamIntrinsicModel
         {
             decimal intrinsicValue = Math.Round(request.Eps * (8.5m + 2m * request.FiveYearGrowth) * request.AverageBondYield / request.CurrentBondYield, 2);
 
-            return new GrahamIntrinsicResult(request, intrinsicValue);
+            return new GrahamCalculationResult(
+                request.Ticker, 
+                request.CurrentPrice,
+                intrinsicValue, 
+                request.Eps, 
+                request.FiveYearGrowth, 
+                request.AverageBondYield, 
+                request.CurrentBondYield,
+                request.SafetyMargin);
         }
     }
 }

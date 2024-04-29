@@ -4,7 +4,6 @@ using FinanceScraper.Common.Exceptions;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.Common.Extensions;
 using FinanceScraper.YahooFinance.CashFlowScraper.Commands;
-using Finance.Collection.Domain.FinanceScraper.CustomDataType;
 using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.FinanceScraper.DataSets;
 

@@ -24,7 +24,7 @@ namespace FinanceScraper.Common.Init.ExecutionStrategy.Factory
             strategies.Add(new DCFScrapeExecutionStrategy(_mediator, _ticker));
         }
         [HandleMethodExecutionAspect]
-        public MethodResult<IScrapeExecutionStrategy> GetScrapeExecutionStrategy(InitCommand request)
+        public MethodResult<IScrapeExecutionStrategy> GetScrapeExecutionStrategy(InitScrapeCommand request)
         {
             var selectedStrategies = new List<IScrapeExecutionStrategy>();
 
@@ -47,7 +47,7 @@ namespace FinanceScraper.Common.Init.ExecutionStrategy.Factory
             // Use a composite strategy if more than one strategy is selected
             if (selectedStrategies.Count > 1)
             {
-                return new MethodResult<IScrapeExecutionStrategy>(new CompositeScrapeExecutionStrategy(selectedStrategies));
+                return new MethodResult<IScrapeExecutionStrategy>(new CompositeScrapeExecutionStrategy(selectedStrategies, _ticker));
             }
 
             // Only one strategy is selected

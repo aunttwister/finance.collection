@@ -1,5 +1,4 @@
 ﻿using FinanceScraper.Common.Base;
-using Finance.Collection.Domain.FinanceScraper.CustomDataType;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.Common.Extensions;
 using FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands;

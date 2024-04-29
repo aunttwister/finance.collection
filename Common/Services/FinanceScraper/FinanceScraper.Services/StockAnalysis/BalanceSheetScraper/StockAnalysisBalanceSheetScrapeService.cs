@@ -6,10 +6,6 @@ using FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Finance.Collection.Domain.FinanceScraper.CustomDataType;
 using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.FinanceScraper.DataSets;
 
@@ -32,16 +28,24 @@ namespace FinanceScraper.StockAnalysis.BalanceSheetScraper
 
             await Task.WhenAll(HistoricalCashEquivalents, HistoricalTotalDebt).ConfigureAwait(false);
 
-            decimal ttmCashEquivalents = HistoricalCashEquivalents.Result.Data.First().Value;
-            decimal ttmTotalDebt = HistoricalTotalDebt.Result.Data.First().Value;
+
+            MethodResult<decimal> ttmCashEquivalentsResult = ProcessTTMData(HistoricalCashEquivalents.Result);
+            MethodResult<decimal> ttmTotalDebtResult = ProcessTTMData(HistoricalTotalDebt.Result);
 
             return new BalanceSheetDataSet()
             {
-                TTMCashEquivalents = ttmCashEquivalents,
-                TTMTotalDebt = ttmTotalDebt,
+                TTMCashEquivalents = ttmCashEquivalentsResult,
+                TTMTotalDebt = ttmTotalDebtResult,
                 HistoricalCashEquivalents = HistoricalCashEquivalents.Result,
                 HistoricalTotalDebt = HistoricalTotalDebt.Result
             };
+        }
+
+        private MethodResult<decimal> ProcessTTMData(MethodResultDictionary<string, decimal> historicalData)
+        {
+            return historicalData.IsSuccessfulValue ?
+                new MethodResult<decimal>(historicalData.Data.First().Value) :
+                new MethodResult<decimal>(historicalData.KeyValuePairExceptions.Value);
         }
 
         [HandleMethodExecutionAspect]

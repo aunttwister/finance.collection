@@ -1,6 +1,6 @@
-﻿using Finance.Collection.Domain.IntrinsicValue.Calculation.DataSets.Base;
-using Finance.Collection.Domain.IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel;
+﻿using Finance.Collection.Domain.IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel;
 using Finance.Collection.Domain.IntrinsicValue.Calculation.Results;
+using Finance.Collection.Domain.IntrinsicValue.Calculation.Results.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,22 +9,19 @@ using System.Threading.Tasks;
 
 namespace IntrinsicValue.Calculation.DataSets.Results
 {
-    public class DCFCalculationResult : BaseIntrinsicModelDataSet, ICalculationResult
+    public class DCFCalculationResult : BaseCalculationResult, ICalculationResult
     {
         public DCFCalculationResult(
             string ticker,
-            decimal currentPrice,
             decimal sharesOutstanding,
             ValuationDataSet valuationDataSet,
             AssetsDataSet assetsDataSet,
             LiabilitiesDataSet liabilitiesDataSet,
             CashFlowDataSet cashFlowDataSet,
             GrowthRateDataSet growthRateDataSet,
-            ConfigurationDataSet configurationDataSet)
+            ConfigurationDataSet configurationDataSet) : base(valuationDataSet.DiscountedCashFlowValue.Value)
         {
-            //Base Data
             Ticker = ticker;
-            CurrentPrice = currentPrice;
 
             //Config params
             ConfigurationDataSet = configurationDataSet;
@@ -36,8 +33,33 @@ namespace IntrinsicValue.Calculation.DataSets.Results
             LiabilitiesDataSet = liabilitiesDataSet;
             CashFlowDataSet = cashFlowDataSet;
             GrowthRateDataSet = growthRateDataSet;
-
         }
+        public DCFCalculationResult(
+            string ticker,
+            decimal currentPrice,
+            decimal sharesOutstanding,
+            ValuationDataSet valuationDataSet,
+            AssetsDataSet assetsDataSet,
+            LiabilitiesDataSet liabilitiesDataSet,
+            CashFlowDataSet cashFlowDataSet,
+            GrowthRateDataSet growthRateDataSet,
+            ConfigurationDataSet configurationDataSet,
+            decimal safetyMargin) : base(currentPrice, valuationDataSet.DiscountedCashFlowValue.Value, safetyMargin)
+        {
+            Ticker = ticker;
+
+            //Config params
+            ConfigurationDataSet = configurationDataSet;
+
+            //Specifics
+            SharesOutstanding = sharesOutstanding;
+            ValuationDataSet = valuationDataSet;
+            AssetsDataSet = assetsDataSet;
+            LiabilitiesDataSet = liabilitiesDataSet;
+            CashFlowDataSet = cashFlowDataSet;
+            GrowthRateDataSet = growthRateDataSet;
+        }
+        public string Ticker { get; set; }
         public decimal SharesOutstanding { get; set; }
         public CashFlowDataSet CashFlowDataSet { get; set; }
         public GrowthRateDataSet GrowthRateDataSet { get; set; }

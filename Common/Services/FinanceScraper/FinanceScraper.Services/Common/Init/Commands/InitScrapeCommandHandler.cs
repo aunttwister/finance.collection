@@ -14,15 +14,15 @@ using Finance.Collection.Domain.Common.Propagation;
 
 namespace FinanceScraper.Common.Init.Commands
 {
-    public class InitCommandHandler : IRequestHandler<InitCommand, MethodResult<IScrapeResult>>
+    public class InitScrapeCommandHandler : IRequestHandler<InitScrapeCommand, MethodResult<IScrapeResult>>
     {
         private IScrapeExecutionStrategy _executionStrategy;
         private readonly IMediator _mediator;
-        public InitCommandHandler(IMediator mediator)
+        public InitScrapeCommandHandler(IMediator mediator)
         {
             _mediator = mediator;
         }
-        public async Task<MethodResult<IScrapeResult>> Handle(InitCommand request, CancellationToken cancellationToken)
+        public async Task<MethodResult<IScrapeResult>> Handle(InitScrapeCommand request, CancellationToken cancellationToken)
         {
             MethodResult<string> validationResult = await ValidateTicker(request).ConfigureAwait(false);
             if (!validationResult.IsSuccessful)
@@ -43,13 +43,13 @@ namespace FinanceScraper.Common.Init.Commands
             return await _executionStrategy.ExecuteScrapeStrategy();
         }
 
-        private MethodResult<IScrapeExecutionStrategy> SwitchStrategy(InitCommand request, IMediator _mediator)
+        private MethodResult<IScrapeExecutionStrategy> SwitchStrategy(InitScrapeCommand request, IMediator _mediator)
         {
             var factory = new ScrapeExecutionStrategyFactory(_mediator, request.Ticker);
             return factory.GetScrapeExecutionStrategy(request);
         }
         [HandleMethodExecutionAspect]
-        private async Task<MethodResult<string>> ValidateTicker(InitCommand request)
+        private async Task<MethodResult<string>> ValidateTicker(InitScrapeCommand request)
         {
             // Simplify by directly handling the no-operation scenario
             if (!request.ExecuteGrahamScrape && !request.ExecuteDCFScrape)

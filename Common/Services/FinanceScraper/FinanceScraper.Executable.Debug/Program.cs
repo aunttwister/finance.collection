@@ -1,4 +1,4 @@
-﻿using IntrinsicValue.Calculation;
+﻿/*using IntrinsicValue.Calculation;
 using IntrinsicValue.Calculation.GrahamIntrinsicModel.Commands;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +33,7 @@ namespace FinanceScraper.Executable.Debug
 
             Task<GrahamIntrinsicScrapeResult> grahamIntrinsicScrapeData = RunGrahamIntrinsicScrapersAsync(ticker, _mediator);
 
-            ScrapeResult scrapeData = new ScrapeResult();
+            BaseScrapeResult scrapeData = new BaseScrapeResult();
             if (executeDCF)
             {
                 Task<DCFIntrinsicScrapeResult> dcfIntrinsicScrapeResult = RunDCFIntrinsicScrapersAsync(ticker, _mediator);
@@ -119,7 +119,7 @@ namespace FinanceScraper.Executable.Debug
             };
         }
 
-        private async static Task<GrahamCalculationResult> CalculateGrahamIntrinsicValueModel(IMediator _mediator, string ticker, DateTime startTime, ScrapeResult scrapeData)
+        private async static Task<GrahamCalculationResult> CalculateGrahamIntrinsicValueModel(IMediator _mediator, string ticker, DateTime startTime, BaseScrapeResult scrapeData)
         {
             if (scrapeData.GrahamIntrinsicScrapeResult.Summary.Eps.Exception is not null)
                 Console.WriteLine($"{scrapeData.GrahamIntrinsicScrapeResult.Summary.Eps.Exception}");
@@ -140,7 +140,7 @@ namespace FinanceScraper.Executable.Debug
             return await _mediator.Send(grahamIntrinsicModelRequest);
         }
 
-        private async static Task<DCFCalculationResult> CalculateDCFIntrinsicValueModel(IMediator _mediator, string ticker, DateTime startTime, ScrapeResult scrapeData)
+        private async static Task<DCFCalculationResult> CalculateDCFIntrinsicValueModel(IMediator _mediator, string ticker, DateTime startTime, BaseScrapeResult scrapeData)
         {
             if (scrapeData.GrahamIntrinsicScrapeResult.Summary.Eps.Exception is not null)
                 Console.WriteLine($"{scrapeData.GrahamIntrinsicScrapeResult.Summary.Eps.Exception}");
@@ -242,4 +242,4 @@ namespace FinanceScraper.Executable.Debug
             Console.WriteLine();
         }
     }
-}
+}*/

@@ -9,7 +9,6 @@ namespace Finance.Collection.Domain.FinanceScraper.Results
     public class CombinedScrapeResult : IScrapeResult
     {
         public string Ticker { get; set; }
-        public decimal CurrentPrice { get; set; }
         private readonly Dictionary<Type, IScrapeResult> _results;
 
         public CombinedScrapeResult()
@@ -30,6 +29,8 @@ namespace Finance.Collection.Domain.FinanceScraper.Results
             }
             return default(T);
         }
+        public Dictionary<Type, IScrapeResult> GetAllResults() =>
+            _results;
         public IEnumerable<Type> GetResultTypes()
         {
             return _results.Keys.AsEnumerable();

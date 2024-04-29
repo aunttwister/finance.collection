@@ -1,0 +1,92 @@
+﻿@using IntrinsicValue.Blazor.Model
+@using IntrinsicValue.Blazor.Services.StateServices
+@inject TickerStateService TickerState
+
+<style type="text/css">
+    .mud-table-head .header-centered th {
+        text-align: center;
+        font-size: 1.2em;
+    }
+
+    .mud-table-foot .bold-text .mud-table-cell {
+        font-weight: 500;
+    }
+</style>
+
+
+<MudTable T="TickerDto" Items="@TickerList" Hover="true" Breakpoint="Breakpoint.Sm"
+          Striped="true" Bordered="true" CustomHeader="true" Dense="true" HeaderClass="table-head-bordered"
+          RowClass="cursor-pointer" OnRowClick="@RowClickEvent">
+    <HeaderContent>
+        <MudTHeadRow Class="header-centered">
+            <MudTh colspan="3">Summary</MudTh>
+            <MudTh colspan="3">Benjamin Graham Model</MudTh>
+            <MudTh colspan="3">DCF Model</MudTh>
+            <MudTh colspan="3">Average Rate</MudTh>
+        </MudTHeadRow>
+        <MudTHeadRow>
+            <MudTh>No.</MudTh>
+            <MudTh>Ticker</MudTh>
+            <MudTh>Current Price</MudTh>
+            <MudTh>Value</MudTh>
+            <MudTh>Price Difference</MudTh>
+            <MudTh>Price Difference Percentage</MudTh>
+            <MudTh>Value</MudTh>
+            <MudTh>Price Difference</MudTh>
+            <MudTh>Price Difference Percentage</MudTh>
+            <MudTh>Value</MudTh>
+            <MudTh>Price Difference</MudTh>
+            <MudTh>Price Difference Percentage</MudTh>
+        </MudTHeadRow>
+    </HeaderContent>
+    <RowTemplate Context="ticker">
+        <MudTd DataLabel="No.">1</MudTd>
+        <MudTd DataLabel="Ticker">@ticker.Ticker</MudTd>
+        <MudTd DataLabel="Current Price">@ticker.CurrentPrice</MudTd>
+        <MudTd DataLabel="Benjamin Graham Model Value">@ticker.BenjaminGrahamModel.Value</MudTd>
+        <MudTd DataLabel="Benjamin Graham Model Price Difference">@ticker.BenjaminGrahamModel.PriceDifference</MudTd>
+        <MudTd DataLabel="Benjamin Graham Model Price Difference Percent">@ticker.BenjaminGrahamModel.PriceDifferencePercentage.ToString() %</MudTd>
+        <MudTd DataLabel="DCF Model Value">@ticker.DCFModel.Value</MudTd>
+        <MudTd DataLabel="DCF Model Price Difference">@ticker.DCFModel.PriceDifference</MudTd>
+        <MudTd DataLabel="DCF Model Price Difference Percent">@ticker.DCFModel.PriceDifferencePercentage.ToString() %</MudTd>
+        <MudTd DataLabel="Average Value">@ticker.AverageIntrinsic.Value</MudTd>
+        <MudTd DataLabel="Average Price Difference">@ticker.AverageIntrinsic.PriceDifference</MudTd>
+        <MudTd DataLabel="Average Price Difference Percent">@ticker.AverageIntrinsic.PriceDifferencePercentage.ToString() %</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    [Parameter]
+    public IEnumerable<TickerDto> TickerList { get; set; }
+}
+
+@code {
+    private void RowClickEvent(TableRowClickEventArgs<TickerDto> ticker)
+    {
+        SelectTicker(ticker.Item);
+    }
+}
+
+@code {
+    private TickerDto _selectedTicker;
+    private TickerDto SelectedTicker
+    {
+        get => _selectedTicker;
+        set
+        {
+            _selectedTicker = value;
+            UpdateGlobalState(value);  // Update the shared state
+        }
+    }
+
+    private void SelectTicker(TickerDto ticker)
+    {
+        SelectedTicker = ticker;  // Use the property to ensure checks are made
+    }
+
+    private void UpdateGlobalState(TickerDto ticker)
+    {
+        // Assuming TickerState is your service that manages the shared state
+        TickerState.SelectedTicker = ticker;
+    }
+}

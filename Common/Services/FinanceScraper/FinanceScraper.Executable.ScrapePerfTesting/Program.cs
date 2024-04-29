@@ -24,20 +24,20 @@ namespace FinanceScraper.Executable.ScrapePerfTesting
             bool executeDcf = true;
             bool executeGraham = true;
 
-            InitCommand request = new InitCommand()
+            InitScrapeCommand request = new InitScrapeCommand()
             {
                 Ticker = ticker1,
                 ExecuteDCFScrape = executeDcf,
                 ExecuteGrahamScrape = executeGraham
             };
 
-            InitCommand request2 = new InitCommand()
+            InitScrapeCommand request2 = new InitScrapeCommand()
             {
                 Ticker = ticker2,
                 ExecuteDCFScrape = executeDcf,
                 ExecuteGrahamScrape = executeGraham
             };
-            InitCommand request3 = new InitCommand()
+            InitScrapeCommand request3 = new InitScrapeCommand()
             {
                 Ticker = ticker3,
                 ExecuteDCFScrape = executeDcf,

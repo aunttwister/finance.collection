@@ -11,6 +11,6 @@ namespace IntrinsicValue.Calculation.Init.ExecutionStrategy
 {
     public interface ICalculationExecutionStrategy
     {
-        public Task<MethodResult<ICalculationResult>> ExecuteCalculationStrategy();
+        public Task<MethodResult<ICalculationResult>> ExecuteCalculationStrategy(IScrapeResult scrapeResult, decimal safetyMargin);
     }
 }

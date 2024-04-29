@@ -33,8 +33,7 @@ public class HandleMethodExecutionAspect : Attribute
         }
         catch (Exception ex)
         {
-            var ticker = args.FirstOrDefault(arg => arg is string) as string; // Assuming ticker is passed as a string argument
-            var message = $"Error in method {method.DeclaringType.Name}.{methodName} for ticker '{ticker}': {ex.Message}";
+            var message = $"Error in method {method.DeclaringType.Name}.{methodName}: {ex.Message}";
 
             // Determine the severity of the log based on exception type or other criteria
             _logger?.LogError(ex, message);

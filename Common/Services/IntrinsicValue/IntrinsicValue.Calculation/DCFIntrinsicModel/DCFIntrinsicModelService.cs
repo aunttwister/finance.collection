@@ -52,7 +52,6 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel
 
             return new DCFCalculationResult(
                 request.Ticker,
-                request.CurrentPrice,
                 request.SharesOutstanding,
                 valuationDataSet,
                 assetsDataSet,
@@ -151,6 +150,6 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel
             sumPresentFutureValue + cashAndCashEquivalents - totalDebt;
 
         public decimal CalculateDiscountedCashFlowValue(decimal equityValue, decimal sharesOutstanding) =>
-            equityValue / sharesOutstanding;
+            Math.Round(equityValue / sharesOutstanding, 2);
     }
 }

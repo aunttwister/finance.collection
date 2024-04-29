@@ -10,6 +10,8 @@ namespace Finance.Collection.Domain.Common.Propagation
     {
         public Dictionary<T1, T2> Data { get; set; }
         public KeyValuePair<Exception, Exception> KeyValuePairExceptions { get; set; }
+        public bool IsSuccessfulKey => KeyValuePairExceptions.Key == null;
+        public bool IsSuccessfulValue => KeyValuePairExceptions.Value == null;
         public MethodResultDictionary(
             Dictionary<T1, T2> data,
             KeyValuePair<Exception, Exception> keyValuePairExceptions)

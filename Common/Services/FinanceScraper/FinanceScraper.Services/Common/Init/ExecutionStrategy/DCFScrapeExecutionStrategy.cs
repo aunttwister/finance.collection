@@ -39,6 +39,7 @@ namespace FinanceScraper.Common.Init.ExecutionStrategy
 
             DCFIntrinsicScrapeResult dcfScrapeResult = new DCFIntrinsicScrapeResult()
             {
+                Ticker = _ticker,
                 CashFlow = cashFlowTask.Result,
                 BalanceSheet = balanceSheetTask.Result,
                 Statistics = statisticsTask.Result

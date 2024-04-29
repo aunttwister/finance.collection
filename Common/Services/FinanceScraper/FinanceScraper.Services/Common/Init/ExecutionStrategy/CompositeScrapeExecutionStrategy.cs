@@ -6,10 +6,12 @@ namespace FinanceScraper.Common.Init.ExecutionStrategy
     public class CompositeScrapeExecutionStrategy : IScrapeExecutionStrategy
     {
         private readonly List<IScrapeExecutionStrategy> _strategies;
+        private readonly string _ticker;
 
-        public CompositeScrapeExecutionStrategy(IEnumerable<IScrapeExecutionStrategy> strategies)
+        public CompositeScrapeExecutionStrategy(IEnumerable<IScrapeExecutionStrategy> strategies, string ticker)
         {
             _strategies = strategies.ToList();
+            _ticker = ticker;
         }
 
         public async Task<MethodResult<IScrapeResult>> ExecuteScrapeStrategy()
@@ -19,6 +21,7 @@ namespace FinanceScraper.Common.Init.ExecutionStrategy
 
             // Combine results, or return a new result that indicates the completion of all tasks.
             CombinedScrapeResult combinedResult = new CombinedScrapeResult();
+            combinedResult.Ticker = _ticker;
             foreach (var result in results)
             {
                 combinedResult.AddResult(result.Data);

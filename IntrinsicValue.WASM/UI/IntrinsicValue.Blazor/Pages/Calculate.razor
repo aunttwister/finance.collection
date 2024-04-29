@@ -1,40 +1,123 @@
 ﻿@page "/calculate";
 @inject ISnackbar Snackbar;
+@inject MediatR.IMediator _mediator;
 
 <PageTitle>Calculate</PageTitle>
 <MudContainer Class="my-4">
-    <MudGrid>
-        <MudItem>
-            <MudText Typo="Typo.h4" GutterBottom="true">Start Now!</MudText>
-            <MudText>
-                Use our intuitive calculator to evaluate the intrinsic value of stocks based on fundamental analysis and financial data.
-            </MudText>
-            <MudTextField @bind-Value="ticker" Label="Enter Ticker Symbol" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" Adornment="Adornment.End" @onkeydown="@SearchTicker" Class="mt-2" />
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2" OnClick="CalculateValue">Calculate</MudButton>
-        </MudItem>
-    </MudGrid>
+    <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="12" sm="2">
 
-    <MudExpansionPanels Class="mt-4">
-        <!-- Expansion Panels for Information -->
-    </MudExpansionPanels>
+            </MudItem>
+            <MudItem xs="12" sm="8">
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h4" GutterBottom="true">Start Now!</MudText>
+                    <MudText>
+                        Use our intuitive calculator to evaluate the intrinsic value of stocks based on fundamental analysis and financial data.
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudContainer>
+                        <MudExpansionPanels Class="mt-6">
+                            <MudExpansionPanel Text="What is Intrinsic Value?" Icon="@Icons.Material.Filled.Settings">
+                                <TitleContent>
+                                    <MudText Typo="Typo.h5">Configuration</MudText>
+                                </TitleContent>
+                                <ChildContent>
+                                    <MudStack Spacing="4">
+                                        <MudPaper Class="pa-6">
+                                            <MudText Typo="Typo.body1">Calculation types</MudText>
+                                            <MudChipSet Class="mt-2" @bind-SelectedChips="CalculationTypes" MultiSelection="true" Filter="true">
+                                                <MudChip id="ExecuteGrahamScrape" Text="purple" Variant="Variant.Outlined" Color="Color.Primary">Benjamin Graham</MudChip>
+                                                <MudChip id="ExecuteDCFScrape" Text="purple" Variant="Variant.Outlined" Color="Color.Primary">Discounted Cash Flow</MudChip>
+                                            </MudChipSet>
+                                        </MudPaper>
+                                    </MudStack>
+                                    <MudStack Spacing="4" Class="mt-4">
+                                        <MudPaper Class="pa-6">
+                                            <MudText Typo="Typo.body1">Safety Margin</MudText>
+                                            <MudNumericField Class="mt-3" @bind-Value="SafetyMargin" Label="Safety Margin" Variant="Variant.Outlined" Step="5M" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Percent" HelperText="Percentage of intrinsic value to be displayed" HelperTextOnFocus="true" />
+                                        </MudPaper>
+                                    </MudStack>
+                                </ChildContent>
+                            </MudExpansionPanel>
+                        </MudExpansionPanels>
+                    </MudContainer>
+                    <MudContainer Class="mt-6">
+                        <MudTextField @bind-Value="ticker" Label="Enter Ticker Symbol" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" Adornment="Adornment.End" @onkeydown="@SearchTicker" Class="mt-2" />
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-6" OnClick="CalculateValue">Calculate</MudButton>
+                    </MudContainer>
+                </MudItem>
+            </MudItem>
+            <MudItem xs="12" sm="2">
 
-    <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-5">Calculation Results:</MudText>
-    <!-- Placeholder for results, possibly showing charts or tables -->
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+
+    <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False" hidden="true">
+        <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-5">Calculation Results:</MudText>
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudPaper Elevation="2" Class="pa-4" Style="height: 100%"></MudPaper>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
     <MudSimpleTable Dense="true" Hover="true" Striped="true" Class="mt-2">
         <!-- Data table for displaying calculation results -->
     </MudSimpleTable>
 </MudContainer>
 
-
 @code {
+    public decimal? SafetyMargin { get; set; }
+    MudChip[] CalculationTypes;
+
     private string ticker = "";
 
-    private void CalculateValue()
+    private async void CalculateValue()
     {
         if (string.IsNullOrWhiteSpace(ticker))
         {
+
             Snackbar.Add("Please enter a valid ticker symbol.", Severity.Error);
             return;
+        }
+        else
+        {
+            bool ExecuteGrahamScrape = false;
+            bool ExecuteDCFScrape = false;
+
+            var grahamChipId = CalculationTypes.FirstOrDefault(c => c.FieldId == "ExecuteGrahamScrape" && c.IsSelected);
+            if (!string.IsNullOrWhiteSpace(grahamChipId.FieldId))
+                ExecuteGrahamScrape = true;
+
+            var dcfChipId = CalculationTypes.FirstOrDefault(c => c.FieldId == nameof(ExecuteDCFScrape) && c.IsSelected);
+            if (!string.IsNullOrWhiteSpace(dcfChipId.FieldId))
+                ExecuteDCFScrape = true;
+
+            if (SafetyMargin == null)
+                SafetyMargin = 1;
+
+            //InitScrapeCommand request = new InitScrapeCommand()
+            //{
+            //    Ticker = ticker,
+            //    ExecuteGrahamScrape = ExecuteGrahamScrape,
+            //    ExecuteDCFScrape = ExecuteDCFScrape,
+            //    SafetyMargin = SafetyMargin.Value
+            //};
+            //var result = await _mediator.Send(request);
+
+            int test = 1;
         }
         Snackbar.Add("Calculating intrinsic value for: " + ticker, Severity.Success);
         // Add logic to fetch and calculate intrinsic value

@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using FinanceScraper.Common.Extensions;
+using IntrinsicValue.Calculation;
+using Microsoft.Extensions.DependencyInjection;
+using IntrinsicValue.Blazor.Services.StateServices;
 
 namespace IntrinsicValue.Blazor
 {
@@ -12,6 +16,7 @@ namespace IntrinsicValue.Blazor
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
+            builder.Services.AddScoped<TickerStateService>();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddMudServices();
 

@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using FinanceScraper.Common.Extensions;
 using IntrinsicValue.Calculation;
 using Finance.Collection.Domain.Common.Propagation;
+using IntrinsicValue.Calculation.Init.Commands;
+using Finance.Collection.Domain.IntrinsicValue.Calculation.Results;
 
 namespace FinanceScrape.Executable.InitDebug
 {
@@ -17,12 +19,12 @@ namespace FinanceScrape.Executable.InitDebug
             IServiceProvider serviceProvider = CreateHostBuilder().Build().Services;
             IMediator _mediator = serviceProvider.GetRequiredService<IMediator>();
 
-            string ticker1 = "NVDA";
+            string ticker1 = "SPOT";
 
             bool executeDcf = true;
             bool executeGraham = true;
 
-            InitCommand request = new InitCommand()
+            InitScrapeCommand request = new InitScrapeCommand()
             {
                 Ticker = ticker1,
                 ExecuteDCFScrape = executeDcf,
@@ -31,9 +33,24 @@ namespace FinanceScrape.Executable.InitDebug
 
             Task<MethodResult<IScrapeResult>> result = _mediator.Send(request);
 
-            await Task.WhenAll(result).ConfigureAwait(false);
+            await result.ConfigureAwait(false);
 
             var combinedResult = result.Result;
+
+            decimal safetyMargin = 0.65m;
+
+            InitCalculationCommand requestCalc = new InitCalculationCommand()
+            {
+                Ticker = combinedResult.Data.Ticker,
+                ScrapeResult = combinedResult.Data,
+                SafetyMargin = safetyMargin
+            };
+
+            Task <MethodResult<ICalculationResult>> resultCalc = _mediator.Send(requestCalc);
+
+            await resultCalc.ConfigureAwait(false);
+
+            var calcResult = resultCalc.Result;
 
             Console.Write($"Run time: {DateTime.Now - startTime}");
             Console.WriteLine();

@@ -1,4 +1,5 @@
-﻿using IntrinsicValue.Calculation.DataSets.Results;
+﻿using Finance.Collection.Domain.FinanceScraper.Results;
+using IntrinsicValue.Calculation.DataSets.Results;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -11,20 +12,17 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel.Commands
     public class DCFIntrinsicModelCommand : BaseIntrinsicModelCommand, IRequest<DCFCalculationResult>
     {
         public DCFIntrinsicModelCommand(
-            string ticker, 
-            decimal currentPrice,
-            Dictionary<string, decimal> historicalCashFlow,
-            decimal ttmCashAndCashEquivalents,
-            decimal ttmTotalDebt,
-            decimal sharesOutstanding,
+            DCFIntrinsicScrapeResult scrapeResult,
+            decimal safetyMargin,
             decimal discountRate = 0.08m,
-            decimal perpetualRate = 0.025m,
-            decimal safetyMargin = 0.75m) : base(ticker, currentPrice) 
+            decimal perpetualRate = 0.025m) : base(scrapeResult.Ticker) 
         { 
-            HistoricalCashFlow = historicalCashFlow;
-            TTMCashAndCashEquivalents = ttmCashAndCashEquivalents;
-            TTMTotalDebt = ttmTotalDebt;
-            SharesOutstanding = sharesOutstanding;
+            HistoricalCashFlow = scrapeResult.CashFlow.HistoricalCashFlows.Data;
+            HistoricalCashAndCashEquivalents = scrapeResult.BalanceSheet.HistoricalCashEquivalents.Data;
+            TTMCashAndCashEquivalents = scrapeResult.BalanceSheet.TTMCashEquivalents.Data;
+            HistoricalCashAndCashEquivalents = scrapeResult.BalanceSheet.HistoricalTotalDebt.Data;
+            TTMTotalDebt = scrapeResult.BalanceSheet.TTMTotalDebt.Data;
+            SharesOutstanding = scrapeResult.Statistics.SharesOutstanding.Data;
             DiscountRate = discountRate;
             PerpetualRate = perpetualRate;
             SafetyMargin = safetyMargin;

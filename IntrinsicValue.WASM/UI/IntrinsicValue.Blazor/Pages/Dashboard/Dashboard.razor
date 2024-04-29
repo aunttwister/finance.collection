@@ -1,0 +1,62 @@
+﻿@page "/dashboard";
+@using IntrinsicValue.Blazor.MockData
+@using IntrinsicValue.Blazor.Model
+
+
+<PageTitle>Dashboard</PageTitle>
+<MudLayout Style="text-align: center !important;">
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+        <MudPaper Elevation="2" Class="pa-4; mt-6">
+            <MudToolBar>
+                <MudGrid>
+                    <MudItem xs="1">
+                        <MudSwitch @bind-Value="viewToggle" Color="Color.Primary" Label="Toggle View" Size="Size.Small" />
+                    </MudItem>
+                    <MudItem xs="4">
+                    </MudItem>
+                    <MudItem xs="1">
+                        <MudText Typo="Typo.h6">Overview</MudText>
+                    </MudItem>
+                    <MudItem xs="3">
+                    </MudItem>
+                    <MudItem xs="3">
+                        <MudSelect T="WatchlistDto" Dense="true" Margin="Margin.Dense" @bind-Value="@SelectedWatchlist"
+                                   AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                            @foreach (var watchlist in WatchlistList)
+                            {
+                                <MudSelectItem T="WatchlistDto" Value="@watchlist">@watchlist.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                </MudGrid>
+            </MudToolBar>
+            @if (viewToggle)
+            {
+                <TickerInfoTable TickerList="@SelectedWatchlist.Tickers" />
+            }
+            else
+            {
+                <TickerIntrinsicTable TickerList="@SelectedWatchlist.Tickers" />
+            }
+        </MudPaper>
+    </MudContainer>
+</MudLayout>
+
+@code {
+    private bool viewToggle = false;
+}
+
+@code {
+    private List<WatchlistDto> WatchlistList;
+
+    private WatchlistDto SelectedWatchlist;
+
+    private string SelectedWatchlistName;
+
+    protected override void OnInitialized()
+    {
+        WatchlistList = DataSource.InitializeWatchlistData();
+        SelectedWatchlist = WatchlistList.FirstOrDefault();
+        SelectedWatchlistName = SelectedWatchlist.Name;
+    }
+}

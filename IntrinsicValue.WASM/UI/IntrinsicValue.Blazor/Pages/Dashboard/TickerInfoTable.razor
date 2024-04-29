@@ -1,0 +1,92 @@
+﻿@using IntrinsicValue.Blazor.Model
+@using IntrinsicValue.Blazor.Services.StateServices
+@inject TickerStateService TickerState
+
+<style type="text/css">
+    .mud-table-head .header-centered th {
+        text-align: center;
+        font-size: 1.2em;
+    }
+
+    .mud-table-foot .bold-text .mud-table-cell {
+        font-weight: 500;
+    }
+</style>
+
+
+<MudTable T="TickerDto" Items="@TickerList" Hover="true" Breakpoint="Breakpoint.Sm"
+          Striped="true" Bordered="true" Dense="true" CustomHeader="true" HeaderClass="table-head-bordered"
+          RowClass="cursor-pointer" OnRowClick="@RowClickEvent">
+    <HeaderContent>
+        <MudTHeadRow Class="header-centered">
+            <MudTh colspan="6">Summary</MudTh>
+            <MudTh colspan="2">Trailing Twelve Months</MudTh>
+            <MudTh colspan="2">Growth Rate</MudTh>
+            <MudTh colspan="2">Earnings Date</MudTh>
+        </MudTHeadRow>
+        <MudTHeadRow>
+            <MudTh>No.</MudTh>
+            <MudTh>Ticker</MudTh>
+            <MudTh>Current Price</MudTh>
+            <MudTh>EPS</MudTh>
+            <MudTh>P/E</MudTh>
+            <MudTh>Shares Outstanding</MudTh>
+            <MudTh>Cash and Cash Equivalents</MudTh>
+            <MudTh>Total Debt</MudTh>
+            <MudTh>Period</MudTh>
+            <MudTh>Rate</MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh>Date</MudTh>
+        </MudTHeadRow>
+    </HeaderContent>
+    <RowTemplate Context="ticker">
+        <MudTd DataLabel="No.">1</MudTd>
+        <MudTd DataLabel="Ticker">@ticker.Ticker</MudTd>
+        <MudTd DataLabel="Current Price">@ticker.CurrentPrice</MudTd>
+        <MudTd DataLabel="EPS">@ticker.EPS</MudTd>
+        <MudTd DataLabel="P/E">@ticker.PE</MudTd>
+        <MudTd DataLabel="Shares Outstanding">@ticker.SharesOutstanding.ToString("N")</MudTd>
+        <MudTd DataLabel="Trailing Twelve Months Cash and Cash Equivalents">@ticker.TTMCashAndCashEquivalents.ToString("N")</MudTd>
+        <MudTd DataLabel="Trailing Twelve Months Total Debt">@ticker.TTMTotalDebt.ToString("N")</MudTd>
+        <MudTd DataLabel="Growth Period">@ticker.GrowthRate.Period</MudTd>
+        <MudTd DataLabel="Growth Rate">@ticker.GrowthRate.Rate.ToString() %</MudTd>
+        <MudTd DataLabel="Earnings Status">@ticker.EarningsDate.Status</MudTd>
+        <MudTd DataLabel="Earnings Date">@ticker.EarningsDate.Date.ToShortDateString()</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    [Parameter]
+    public IEnumerable<TickerDto> TickerList { get; set; }
+}
+
+@code {
+    private void RowClickEvent(TableRowClickEventArgs<TickerDto> ticker)
+    {
+        SelectTicker(ticker.Item);
+    }
+}
+
+@code {
+    private TickerDto _selectedTicker;
+    private TickerDto SelectedTicker
+    {
+        get => _selectedTicker;
+        set
+        {
+            _selectedTicker = value;
+            UpdateGlobalState(value);  // Update the shared state
+        }
+    }
+
+    private void SelectTicker(TickerDto ticker)
+    {
+        SelectedTicker = ticker;  // Use the property to ensure checks are made
+    }
+
+    private void UpdateGlobalState(TickerDto ticker)
+    {
+        // Assuming TickerState is your service that manages the shared state
+        TickerState.SelectedTicker = ticker;
+    }
+}

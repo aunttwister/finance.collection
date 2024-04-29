@@ -1,25 +1,54 @@
 ﻿@inherits LayoutComponentBase
+@using IntrinsicValue.Blazor.Model
+@using IntrinsicValue.Blazor.Pages.DetailsDrawer
+@using IntrinsicValue.Blazor.Services.StateServices
+@inject TickerStateService TickerState
 
-<MudThemingProvider />
-<MudLayout Style="height: 100%;">
-    <MudAppBar Elevation="1">
-        <MudText Typo="Typo.h6" Class="ml-3">Intrinsic Value Calculator.</MudText>
+<MudThemeProvider />
+
+<MudLayout>
+    <MudAppBar Dense="true" Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => NavbarDrawerToggle())" />
+        <MudText Typo="Typo.h6" Class="ml-3">Intrinsicly.</MudText>
     </MudAppBar>
-    <MudDrawer @bind-Open="@open" Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="true">
+    <MudDrawer @bind-Open="_navbarDawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="@DrawerVariant.Temporary">
         <NavMenu />
     </MudDrawer>
-    
-    <MudMainContent Class="mt-16 pa-4 d-flex justify-center" Style="height 100%;">
+    <MudDrawer @bind-Open="_detailsDrawerOpen" ClipMode="DrawerClipMode.Always"
+               Anchor="Anchor.End" Elevation="2" Variant="DrawerVariant.Temporary" Width="400px">
+        <DetailsDrawer OnCloseRequest="@(() => _detailsDrawerOpen = false)" />
+    </MudDrawer>
+    <MudMainContent>
         @Body
     </MudMainContent>
 </MudLayout>
+@code {
+    bool _navbarDawerOpen = false;
 
-@code
-{
-    bool open = false;
-
-    void ToggleDrawer()
+    void NavbarDrawerToggle()
     {
-        open = !open;
+        _navbarDawerOpen = !_navbarDawerOpen;
+    }
+}
+
+@code {
+    private bool _detailsDrawerOpen = false;
+
+    private TickerDto SelectedTicker;
+
+    protected override void OnInitialized()
+    {
+        TickerState.OnChange += HandleTickerChange;
+    }
+
+    private void HandleTickerChange()
+    {
+        _detailsDrawerOpen = true;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        TickerState.OnChange -= StateHasChanged;
     }
 }

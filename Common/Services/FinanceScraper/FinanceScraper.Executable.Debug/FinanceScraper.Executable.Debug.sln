@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinanceScrape.Executable.In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinanceScraper.Executable.ScrapePerfTest", "..\FinanceScraper.Executable.ScrapePerfTesting\FinanceScraper.Executable.ScrapePerfTest.csproj", "{C7319AB5-E8D4-46D9-969F-5B631AC534EA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntrinsicValue.Blazor", "..\..\..\..\IntrinsicValue.WASM\UI\IntrinsicValue.Blazor\IntrinsicValue.Blazor.csproj", "{A65DA142-74CC-4BAC-8659-1C70414875DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{C7319AB5-E8D4-46D9-969F-5B631AC534EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7319AB5-E8D4-46D9-969F-5B631AC534EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7319AB5-E8D4-46D9-969F-5B631AC534EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A65DA142-74CC-4BAC-8659-1C70414875DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A65DA142-74CC-4BAC-8659-1C70414875DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A65DA142-74CC-4BAC-8659-1C70414875DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A65DA142-74CC-4BAC-8659-1C70414875DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

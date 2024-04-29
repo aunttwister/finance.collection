@@ -1,0 +1,29 @@
+﻿@page "/fetch-html";
+
+<MudContainer>
+    <MudText Typo="Typo.h4">Fetch HTML Content</MudText>
+    <MudTextField @bind-Value="Url" Label="Enter URL" Variant="Variant.Outlined" />
+    <MudButton OnClick="FetchHtmlContent">Fetch Content</MudButton>
+    <MudText Typo="Typo.body1">Result: @HtmlContent</MudText>
+</MudContainer>
+
+@code {
+    private string Url { get; set; } = "https://example.com"; // Default URL
+    private string HtmlContent { get; set; }
+
+    private async Task FetchHtmlContent()
+    {
+        var httpClient = new HttpClient();
+        try
+        {
+            // Fetch HTML content
+            var response = await httpClient.GetAsync(Url);
+            response.EnsureSuccessStatusCode(); // Ensure a successful response
+            HtmlContent = await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception ex)
+        {
+            HtmlContent = $"Error: {ex.Message}"; // Display error message
+        }
+    }
+}

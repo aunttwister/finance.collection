@@ -10,48 +10,35 @@ using System.Threading.Tasks;
 using IntrinsicValue.Calculation.Init.ExecutionStrategy;
 using Finance.Collection.Domain.IntrinsicValue.Calculation.Results;
 using Finance.Collection.Domain.Common.Propagation;
+using IntrinsicValue.Calculation.DataSets.Results;
+using IntrinsicValue.Calculation.DCFIntrinsicModel.Commands;
+using IntrinsicValue.Calculation.GrahamIntrinsicModel.Commands;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FinanceScraper.Common.Init.ExecutionStrategy
 {
     public class GrahamCalculationExecutionStrategy : ICalculationExecutionStrategy
     {
         private readonly IMediator _mediator;
-        private readonly IScrapeResult _scrapeResult;
-        public GrahamCalculationExecutionStrategy(IMediator mediator, IScrapeResult scrapeResult)
+        private readonly string _ticker;
+        public GrahamCalculationExecutionStrategy(IMediator mediator, string ticker)
         {
             _mediator = mediator;
-            _scrapeResult = scrapeResult;
+            _ticker = ticker;
         }
 
-        public Task<MethodResult<ICalculationResult>> ExecuteCalculationStrategy()
+        public async Task<MethodResult<ICalculationResult>> ExecuteCalculationStrategy(IScrapeResult scrapeResult, decimal safetyMargin)
         {
-            throw new NotImplementedException();
+            GrahamIntrinsicScrapeResult grahamScrapeResult = (GrahamIntrinsicScrapeResult)scrapeResult;
+            if (grahamScrapeResult.Ticker is null)
+                grahamScrapeResult.Ticker = _ticker;
+            GrahamIntrinsicModelCommand request = new GrahamIntrinsicModelCommand(grahamScrapeResult, safetyMargin);
+
+            Task<GrahamCalculationResult> result = _mediator.Send(request);
+
+            await result.ConfigureAwait(false);
+
+            return new MethodResult<ICalculationResult>(result.Result);
         }
-
-        /*public async Task<MethodResult<IScrapeResult>> ExecuteScrapeStrategy()
-        {
-            SummaryScraperCommand summaryRequest = new SummaryScraperCommand(_ticker, UrlPathConstants.YahooFinanceSummaryScraperPath);
-            Task<SummaryDataSet> summaryTask = _mediator.Send(summaryRequest);
-
-            AnalysisScraperCommand analysisRequest = new AnalysisScraperCommand(_ticker, UrlPathConstants.YahooFinanceAnalysisScraperPath);
-            Task<AnalysisDataSet> analysisTask = _mediator.Send(analysisRequest);
-
-            TripleABondYieldScraperCommand tripleABondYieldRequest = new TripleABondYieldScraperCommand();
-            Task<TripleABondsDataSet> tripleABondYieldTask = _mediator.Send(tripleABondYieldRequest);
-
-            await Task.WhenAll(summaryTask, analysisTask, tripleABondYieldTask);
-
-            GrahamIntrinsicScrapeResult grahamScrapeResult = new GrahamIntrinsicScrapeResult()
-            {
-                Summary = summaryTask.Result,
-                Analysis = analysisTask.Result,
-                TripleABonds = tripleABondYieldTask.Result
-            };
-
-            MethodResult<IScrapeResult> result = new MethodResult<IScrapeResult>();
-
-            result.AssignData(grahamScrapeResult);
-            return result;
-        }*/
     }
 }

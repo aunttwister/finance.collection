@@ -1,8 +1,9 @@
 ﻿using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.FinanceScraper.Constants;
-using Finance.Collection.Domain.Common.DataSets;
 using Finance.Collection.Domain.FinanceScraper.Results;
 using Finance.Collection.Domain.IntrinsicValue.Calculation.Results;
+using IntrinsicValue.Calculation.DataSets.Results;
+using IntrinsicValue.Calculation.DCFIntrinsicModel.Commands;
 using MediatR;
 
 namespace IntrinsicValue.Calculation.Init.ExecutionStrategy
@@ -10,42 +11,29 @@ namespace IntrinsicValue.Calculation.Init.ExecutionStrategy
     public class DCFCalculationExecutionStrategy : ICalculationExecutionStrategy
     {
         private readonly IMediator _mediator;
-        private readonly IScrapeResult _scrapeResult;
-        public DCFCalculationExecutionStrategy(IMediator mediator, IScrapeResult scrapeResult)
+        private readonly string _ticker;
+        /*public DCFCalculationExecutionStrategy(IMediator mediator)
         {
             _mediator = mediator;
-            _scrapeResult = scrapeResult;
-        }
-
-        public Task<MethodResult<ICalculationResult>> ExecuteCalculationStrategy()
-        {
-            throw new NotImplementedException();
-        }
-
-        /*public async Task<MethodResult<IScrapeResult>> ExecuteScrapeStrategy()
-        {
-            StockAnalysisCashFlowScraperCommand cashFlowRequest = new StockAnalysisCashFlowScraperCommand(_ticker, UrlPathConstants.StockAnalysisCashFlowScraperPath);
-            Task<CashFlowDataSet> cashFlowTask = _mediator.Send(cashFlowRequest);
-
-            StockAnalysisBalanceSheetScraperCommand balanceSheetRequest = new StockAnalysisBalanceSheetScraperCommand(_ticker, UrlPathConstants.StockAnalysisBalanceSpreadSheetPath);
-            Task<BalanceSheetDataSet> balanceSheetTask = _mediator.Send(balanceSheetRequest);
-
-            StockAnalysisStatisticsScraperCommand statisticsRequest = new StockAnalysisStatisticsScraperCommand(_ticker, UrlPathConstants.StockAnalysisStatisticsSheetPath);
-            Task<StatisticsDataSet> statisticsTask = _mediator.Send(statisticsRequest);
-
-            await Task.WhenAll(cashFlowTask, balanceSheetTask, statisticsTask);
-
-            DCFIntrinsicScrapeResult dcfScrapeResult = new DCFIntrinsicScrapeResult()
-            {
-                CashFlow = cashFlowTask.Result,
-                BalanceSheet = balanceSheetTask.Result,
-                Statistics = statisticsTask.Result
-            };
-
-            MethodResult<IScrapeResult> result = new MethodResult<IScrapeResult>();
-
-            result.AssignData(dcfScrapeResult);
-            return result;
         }*/
+        public DCFCalculationExecutionStrategy(IMediator mediator, string ticker)
+        {
+            _mediator = mediator;
+            _ticker = ticker;
+        }
+
+        public async Task<MethodResult<ICalculationResult>> ExecuteCalculationStrategy(IScrapeResult scrapeResult, decimal safetyMargin)
+        {
+            DCFIntrinsicScrapeResult dcfScrapeResult = (DCFIntrinsicScrapeResult)scrapeResult;
+            if (dcfScrapeResult.Ticker is null)
+                dcfScrapeResult.Ticker = _ticker;
+            DCFIntrinsicModelCommand request = new DCFIntrinsicModelCommand(dcfScrapeResult, safetyMargin);
+
+            Task<DCFCalculationResult> result = _mediator.Send(request);
+
+            await result.ConfigureAwait(false);
+
+            return new MethodResult<ICalculationResult>(result.Result);
+        }
     }
 }

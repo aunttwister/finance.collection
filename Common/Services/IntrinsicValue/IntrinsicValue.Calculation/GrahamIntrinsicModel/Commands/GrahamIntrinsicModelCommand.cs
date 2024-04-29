@@ -1,4 +1,5 @@
-﻿using IntrinsicValue.Calculation.DataSets.Results;
+﻿using Finance.Collection.Domain.FinanceScraper.Results;
+using IntrinsicValue.Calculation.DataSets.Results;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -11,21 +12,19 @@ namespace IntrinsicValue.Calculation.GrahamIntrinsicModel.Commands
     public class GrahamIntrinsicModelCommand : BaseIntrinsicModelCommand, IRequest<GrahamCalculationResult>
     {
         public GrahamIntrinsicModelCommand(
-            string ticker, 
-            decimal currentPrice,
-            decimal eps,
-            decimal fiveYearGrowth,
-            decimal averageBondYield,
-            decimal currentBondYield) : base(ticker, currentPrice) 
+            GrahamIntrinsicScrapeResult scrapeResult,
+            decimal safetyMargin) : base(scrapeResult.Ticker, scrapeResult.Summary.CurrentPrice.Data) 
         {
-            Eps = eps;
-            FiveYearGrowth = fiveYearGrowth;
-            AverageBondYield = averageBondYield;
-            CurrentBondYield = currentBondYield;
+            Eps = scrapeResult.Summary.Eps.Data;
+            FiveYearGrowth = scrapeResult.Analysis.FiveYearGrowth.Data;
+            AverageBondYield = scrapeResult.TripleABonds.HistoricalAverageTripleABond.Data;
+            CurrentBondYield = scrapeResult.TripleABonds.CurrentTripleABond.Data;
+            SafetyMargin = safetyMargin;
         }
         public decimal Eps { get; set; }
         public decimal FiveYearGrowth { get; set; }
         public decimal AverageBondYield { get; set; }
         public decimal CurrentBondYield { get; set; }
+        public decimal SafetyMargin { get; set; }
     }
 }

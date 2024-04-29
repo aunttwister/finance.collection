@@ -9,6 +9,7 @@ namespace Finance.Collection.Domain.FinanceScraper.Results
 {
     public class DCFIntrinsicScrapeResult : IScrapeResult
     {
+        public string Ticker { get; set; }
         public CashFlowDataSet CashFlow { get; set; }
         public BalanceSheetDataSet BalanceSheet { get; set; }
         public StatisticsDataSet Statistics { get; set; }
