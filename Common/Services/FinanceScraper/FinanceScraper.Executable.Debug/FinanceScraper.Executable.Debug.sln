@@ -23,6 +23,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinanceScraper.Executable.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntrinsicValue.Blazor", "..\..\..\..\IntrinsicValue.WASM\UI\IntrinsicValue.Blazor\IntrinsicValue.Blazor.csproj", "{A65DA142-74CC-4BAC-8659-1C70414875DD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{3760FE9C-E84E-408F-9BB0-A633EC78C2FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ListPropertiesToFile", "..\..\..\Support\ListPropertiesToFile\ListPropertiesToFile.csproj", "{70C39E00-06CE-484F-91B0-5CF241895F95}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +65,10 @@ Global
 		{A65DA142-74CC-4BAC-8659-1C70414875DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A65DA142-74CC-4BAC-8659-1C70414875DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A65DA142-74CC-4BAC-8659-1C70414875DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70C39E00-06CE-484F-91B0-5CF241895F95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70C39E00-06CE-484F-91B0-5CF241895F95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70C39E00-06CE-484F-91B0-5CF241895F95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70C39E00-06CE-484F-91B0-5CF241895F95}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -71,6 +79,7 @@ Global
 		{B4C9345C-4303-4EB4-B712-E2E61DC506B6} = {4EACC3FB-C951-4F09-B052-2EA37336EA06}
 		{8F39ABFA-9239-4653-A864-8ACE3DDEB14F} = {87012A8F-75C2-4B7F-9575-EB923FF5C9ED}
 		{C7319AB5-E8D4-46D9-969F-5B631AC534EA} = {87012A8F-75C2-4B7F-9575-EB923FF5C9ED}
+		{70C39E00-06CE-484F-91B0-5CF241895F95} = {3760FE9C-E84E-408F-9BB0-A633EC78C2FD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EDD0A547-FE19-4010-A2AB-CC2767690528}
