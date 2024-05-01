@@ -11,6 +11,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Finance.Collection.Domain.Common.Propagation;
+using FinanceScraper.Common.NodeResolver;
+using FinanceScraper.Common.NodeResolver.Factory;
+using FinanceScraper.Common.NodeResolver.ServiceProvider;
 
 namespace FinanceScraper.Common.Init.Commands
 {
@@ -18,12 +21,17 @@ namespace FinanceScraper.Common.Init.Commands
     {
         private IScrapeExecutionStrategy _executionStrategy;
         private readonly IMediator _mediator;
-        public InitScrapeCommandHandler(IMediator mediator)
+        private readonly INodeResolverStrategyProvider _nodeResolverStrategyProvider;
+        public InitScrapeCommandHandler(IMediator mediator, INodeResolverStrategyProvider nodeResolverStrategyProvider)
         {
             _mediator = mediator;
+            _nodeResolverStrategyProvider = nodeResolverStrategyProvider;
         }
         public async Task<MethodResult<IScrapeResult>> Handle(InitScrapeCommand request, CancellationToken cancellationToken)
         {
+            INodeResolverStrategy nodeResolverStrategy = SwitchNodeResolverStrategy(request.UseHtmlContent);
+            _nodeResolverStrategyProvider.SetCurrentStrategy(nodeResolverStrategy);
+
             MethodResult<string> validationResult = await ValidateTicker(request).ConfigureAwait(false);
             if (!validationResult.IsSuccessful)
             {
@@ -31,7 +39,7 @@ namespace FinanceScraper.Common.Init.Commands
                 return new MethodResult<IScrapeResult>(null, exception);
             }
 
-            MethodResult<IScrapeExecutionStrategy> strategyResolveResult = SwitchStrategy(request, _mediator);
+            MethodResult<IScrapeExecutionStrategy> strategyResolveResult = SwitchExecutionStrategy(request, _mediator);
             if (!strategyResolveResult.IsSuccessful)
             {
                 return new MethodResult<IScrapeResult>(
@@ -42,8 +50,13 @@ namespace FinanceScraper.Common.Init.Commands
 
             return await _executionStrategy.ExecuteScrapeStrategy();
         }
+        public INodeResolverStrategy SwitchNodeResolverStrategy(bool useHtmlContent)
+        {
+            NodeResolverFactory factory = new NodeResolverFactory();
+            return factory.GetResolverStrategy(useHtmlContent);
+        }
 
-        private MethodResult<IScrapeExecutionStrategy> SwitchStrategy(InitScrapeCommand request, IMediator _mediator)
+        private MethodResult<IScrapeExecutionStrategy> SwitchExecutionStrategy(InitScrapeCommand request, IMediator _mediator)
         {
             var factory = new ScrapeExecutionStrategyFactory(_mediator, request.Ticker);
             return factory.GetScrapeExecutionStrategy(request);
@@ -99,9 +112,8 @@ namespace FinanceScraper.Common.Init.Commands
 
         private async Task<MethodResult<string>> ValidateTickerStockAnalysis(string ticker)
         {
-            var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(BaseUrlConstants.StockAnalysis + ticker).ConfigureAwait(false);
-            HtmlNode node = doc.DocumentNode;
+            INodeResolverStrategy nodeResolverStrategy = _nodeResolverStrategyProvider.GetCurrentStrategy();
+            HtmlNode node = await nodeResolverStrategy.ResolveNodeAsync(BaseUrlConstants.StockAnalysis + ticker).ConfigureAwait(false);
 
             if (node.InnerText.Contains("Not Found - 404"))
             {
@@ -113,9 +125,8 @@ namespace FinanceScraper.Common.Init.Commands
         }
         private async Task<MethodResult<string>> ValidateTickerYahooFinance(string ticker)
         {
-            var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(BaseUrlConstants.YahooFinance + ticker).ConfigureAwait(false);
-            HtmlNode node = doc.DocumentNode;
+            INodeResolverStrategy nodeResolverStrategy = _nodeResolverStrategyProvider.GetCurrentStrategy();
+            HtmlNode node = await nodeResolverStrategy.ResolveNodeAsync(BaseUrlConstants.YahooFinance + ticker).ConfigureAwait(false);
 
             if (node.InnerText.Contains("Symbols similar to"))
             {

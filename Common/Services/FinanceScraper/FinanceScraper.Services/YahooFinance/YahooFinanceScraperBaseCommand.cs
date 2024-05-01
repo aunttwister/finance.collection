@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FinanceScraper.Common.Base;
 using Finance.Collection.Domain.FinanceScraper.Constants;
+using FinanceScraper.Common.NodeResolver;
 
 namespace FinanceScraper.YahooFinance
 {

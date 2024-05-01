@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FinanceScraper.Common.NodeResolver;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,10 +18,7 @@ namespace FinanceScraper.Common.Base
             Ticker = ticker;
             Path = path;
         }
-        public ScraperBaseCommand()
-        {
-
-        }
+        public ScraperBaseCommand() { }
         public string BaseUrl { get; set; }
         public string Ticker { get; set; }
         public string Path { get; set; }

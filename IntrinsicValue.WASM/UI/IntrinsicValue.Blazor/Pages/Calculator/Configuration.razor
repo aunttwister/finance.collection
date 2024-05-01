@@ -1,0 +1,64 @@
+﻿@using IntrinsicValue.Blazor.Services.FinanceServices.Encapsulation
+<MudContainer Class="mt-6">
+    <MudExpansionPanels>
+        <MudExpansionPanel Dense="true" Icon="@Icons.Material.Filled.Settings">
+            <TitleContent>
+                <MudText Typo="Typo.subtitle1">Configuration</MudText>
+            </TitleContent>
+            <ChildContent>
+                <MudStack Spacing="4">
+                    <MudPaper Elevation="4" Class="pa-6">
+                        <MudText Typo="Typo.body1">Calculation types</MudText>
+                        <MudChipSet Class="mt-2" @bind-SelectedChips="CalculationTypes" MultiSelection="true" Filter="true">
+                            <MudChip id="ExecuteGrahamScrape" Text="purple" Variant="Variant.Outlined" Color="Color.Primary">Benjamin Graham</MudChip>
+                            <MudChip id="ExecuteDCFScrape" Text="purple" Variant="Variant.Outlined" Color="Color.Primary">Discounted Cash Flow</MudChip>
+                        </MudChipSet>
+                    </MudPaper>
+                </MudStack>
+                <MudStack Spacing="4" Class="mt-4 mb-4">
+                    <MudPaper Elevation="4" Class="pa-6">
+                        <MudText Typo="Typo.body1">Safety Margin</MudText>
+                        <MudGrid>
+                            <MudItem sm="6">
+                                <MudNumericField Class="mt-3" @bind-Value="SafetyMargin" Label="Safety Margin" Variant="Variant.Outlined" Step="5M" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Percent" HelperText="Percentage of intrinsic value to be displayed" HelperTextOnFocus="true" />
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+                </MudStack>
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</MudContainer>
+
+@code {
+    public decimal? SafetyMargin { get; set; }
+    MudChip[] CalculationTypes;
+
+    bool ExecuteGrahamScrape = false;
+    bool ExecuteDCFScrape = false;
+
+    public CalculatorParameterEncapsulator GatherConfigurationParameters(string ticker)
+    {
+        var grahamChipId = CalculationTypes.FirstOrDefault(c => c.FieldId == "ExecuteGrahamScrape" && c.IsSelected);
+        if (!string.IsNullOrWhiteSpace(grahamChipId.FieldId))
+            ExecuteGrahamScrape = true;
+
+        var dcfChipId = CalculationTypes.FirstOrDefault(c => c.FieldId == nameof(ExecuteDCFScrape) && c.IsSelected);
+        if (!string.IsNullOrWhiteSpace(dcfChipId.FieldId))
+            ExecuteDCFScrape = true;
+
+        if (SafetyMargin == null)
+            SafetyMargin = 100;
+
+        return new CalculatorParameterEncapsulator()
+            {
+                Ticker = ticker,
+                ExecuteGrahamScrape = ExecuteGrahamScrape,
+                ExecuteDCFScrape = ExecuteDCFScrape,
+                UseHtmlContent = true,
+                SafetyMargin = SafetyMargin.Value
+            };
+
+        
+    }
+}

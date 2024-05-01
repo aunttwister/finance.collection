@@ -3,11 +3,11 @@ using FinanceScraper.Common.Init.Commands;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FinanceScraper.Common.Extensions;
 using IntrinsicValue.Calculation;
 using Finance.Collection.Domain.Common.Propagation;
 using IntrinsicValue.Calculation.Init.Commands;
 using Finance.Collection.Domain.IntrinsicValue.Calculation.Results;
+using FinanceScraper.Common.Extensions.ServiceRegistar;
 
 namespace FinanceScrape.Executable.InitDebug
 {
@@ -19,7 +19,7 @@ namespace FinanceScrape.Executable.InitDebug
             IServiceProvider serviceProvider = CreateHostBuilder().Build().Services;
             IMediator _mediator = serviceProvider.GetRequiredService<IMediator>();
 
-            string ticker1 = "SPOT";
+            string ticker1 = "NTAP";
 
             bool executeDcf = true;
             bool executeGraham = true;
@@ -28,7 +28,8 @@ namespace FinanceScrape.Executable.InitDebug
             {
                 Ticker = ticker1,
                 ExecuteDCFScrape = executeDcf,
-                ExecuteGrahamScrape = executeGraham
+                ExecuteGrahamScrape = executeGraham,
+                UseHtmlContent = true
             };
 
             Task<MethodResult<IScrapeResult>> result = _mediator.Send(request);

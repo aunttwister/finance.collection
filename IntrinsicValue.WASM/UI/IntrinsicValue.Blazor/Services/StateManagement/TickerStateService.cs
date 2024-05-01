@@ -1,6 +1,6 @@
 ﻿using IntrinsicValue.Blazor.Model;
 
-namespace IntrinsicValue.Blazor.Services.StateServices
+namespace IntrinsicValue.Blazor.Services.StateManagement
 {
     public class TickerStateService
     {

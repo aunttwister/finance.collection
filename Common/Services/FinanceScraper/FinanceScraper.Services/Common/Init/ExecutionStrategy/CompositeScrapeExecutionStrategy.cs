@@ -1,5 +1,6 @@
 ﻿using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.FinanceScraper.Results;
+using FinanceScraper.Common.NodeResolver;
 
 namespace FinanceScraper.Common.Init.ExecutionStrategy
 {

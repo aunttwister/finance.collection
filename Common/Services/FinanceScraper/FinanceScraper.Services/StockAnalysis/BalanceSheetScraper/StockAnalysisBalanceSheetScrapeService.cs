@@ -8,19 +8,25 @@ using System.Collections.Generic;
 using System.Linq;
 using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.FinanceScraper.DataSets;
+using FinanceScraper.Common.NodeResolver;
+using FinanceScraper.Common.NodeResolver.ServiceProvider;
 
 namespace FinanceScraper.StockAnalysis.BalanceSheetScraper
 {
     public class StockAnalysisBalanceSheetScrapeService : IScrapeServiceStrategy<StockAnalysisBalanceSheetScraperCommand, BalanceSheetDataSet>
     {
         private readonly IExceptionResolverService _exceptionResolverService;
-        public StockAnalysisBalanceSheetScrapeService(IExceptionResolverService exceptionResolverService)
+        private readonly INodeResolverStrategyProvider _nodeResolverStrategyProvider;
+        public StockAnalysisBalanceSheetScrapeService(IExceptionResolverService exceptionResolverService,
+            INodeResolverStrategyProvider nodeResolverStrategyProvider)
         {
             _exceptionResolverService = exceptionResolverService;
+            _nodeResolverStrategyProvider = nodeResolverStrategyProvider;
         }
         public async Task<BalanceSheetDataSet> ExecuteScrape(StockAnalysisBalanceSheetScraperCommand request)
         {
-            HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
+            INodeResolverStrategy nodeResolverStrategy = _nodeResolverStrategyProvider.GetCurrentStrategy();
+            HtmlNode node = await nodeResolverStrategy.ResolveNodeAsync(request.FullUrl).ConfigureAwait(false);
 
             Task<MethodResultDictionary<string, decimal>> HistoricalCashEquivalents = GetHistoricalCashEquivalents(node);
 

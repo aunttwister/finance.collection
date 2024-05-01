@@ -3,9 +3,9 @@ using IntrinsicValue.Calculation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FinanceScraper.Common.Extensions;
 using Finance.Collection.Domain.FinanceScraper.Results;
 using Finance.Collection.Domain.Common.Propagation;
+using FinanceScraper.Common.Extensions.ServiceRegistar;
 
 namespace FinanceScraper.Executable.ScrapePerfTesting
 {

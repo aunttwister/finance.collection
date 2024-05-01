@@ -7,19 +7,25 @@ using FinanceScraper.YahooFinance.SummaryScraper.Commands;
 using System.Xml.Linq;
 using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.FinanceScraper.DataSets;
+using FinanceScraper.Common.NodeResolver.ServiceProvider;
+using FinanceScraper.Common.NodeResolver;
 
 namespace FinanceScraper.YahooFinance.SummaryScraper
 {
     public class YahooFinanceSummaryScrapeService : IScrapeServiceStrategy<SummaryScraperCommand, SummaryDataSet>
     {
         private readonly IExceptionResolverService _exceptionResolverService;
-        public YahooFinanceSummaryScrapeService(IExceptionResolverService exceptionResolverService)
+        private readonly INodeResolverStrategyProvider _nodeResolverStrategyProvider;
+        public YahooFinanceSummaryScrapeService(IExceptionResolverService exceptionResolverService,
+            INodeResolverStrategyProvider nodeResolverStrategyProvider)
         {
             _exceptionResolverService = exceptionResolverService;
+            _nodeResolverStrategyProvider = nodeResolverStrategyProvider;
         }
         public async Task<SummaryDataSet> ExecuteScrape(SummaryScraperCommand request)
         {
-            HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
+            INodeResolverStrategy nodeResolverStrategy = _nodeResolverStrategyProvider.GetCurrentStrategy();
+            HtmlNode node = await nodeResolverStrategy.ResolveNodeAsync(request.FullUrl).ConfigureAwait(false);
 
             Task<MethodResult<decimal>> currentPrice = Task.Run(() => GetCurrentPrice(node));
 

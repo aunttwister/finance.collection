@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Finance.Collection.Domain.Common.Propagation;
+using FinanceScraper.Common.NodeResolver;
 
 namespace FinanceScraper.Common.Init.ExecutionStrategy
 {

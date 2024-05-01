@@ -1,6 +1,7 @@
 ﻿using Finance.Collection.Domain.FinanceScraper.DataSets;
 using FinanceScraper.Common.Base;
 using FinanceScraper.Common.Exceptions.ExceptionResolver;
+using FinanceScraper.Common.NodeResolver.ServiceProvider;
 using FinanceScraper.StockAnalysis.BalanceSheetScraper;
 using FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands;
 using FinanceScraper.StockAnalysis.CashFlowScraper;
@@ -20,7 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 
-namespace FinanceScraper.Common.Extensions
+namespace FinanceScraper.Common.Extensions.ServiceRegistar
 {
     public static class FinanceScraperServicesExtensions
     {
@@ -30,6 +31,8 @@ namespace FinanceScraper.Common.Extensions
 
             services.AddTransient<IExceptionResolverService, ExceptionResolverService>();
 
+            services.AddScoped<INodeResolverStrategyProvider, NodeResolverStrategyProvider>();
+
             //services.AddTransient<IScrapeServiceStrategy<MacroTrendsCashFlowScraperCommand, CashFlowDataSet>, MacroTrendsCashFlowScrapeService>();
             services.AddTransient<IScrapeServiceStrategy<SummaryScraperCommand, SummaryDataSet>, YahooFinanceSummaryScrapeService>();
             services.AddTransient<IScrapeServiceStrategy<AnalysisScraperCommand, AnalysisDataSet>, YahooFinanceAnalysisScrapeService>();
@@ -38,8 +41,6 @@ namespace FinanceScraper.Common.Extensions
             services.AddTransient<IScrapeServiceStrategy<StockAnalysisBalanceSheetScraperCommand, BalanceSheetDataSet>, StockAnalysisBalanceSheetScrapeService>();
             services.AddTransient<IScrapeServiceStrategy<StockAnalysisStatisticsScraperCommand, StatisticsDataSet>, StockAnalysisStatisticsScrapeService>();
             services.AddTransient<IScrapeServiceStrategy<StockAnalysisCashFlowScraperCommand, CashFlowDataSet>, StockAnalysisCashFlowScrapeService>();
-
-
         }
     }
 }

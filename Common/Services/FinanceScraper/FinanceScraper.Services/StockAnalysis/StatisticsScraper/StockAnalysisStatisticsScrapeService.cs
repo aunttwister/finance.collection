@@ -11,19 +11,25 @@ using System.Threading.Tasks;
 using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.Common.CustomDataType;
 using Finance.Collection.Domain.FinanceScraper.DataSets;
+using FinanceScraper.Common.NodeResolver;
+using FinanceScraper.Common.NodeResolver.ServiceProvider;
 
 namespace FinanceScraper.StockAnalysis.StatisticsScraper
 {
     public class StockAnalysisStatisticsScrapeService : IScrapeServiceStrategy<StockAnalysisStatisticsScraperCommand, StatisticsDataSet>
     {
         private readonly IExceptionResolverService _exceptionResolverService;
-        public StockAnalysisStatisticsScrapeService(IExceptionResolverService exceptionResolverService)
+        private readonly INodeResolverStrategyProvider _nodeResolverStrategyProvider;
+        public StockAnalysisStatisticsScrapeService(IExceptionResolverService exceptionResolverService,
+            INodeResolverStrategyProvider nodeResolverStrategyProvider)
         {
             _exceptionResolverService = exceptionResolverService;
+            _nodeResolverStrategyProvider = nodeResolverStrategyProvider;
         }
         public async Task<StatisticsDataSet> ExecuteScrape(StockAnalysisStatisticsScraperCommand request)
         {
-            HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
+            INodeResolverStrategy nodeResolverStrategy = _nodeResolverStrategyProvider.GetCurrentStrategy();
+            HtmlNode node = await nodeResolverStrategy.ResolveNodeAsync(request.FullUrl).ConfigureAwait(false);
 
             Task<MethodResult<decimal>> sharesOutstanding = Task.Run(() => GetSharesOutstanding(node));
 

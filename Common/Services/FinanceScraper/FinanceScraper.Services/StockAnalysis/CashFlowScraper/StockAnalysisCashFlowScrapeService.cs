@@ -12,19 +12,25 @@ using System.Text;
 using System.Threading.Tasks;
 using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.FinanceScraper.DataSets;
+using FinanceScraper.Common.NodeResolver.ServiceProvider;
+using FinanceScraper.Common.NodeResolver;
 
 namespace FinanceScraper.StockAnalysis.CashFlowScraper
 {
     public class StockAnalysisCashFlowScrapeService : IScrapeServiceStrategy<StockAnalysisCashFlowScraperCommand, CashFlowDataSet>
     {
         private readonly IExceptionResolverService _exceptionResolverService;
-        public StockAnalysisCashFlowScrapeService(IExceptionResolverService exceptionResolverService)
+        private readonly INodeResolverStrategyProvider _nodeResolverStrategyProvider;
+        public StockAnalysisCashFlowScrapeService(IExceptionResolverService exceptionResolverService, 
+            INodeResolverStrategyProvider nodeResolverStrategyProvider)
         {
             _exceptionResolverService = exceptionResolverService;
+            _nodeResolverStrategyProvider = nodeResolverStrategyProvider;
         }
         public async Task<CashFlowDataSet> ExecuteScrape(StockAnalysisCashFlowScraperCommand request)
         {
-            HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
+            INodeResolverStrategy nodeResolverStrategy = _nodeResolverStrategyProvider.GetCurrentStrategy();
+            HtmlNode node = await nodeResolverStrategy.ResolveNodeAsync(request.FullUrl).ConfigureAwait(false);
 
             Task<MethodResultDictionary<string, decimal>> historicalYearCashFlows = GetHistoricalYearCashFlow(node);
 

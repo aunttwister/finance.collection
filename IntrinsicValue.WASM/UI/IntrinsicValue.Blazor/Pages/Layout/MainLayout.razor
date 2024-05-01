@@ -1,15 +1,21 @@
 ﻿@inherits LayoutComponentBase
 @using IntrinsicValue.Blazor.Model
 @using IntrinsicValue.Blazor.Pages.DetailsDrawer
-@using IntrinsicValue.Blazor.Services.StateServices
+@using IntrinsicValue.Blazor.Services.StateManagement
 @inject TickerStateService TickerState
 
-<MudThemeProvider />
+<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
 <MudLayout>
     <MudAppBar Dense="true" Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => NavbarDrawerToggle())" />
         <MudText Typo="Typo.h6" Class="ml-3">Intrinsicly.</MudText>
+        <MudSpacer />
+        <MudToggleIconButton @bind-Toggled="@_isDarkMode"
+                             Icon="@Icons.Material.Filled.DarkMode" Color="@Color.Surface" Title="Off"
+                             ToggledIcon="@Icons.Material.Filled.LightMode" ToggledColor="@Color.Surface" ToggledTitle="On" />
     </MudAppBar>
     <MudDrawer @bind-Open="_navbarDawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="@DrawerVariant.Temporary">
         <NavMenu />
@@ -22,6 +28,52 @@
         @Body
     </MudMainContent>
 </MudLayout>
+
+@code {
+    private MudTheme _theme = new()
+    {
+        Typography = new Typography()
+        {
+            Default = new Default()
+            {
+                FontFamily = new[] { "Roboto Slab" },
+                FontWeight = 600
+            },
+            H1 = new H1()
+            {
+                FontFamily = new[] { "fontfile" },
+                FontSize = "3rem"
+            },
+            H2 = new H2()
+            {
+                FontFamily = new[] { "fontfile" },
+                FontSize = "2.75rem"
+            },
+            H3 = new H3()
+            {
+                FontFamily = new[] { "fontfile" },
+                FontSize = "2.5rem"
+            },
+            H4 = new H4()
+            {
+                FontFamily = new[] { "fontfile" },
+                FontSize = "2.25rem"
+            },
+            H5 = new H5()
+            {
+                 FontFamily = new[] { "fontfile" },
+                FontSize = "2rem"
+            },
+            H6 = new H6()
+            {
+                 FontFamily = new[] { "fontfile" },
+                FontSize = "1.75rem"
+            },
+        }
+    };
+    private bool _isDarkMode;
+}
+
 @code {
     bool _navbarDawerOpen = false;
 

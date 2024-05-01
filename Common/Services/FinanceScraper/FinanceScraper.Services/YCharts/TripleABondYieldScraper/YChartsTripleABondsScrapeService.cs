@@ -11,19 +11,25 @@ using FinanceScraper.Common.Exceptions.ExceptionResolver;
 using FinanceScraper.Common.Base;
 using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.FinanceScraper.DataSets;
+using FinanceScraper.Common.NodeResolver.ServiceProvider;
+using FinanceScraper.Common.NodeResolver;
 
 namespace FinanceScraper.YCharts.TripleABondYieldScraper
 {
     public class YChartsTripleABondsScrapeService : IScrapeServiceStrategy<TripleABondYieldScraperCommand, TripleABondsDataSet>
     {
         private readonly IExceptionResolverService _exceptionResolverService;
-        public YChartsTripleABondsScrapeService(IExceptionResolverService exceptionResolverService)
+        private readonly INodeResolverStrategyProvider _nodeResolverStrategyProvider;
+        public YChartsTripleABondsScrapeService(IExceptionResolverService exceptionResolverService,
+            INodeResolverStrategyProvider nodeResolverStrategyProvider)
         {
             _exceptionResolverService = exceptionResolverService;
+            _nodeResolverStrategyProvider = nodeResolverStrategyProvider;
         }
         public async Task<TripleABondsDataSet> ExecuteScrape(TripleABondYieldScraperCommand request)
         {
-            HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
+            INodeResolverStrategy nodeResolverStrategy = _nodeResolverStrategyProvider.GetCurrentStrategy();
+            HtmlNode node = await nodeResolverStrategy.ResolveNodeAsync(request.FullUrl).ConfigureAwait(false);
 
             Task<MethodResult<decimal>> currentTripleABond = Task.Run(() => GetCurrentBondTripleAYield(node));
 

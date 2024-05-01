@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Finance.Collection.Domain.FinanceScraper.DataSets;
+using FinanceScraper.Common.NodeResolver;
 
 namespace FinanceScraper.StockAnalysis.BalanceSheetScraper.Commands
 {

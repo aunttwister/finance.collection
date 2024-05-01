@@ -6,19 +6,25 @@ using FinanceScraper.Common.Extensions;
 using FinanceScraper.YahooFinance.AnalysisScraper.Commands;
 using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.FinanceScraper.DataSets;
+using FinanceScraper.Common.NodeResolver.ServiceProvider;
+using FinanceScraper.Common.NodeResolver;
 
 namespace FinanceScraper.YahooFinance.AnalysisScraper
 {
     public class YahooFinanceAnalysisScrapeService : IScrapeServiceStrategy<AnalysisScraperCommand, AnalysisDataSet>
     {
         private readonly IExceptionResolverService _exceptionResolverService;
-        public YahooFinanceAnalysisScrapeService(IExceptionResolverService exceptionResolverService) 
+        private readonly INodeResolverStrategyProvider _nodeResolverStrategyProvider;
+        public YahooFinanceAnalysisScrapeService(IExceptionResolverService exceptionResolverService,
+            INodeResolverStrategyProvider nodeResolverStrategyProvider)
         {
             _exceptionResolverService = exceptionResolverService;
+            _nodeResolverStrategyProvider = nodeResolverStrategyProvider;
         }
         public async Task<AnalysisDataSet> ExecuteScrape(AnalysisScraperCommand request)
         {
-            HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
+            INodeResolverStrategy nodeResolverStrategy = _nodeResolverStrategyProvider.GetCurrentStrategy();
+            HtmlNode node = await nodeResolverStrategy.ResolveNodeAsync(request.FullUrl).ConfigureAwait(false);
 
             Task<MethodResult<decimal>> fiveYearGrowth = Task.Run(() => GetFiveYearGrowth(node));
 

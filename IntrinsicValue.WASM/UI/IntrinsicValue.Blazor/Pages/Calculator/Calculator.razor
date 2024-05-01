@@ -1,0 +1,69 @@
+﻿@page "/calculate";
+@using IntrinsicValue.Blazor.Services.FinanceServices.Encapsulation
+@using IntrinsicValue.Blazor.Services.FinanceServices.Interfaces
+@inject ISnackbar Snackbar;
+@inject IFinancialAnalysisService _financeAnalysisService;
+
+<PageTitle>Calculate</PageTitle>
+<MudContainer Class="my-4">
+    <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="12" sm="2"></MudItem>
+            <MudItem xs="12" sm="8">
+                <MudItem xs="12">
+                    <MudContainer>
+                        <MudText Typo="Typo.subtitle2">
+                            Set configurational parameters below and execute the calculation.
+                        </MudText>
+                    </MudContainer>
+                </MudItem>
+                <MudItem xs="12">
+                    <Configuration @ref="config" />
+                </MudItem>
+                <MudItem>
+                    <MudContainer Class="mt-6">
+                        <MudTextField @bind-Value="ticker" Label="Enter Ticker Symbol" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" Adornment="Adornment.End" @onkeydown="@SearchTicker" Class="mt-2" />
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-6" OnClick="CalculateValue">Calculate</MudButton>
+                    </MudContainer>
+                </MudItem>
+            </MudItem>
+            <MudItem xs="12" sm="2">
+            </MudItem>
+            <MudItem sm="12" hidden="true">
+                <Result />
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</MudContainer>
+
+@code {
+    Configuration config;
+
+    private string ticker = "";
+
+    private async void CalculateValue()
+    {
+        if (string.IsNullOrWhiteSpace(ticker))
+        {
+            Snackbar.Add("Please enter a valid ticker symbol.", Severity.Error);
+            return;
+        }
+        Snackbar.Add("Calculating intrinsic value for: " + ticker, Severity.Success);
+
+        CalculatorParameterEncapsulator parameters = config.GatherConfigurationParameters(ticker);
+
+        var result = await _financeAnalysisService.PerformAnalysis(parameters);
+
+        int test = 1;
+    }
+
+    private Task SearchTicker(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+            CalculateValue();
+        return Task.CompletedTask;
+    }
+}
+@code {
+
+}

@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Finance.Collection.Domain.FinanceScraper.DataSets;
+using FinanceScraper.Common.NodeResolver;
 
 namespace FinanceScraper.StockAnalysis.StatisticsScraper.Commands
 {
     public class StockAnalysisStatisticsScraperCommand : StockAnalysisScraperBaseCommand, IRequest<StatisticsDataSet>
     {
-        public StockAnalysisStatisticsScraperCommand(string ticker, string path) : base (ticker, path) { }
+        public StockAnalysisStatisticsScraperCommand(string ticker, string path) : base(ticker, path) { }
     }
 }

@@ -6,19 +6,25 @@ using FinanceScraper.Common.Extensions;
 using FinanceScraper.YahooFinance.CashFlowScraper.Commands;
 using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.FinanceScraper.DataSets;
+using FinanceScraper.Common.NodeResolver.ServiceProvider;
+using FinanceScraper.Common.NodeResolver;
 
 namespace FinanceScraper.YahooFinance.CashFlowScraper
 {
     public class YahooFinanceCashFlowScrapeService : IScrapeServiceStrategy<YahooFinanceCashFlowScraperCommand, CashFlowDataSet>
     {
         private readonly IExceptionResolverService _exceptionResolverService;
-        public YahooFinanceCashFlowScrapeService(IExceptionResolverService exceptionResolverService)
+        private readonly INodeResolverStrategyProvider _nodeResolverStrategyProvider;
+        public YahooFinanceCashFlowScrapeService(IExceptionResolverService exceptionResolverService,
+            INodeResolverStrategyProvider nodeResolverStrategyProvider)
         {
             _exceptionResolverService = exceptionResolverService;
+            _nodeResolverStrategyProvider = nodeResolverStrategyProvider;
         }
         public async Task<CashFlowDataSet> ExecuteScrape(YahooFinanceCashFlowScraperCommand request)
         {
-            HtmlNode node = await request.NodeResolverAsync().ConfigureAwait(false);
+            INodeResolverStrategy nodeResolverStrategy = _nodeResolverStrategyProvider.GetCurrentStrategy();
+            HtmlNode node = await nodeResolverStrategy.ResolveNodeAsync(request.FullUrl).ConfigureAwait(false);
 
             Task<MethodResultDictionary<string, decimal>> taskHistoricalCashFlows = GetHistoricalYearCashFlow(node);
 

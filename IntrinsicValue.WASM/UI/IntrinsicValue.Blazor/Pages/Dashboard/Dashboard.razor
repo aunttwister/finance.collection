@@ -4,22 +4,22 @@
 
 
 <PageTitle>Dashboard</PageTitle>
-<MudLayout Style="text-align: center !important;">
+<MudLayout>
     <MudContainer MaxWidth="MaxWidth.ExtraLarge">
         <MudPaper Elevation="2" Class="pa-4; mt-6">
             <MudToolBar>
                 <MudGrid>
-                    <MudItem xs="1">
+                    <MudItem xs="2" sm="1">
                         <MudSwitch @bind-Value="viewToggle" Color="Color.Primary" Label="Toggle View" Size="Size.Small" />
                     </MudItem>
-                    <MudItem xs="4">
+                    <MudItem xs="1" sm="4">
                     </MudItem>
-                    <MudItem xs="1">
+                    <MudItem xs="2" sm="1">
                         <MudText Typo="Typo.h6">Overview</MudText>
                     </MudItem>
-                    <MudItem xs="3">
+                    <MudItem xs="1" sm="3">
                     </MudItem>
-                    <MudItem xs="3">
+                    <MudItem xs="6" sm="3">
                         <MudSelect T="WatchlistDto" Dense="true" Margin="Margin.Dense" @bind-Value="@SelectedWatchlist"
                                    AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
                             @foreach (var watchlist in WatchlistList)

@@ -14,6 +14,6 @@ namespace FinanceScraper.Common.Init.Commands
         public string Ticker { get; set; }
         public bool ExecuteGrahamScrape { get; set; }
         public bool ExecuteDCFScrape { get; set; }
-        public decimal SafetyMargin { get; set; }
+        public bool UseHtmlContent { get; set; }
     }
 }

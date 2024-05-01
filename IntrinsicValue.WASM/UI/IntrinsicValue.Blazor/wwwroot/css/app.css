@@ -4,6 +4,11 @@
 	but it is exclusively employed in the 'App.razor' component when authentication is enabled.
 */
 
+@font-face {
+    font-family: 'fontfile';
+    src: url('../fonts//Rubik-VariableFont_wght.ttf') format('truetype');
+}
+
 .btn-primary {
     text-transform: uppercase;
     --bs-btn-bg: var(--mud-palette-primary) !important;

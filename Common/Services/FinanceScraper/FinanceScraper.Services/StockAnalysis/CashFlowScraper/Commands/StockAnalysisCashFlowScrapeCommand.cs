@@ -1,4 +1,5 @@
 ﻿using Finance.Collection.Domain.FinanceScraper.DataSets;
+using FinanceScraper.Common.NodeResolver;
 using MediatR;
 using System;
 using System.Collections.Generic;
