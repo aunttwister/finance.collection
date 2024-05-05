@@ -9,7 +9,6 @@ namespace Finance.Collection.Domain.IntrinsicValue.Calculation.Results
 {
     public class CombinedCalculationResult : ICalculationResult
     {
-        public string Ticker { get; set; }
         private readonly Dictionary<Type, ICalculationResult> _results;
 
         public CombinedCalculationResult()

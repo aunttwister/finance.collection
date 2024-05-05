@@ -1,4 +1,4 @@
-﻿using IntrinsicValue.Blazor.Model;
+﻿using Financial.Collection.Domain.DTOs;
 
 namespace IntrinsicValue.Blazor.Services.StateManagement
 {

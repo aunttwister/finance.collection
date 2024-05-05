@@ -18,7 +18,7 @@ namespace FinanceScraper.YahooFinance
         }
         public YahooFinanceScraperBaseCommand(string ticker, string path) : base(ticker, path)
         {
-            BaseUrl = "https://finance.yahoo.com/quote/";
+            BaseUrl = BaseUrlConstants.YahooFinance;
             Path = path;
             ResolveUrl();
         }

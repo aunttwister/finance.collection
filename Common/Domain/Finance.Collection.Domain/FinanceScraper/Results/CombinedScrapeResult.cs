@@ -31,9 +31,15 @@ namespace Finance.Collection.Domain.FinanceScraper.Results
         }
         public Dictionary<Type, IScrapeResult> GetAllResults() =>
             _results;
-        public IEnumerable<Type> GetResultTypes()
+        public IEnumerable<Type> GetResultTypes(Func<Type, bool> condition = null)
         {
-            return _results.Keys.AsEnumerable();
+            if (condition == null)
+            {
+                condition = key => true;
+            }
+
+            return _results.Keys.Where(condition).AsEnumerable();
         }
+
     }
 }

@@ -8,6 +8,5 @@ namespace Finance.Collection.Domain.IntrinsicValue.Calculation.Results
 {
     public interface ICalculationResult
     {
-        public string Ticker { get; set; }
     }
 }

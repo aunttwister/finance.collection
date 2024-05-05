@@ -1,4 +1,4 @@
-﻿@using IntrinsicValue.Blazor.Model
+﻿@using Financial.Collection.Domain.DTOs
 @using IntrinsicValue.Blazor.Services.StateManagement
 @inject TickerStateService TickerState
 
@@ -48,10 +48,10 @@
         <MudTd DataLabel="Shares Outstanding">@ticker.SharesOutstanding.ToString("N")</MudTd>
         <MudTd DataLabel="Trailing Twelve Months Cash and Cash Equivalents">@ticker.TTMCashAndCashEquivalents.ToString("N")</MudTd>
         <MudTd DataLabel="Trailing Twelve Months Total Debt">@ticker.TTMTotalDebt.ToString("N")</MudTd>
-        <MudTd DataLabel="Growth Period">@ticker.GrowthRate.Period</MudTd>
+        @* <MudTd DataLabel="Growth Period">@ticker.GrowthRate.Period</MudTd>
         <MudTd DataLabel="Growth Rate">@ticker.GrowthRate.Rate.ToString() %</MudTd>
         <MudTd DataLabel="Earnings Status">@ticker.EarningsDate.Status</MudTd>
-        <MudTd DataLabel="Earnings Date">@ticker.EarningsDate.Date.ToShortDateString()</MudTd>
+        <MudTd DataLabel="Earnings Date">@ticker.EarningsDate.Date.ToShortDateString()</MudTd> *@
     </RowTemplate>
 </MudTable>
 

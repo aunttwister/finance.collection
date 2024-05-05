@@ -1,4 +1,5 @@
-﻿using IntrinsicValue.Blazor.Model;
+﻿using Finance.Collection.Domain.FinanceScraper.Results;
+using Financial.Collection.Domain.DTOs;
 using IntrinsicValue.Calculation.DataSets.Results;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,7 @@ namespace ListPropertiesToFile
     {
         static void Main(string[] args)
         {
-            PropertyListerCustom.ListPropertiesToFile(typeof(DCFCalculationResult), "DCFCalculationResultProperties.txt");
-
+            PropertyListerCustom.ListPropertiesToFile(typeof(GrahamScrapeResult), "GrahamScrapeResultProperties.txt");
         }
     }
 }

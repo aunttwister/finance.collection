@@ -1,8 +1,8 @@
 ﻿@page "/calculate";
-@using IntrinsicValue.Blazor.Services.FinanceServices.Encapsulation
-@using IntrinsicValue.Blazor.Services.FinanceServices.Interfaces
+@using Financial.Collection.Link.FinanceScraper.Encapsulation
+@using Financial.Collection.Link.Blazor.WASM.Calculator.Services
 @inject ISnackbar Snackbar;
-@inject IFinancialAnalysisService _financeAnalysisService;
+@inject IValuationAnalysisService _valuationAnalysisService;
 
 <PageTitle>Calculate</PageTitle>
 <MudContainer Class="my-4">
@@ -50,10 +50,10 @@
         }
         Snackbar.Add("Calculating intrinsic value for: " + ticker, Severity.Success);
 
-        CalculatorParameterEncapsulator parameters = config.GatherConfigurationParameters(ticker);
-
-        var result = await _financeAnalysisService.PerformAnalysis(parameters);
-
+        ScraperParameterEncapsulator parameters = config.GatherConfigurationParameters(ticker);
+        
+        var result = await _valuationAnalysisService.PerformAnalysis(parameters);
+        
         int test = 1;
     }
 

@@ -1,15 +1,13 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using FinanceScraper.Common.Extensions;
 using IntrinsicValue.Calculation;
-using Microsoft.Extensions.DependencyInjection;
-using IntrinsicValue.Blazor.Services.StateManagement;
-using IntrinsicValue.Blazor.Services.FinanceServices.Interfaces;
-using IntrinsicValue.Blazor.Services.FinanceServices.Services;
-using FinanceScraper.Common.Extensions.ServiceRegistar;
+using Financial.Collection.Link.FinanceScraper.ServiceRegistar;
 using System.Reflection;
 using MudBlazor;
+using IntrinsicValue.Blazor.Services.StateManagement;
+using Financial.Collection.Link.Blazor.WASM.Calculator.ServiceRegistar;
+using Financial.Collection.Link.IntrinsicValue.Calculation.ServiceRegistar;
 
 namespace IntrinsicValue.Blazor
 {
@@ -26,12 +24,12 @@ namespace IntrinsicValue.Blazor
             // Register MediatR
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 
-            builder.Services.RegisterFinanceScraperServices();
-            builder.Services.RegisterIntrinsicCalculatorServices();
+            builder.Services.AddFinanceScraperServices();
+            builder.Services.AddFinanceScraperHttpClient();
 
-            builder.Services.AddScoped<IFinanceScraperService, FinanceScraperService>();
-            builder.Services.AddScoped<IValueCalculationService, ValueCalculationService>();
-            builder.Services.AddScoped<IFinancialAnalysisService, FinancialAnalysisService>();
+            builder.Services.AddValuationServices();
+
+            builder.Services.AddIntrinsicCalculatorServices();
 
             builder.Services.AddAutoMapper(typeof(Program));
 

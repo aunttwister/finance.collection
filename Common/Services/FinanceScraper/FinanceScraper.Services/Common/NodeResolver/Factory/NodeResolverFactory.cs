@@ -16,18 +16,16 @@ namespace FinanceScraper.Common.NodeResolver.Factory
         static NodeResolverFactory()
         {
             _strategies = new Dictionary<string, INodeResolverStrategy>
-        {
-            { "Web", new WebNodeResolverStrategy() },
-            { "Content", new ContentNodeResolverStrategy(new HtmlContentClient()) }
-        };
+            {
+                { "Web", new WebNodeResolverStrategy() },
+                { "Content", new ContentNodeResolverStrategy(new HtmlContentClient(new HttpClient())) }
+            };
         }
         public static void Initialize(IServiceProvider serviceProvider)
         {
             // Register all strategies with their keys
             var webNodeResolver = serviceProvider.GetRequiredService<WebNodeResolverStrategy>();
             var contentNodeResolver = serviceProvider.GetRequiredService<ContentNodeResolverStrategy>();
-            _strategies.Add("Web", webNodeResolver);
-            _strategies.Add("Content", contentNodeResolver);
         }
 
         public INodeResolverStrategy GetResolverStrategy(bool useHtmlContent)

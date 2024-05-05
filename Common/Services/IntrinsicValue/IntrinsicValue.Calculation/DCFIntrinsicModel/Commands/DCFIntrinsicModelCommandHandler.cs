@@ -11,7 +11,7 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel.Commands
 {
     public class DCFIntrinsicModelCommandHandler : IRequestHandler<DCFIntrinsicModelCommand, DCFCalculationResult>
     {
-        public readonly ICalculateIntrinsicServiceStrategy<DCFIntrinsicModelCommand, DCFCalculationResult> _calculateIntrinsicService;
+        private readonly ICalculateIntrinsicServiceStrategy<DCFIntrinsicModelCommand, DCFCalculationResult> _calculateIntrinsicService;
         public DCFIntrinsicModelCommandHandler(ICalculateIntrinsicServiceStrategy<DCFIntrinsicModelCommand, DCFCalculationResult> calculateIntrinsicService)
         {
             _calculateIntrinsicService = calculateIntrinsicService;

@@ -7,9 +7,9 @@ namespace FinanceScraper.Common.NodeResolver.HttpClientFactory
     {
         private readonly HttpClient _httpClient;
 
-        public HtmlContentClient()
+        public HtmlContentClient(HttpClient httpClient)
         {
-            _httpClient = SingletonHttpClient.GetInstance();
+            _httpClient = httpClient;
         }
 
         public async Task<string> GetHtmlContentAsync(string url)

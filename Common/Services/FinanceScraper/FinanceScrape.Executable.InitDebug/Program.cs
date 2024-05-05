@@ -3,11 +3,15 @@ using FinanceScraper.Common.Init.Commands;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using IntrinsicValue.Calculation;
 using Finance.Collection.Domain.Common.Propagation;
 using IntrinsicValue.Calculation.Init.Commands;
 using Finance.Collection.Domain.IntrinsicValue.Calculation.Results;
-using FinanceScraper.Common.Extensions.ServiceRegistar;
+using Financial.Collection.Link.FinanceScraper.ServiceRegistar;
+using Financial.Collection.Link.IntrinsicValue.Calculation.ServiceRegistar;
+using Financial.Collection.Link.Blazor.WASM.Calculator.ServiceRegistar;
+using Financial.Collection.Link.Blazor.WASM.Calculator.Services;
+using Financial.Collection.Link.FinanceScraper.Encapsulation;
+using Financial.Collection.Domain.DTOs;
 
 namespace FinanceScrape.Executable.InitDebug
 {
@@ -18,40 +22,25 @@ namespace FinanceScrape.Executable.InitDebug
             DateTime startTime = DateTime.Now;
             IServiceProvider serviceProvider = CreateHostBuilder().Build().Services;
             IMediator _mediator = serviceProvider.GetRequiredService<IMediator>();
+            IValuationAnalysisService _valuationAnalysisService = serviceProvider.GetRequiredService<IValuationAnalysisService>();
 
-            string ticker1 = "NTAP";
+            string ticker1 = "VRT";
 
-            bool executeDcf = true;
             bool executeGraham = true;
-
-            InitScrapeCommand request = new InitScrapeCommand()
-            {
-                Ticker = ticker1,
-                ExecuteDCFScrape = executeDcf,
-                ExecuteGrahamScrape = executeGraham,
-                UseHtmlContent = true
-            };
-
-            Task<MethodResult<IScrapeResult>> result = _mediator.Send(request);
-
-            await result.ConfigureAwait(false);
-
-            var combinedResult = result.Result;
+            bool executeDcf = true;
 
             decimal safetyMargin = 0.65m;
 
-            InitCalculationCommand requestCalc = new InitCalculationCommand()
+            ScraperParameterEncapsulator request = new ScraperParameterEncapsulator()
             {
-                Ticker = combinedResult.Data.Ticker,
-                ScrapeResult = combinedResult.Data,
-                SafetyMargin = safetyMargin
+                Ticker = ticker1,
+                ExecuteGrahamScrape = executeGraham,
+                ExecuteDCFScrape = executeDcf,
+                SafetyMargin = safetyMargin,
+                UseHtmlContent = true
             };
 
-            Task <MethodResult<ICalculationResult>> resultCalc = _mediator.Send(requestCalc);
-
-            await resultCalc.ConfigureAwait(false);
-
-            var calcResult = resultCalc.Result;
+            MethodResultExceptionSum<TickerDto> tickerDto = await _valuationAnalysisService.PerformAnalysis(request);
 
             Console.Write($"Run time: {DateTime.Now - startTime}");
             Console.WriteLine();
@@ -65,8 +54,11 @@ namespace FinanceScrape.Executable.InitDebug
                        .ConfigureServices((hostContext, services) =>
                        {
                            services.RegisterMediatR();
-                           services.RegisterFinanceScraperServices();
-                           services.RegisterIntrinsicCalculatorServices();
+                           services.AddFinanceScraperServices();
+                           services.AddFinanceScraperHttpClient();
+                           services.AddValuationServices();
+
+                           services.AddIntrinsicCalculatorServices();
                        });
         }
     }

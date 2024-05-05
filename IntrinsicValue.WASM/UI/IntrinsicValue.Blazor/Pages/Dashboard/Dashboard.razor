@@ -1,6 +1,6 @@
 ﻿@page "/dashboard";
+@using Financial.Collection.Domain.DTOs
 @using IntrinsicValue.Blazor.MockData
-@using IntrinsicValue.Blazor.Model
 
 
 <PageTitle>Dashboard</PageTitle>
@@ -20,11 +20,11 @@
                     <MudItem xs="1" sm="3">
                     </MudItem>
                     <MudItem xs="6" sm="3">
-                        <MudSelect T="WatchlistDto" Dense="true" Margin="Margin.Dense" @bind-Value="@SelectedWatchlist"
+                        <MudSelect T="TickerListDto" Dense="true" Margin="Margin.Dense" @bind-Value="@SelectedWatchlist"
                                    AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
                             @foreach (var watchlist in WatchlistList)
                             {
-                                <MudSelectItem T="WatchlistDto" Value="@watchlist">@watchlist.Name</MudSelectItem>
+                                <MudSelectItem T="TickerListDto" Value="@watchlist">@watchlist.Name</MudSelectItem>
                             }
                         </MudSelect>
                     </MudItem>
@@ -47,9 +47,9 @@
 }
 
 @code {
-    private List<WatchlistDto> WatchlistList;
+    private List<TickerListDto> WatchlistList;
 
-    private WatchlistDto SelectedWatchlist;
+    private TickerListDto SelectedWatchlist;
 
     private string SelectedWatchlistName;
 

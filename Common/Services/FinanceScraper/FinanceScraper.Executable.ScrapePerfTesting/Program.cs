@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Finance.Collection.Domain.FinanceScraper.Results;
 using Finance.Collection.Domain.Common.Propagation;
-using FinanceScraper.Common.Extensions.ServiceRegistar;
+using Financial.Collection.Link.FinanceScraper.ServiceRegistar;
 
 namespace FinanceScraper.Executable.ScrapePerfTesting
 {

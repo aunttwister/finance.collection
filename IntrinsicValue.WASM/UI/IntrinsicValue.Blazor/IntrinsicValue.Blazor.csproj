@@ -21,8 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Domain\Finance.Collection.Domain\Finance.Collection.Domain.csproj" />
-    <ProjectReference Include="..\..\..\Common\Services\FinanceScraper\FinanceScraper.Services\FinanceScraper.csproj" />
-    <ProjectReference Include="..\..\..\Common\Services\IntrinsicValue\IntrinsicValue.Calculation\IntrinsicValue.Calculation.csproj" />
+    <ProjectReference Include="..\..\..\Common\Services\Financial.Collection.Link\Financial.Collection.Link.csproj" />
   </ItemGroup>
 
   <ItemGroup>

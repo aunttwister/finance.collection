@@ -12,7 +12,7 @@ using FinanceScraper.Common.NodeResolver;
 
 namespace FinanceScraper.YahooFinance.SummaryScraper
 {
-    public class YahooFinanceSummaryScrapeService : IScrapeServiceStrategy<SummaryScraperCommand, SummaryDataSet>
+    public class YahooFinanceSummaryScrapeService : IScrapeServiceStrategy<YahooFinanceSummaryScraperCommand, SummaryDataSet>
     {
         private readonly IExceptionResolverService _exceptionResolverService;
         private readonly INodeResolverStrategyProvider _nodeResolverStrategyProvider;
@@ -22,36 +22,16 @@ namespace FinanceScraper.YahooFinance.SummaryScraper
             _exceptionResolverService = exceptionResolverService;
             _nodeResolverStrategyProvider = nodeResolverStrategyProvider;
         }
-        public async Task<SummaryDataSet> ExecuteScrape(SummaryScraperCommand request)
+        public async Task<SummaryDataSet> ExecuteScrape(YahooFinanceSummaryScraperCommand request)
         {
             INodeResolverStrategy nodeResolverStrategy = _nodeResolverStrategyProvider.GetCurrentStrategy();
             HtmlNode node = await nodeResolverStrategy.ResolveNodeAsync(request.FullUrl).ConfigureAwait(false);
 
-            Task<MethodResult<decimal>> currentPrice = Task.Run(() => GetCurrentPrice(node));
-
             Task<MethodResult<decimal>> eps = Task.Run(() => GetEPS(node));
 
-            await Task.WhenAll(currentPrice, eps).ConfigureAwait(false);
+            await eps.ConfigureAwait(false);
 
-            return new SummaryDataSet() { CurrentPrice = currentPrice.Result, Eps = eps.Result };
-        }
-        [HandleMethodExecutionAspect]
-        private async Task<MethodResult<decimal>> GetCurrentPrice(HtmlNode node)
-        {
-            try
-            {
-                Task<MethodResult<decimal>> taskCurrentPrice = Task.Run(() => ResolveCurrentPrice(node));
-
-                await taskCurrentPrice.ConfigureAwait(false);
-
-                return taskCurrentPrice.Result;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-            
+            return new SummaryDataSet() { Eps = eps.Result };
         }
         [HandleMethodExecutionAspect]
         private async Task<MethodResult<decimal>> GetEPS(HtmlNode node)
@@ -70,21 +50,6 @@ namespace FinanceScraper.YahooFinance.SummaryScraper
                 throw;
             }
         }
-
-        private MethodResult<decimal> ResolveCurrentPrice(HtmlNode node)
-        {
-            node = node.SelectSingleNode("//fin-streamer[@data-testid='qsp-price']/span");
-
-            Func<MethodResult<decimal>>[] operations = new Func<MethodResult<decimal>>[]
-            {
-                () => _exceptionResolverService.HtmlNodeNullReferenceExceptionResolver<decimal>(node),
-                () => _exceptionResolverService.HtmlNodeNotApplicableExceptionResolver<decimal>(node),
-                () => _exceptionResolverService.ConvertToDecimalExceptionResolver(node.InnerHtml)
-            };
-
-            return node.ExecuteUntilFirstException(operations);
-        }
-
         private MethodResult<decimal> ResolveEPS(HtmlNode node)
         {
             node = node.SelectSingleNode("//li/span[text()=\"EPS (TTM)\"]/following-sibling::span[1]/fin-streamer");

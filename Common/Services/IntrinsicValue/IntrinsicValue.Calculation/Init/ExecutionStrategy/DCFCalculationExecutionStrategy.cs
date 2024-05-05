@@ -2,6 +2,7 @@
 using Finance.Collection.Domain.FinanceScraper.Constants;
 using Finance.Collection.Domain.FinanceScraper.Results;
 using Finance.Collection.Domain.IntrinsicValue.Calculation.Results;
+using Financial.Collection.Domain.DTOs;
 using IntrinsicValue.Calculation.DataSets.Results;
 using IntrinsicValue.Calculation.DCFIntrinsicModel.Commands;
 using MediatR;
@@ -22,12 +23,9 @@ namespace IntrinsicValue.Calculation.Init.ExecutionStrategy
             _ticker = ticker;
         }
 
-        public async Task<MethodResult<ICalculationResult>> ExecuteCalculationStrategy(IScrapeResult scrapeResult, decimal safetyMargin)
+        public async Task<MethodResult<ICalculationResult>> ExecuteCalculationStrategy(TickerDto tickerDto, AAABondDto aaaBondDto, decimal safetyMargin)
         {
-            DCFIntrinsicScrapeResult dcfScrapeResult = (DCFIntrinsicScrapeResult)scrapeResult;
-            if (dcfScrapeResult.Ticker is null)
-                dcfScrapeResult.Ticker = _ticker;
-            DCFIntrinsicModelCommand request = new DCFIntrinsicModelCommand(dcfScrapeResult, safetyMargin);
+            DCFIntrinsicModelCommand request = new DCFIntrinsicModelCommand(tickerDto, safetyMargin);
 
             Task<DCFCalculationResult> result = _mediator.Send(request);
 

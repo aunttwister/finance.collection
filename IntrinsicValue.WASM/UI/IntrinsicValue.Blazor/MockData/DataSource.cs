@@ -1,15 +1,15 @@
-﻿using IntrinsicValue.Blazor.Model;
+﻿using Financial.Collection.Domain.DTOs;
 
 namespace IntrinsicValue.Blazor.MockData
 {
     public static class DataSource
     {
-        private static List<WatchlistDto> _watchlistLiss { get; set; }
-        public static List<WatchlistDto> InitializeWatchlistData()
+        private static List<TickerListDto> _watchlistLiss { get; set; }
+        public static List<TickerListDto> InitializeWatchlistData()
         {
-            _watchlistLiss = new List<WatchlistDto>()
+            _watchlistLiss = new List<TickerListDto>()
             {
-                new WatchlistDto()
+                new TickerListDto()
                 {
                     Id = Guid.NewGuid(),
                     Name = "Main Portoflio",
@@ -27,7 +27,7 @@ namespace IntrinsicValue.Blazor.MockData
                         CreateRandomTicker("AMD", 120.77m, 2.13m, 56.72m, 173.00m)
                     }
                 },
-                new WatchlistDto()
+                new TickerListDto()
                 {
                     Id = Guid.NewGuid(),
                     Name = "Potentials",
@@ -67,7 +67,7 @@ namespace IntrinsicValue.Blazor.MockData
                 SharesOutstanding = (long)(5000000000 + rand.Next(-1000000000, 1000000000)),
                 TTMCashAndCashEquivalents = (long)(40000000 + rand.Next(-10000000, 10000000)),
                 TTMTotalDebt = (long)(20000000 + rand.Next(-5000000, 5000000)),
-                GrowthRate = new GrowthRateDto()
+                /*GrowthRate = new GrowthRateDto()
                 {
                     Period = "2014 - 2023",
                     Rate = Math.Round(baseRate + (decimal)rand.NextDouble() * 50.0m - 25.0m, 2) // Random change between -25 to +25
@@ -94,7 +94,7 @@ namespace IntrinsicValue.Blazor.MockData
                     Value = Math.Round((basePrice + (basePrice * priceChange / 100) + basePrice * 2m + 100m) / 2m, 2),
                     PriceDifference = priceChange,
                     PriceDifferencePercentage = Math.Round(priceChange / 200m, 2)
-                }
+                }*/
             };
         }
     }

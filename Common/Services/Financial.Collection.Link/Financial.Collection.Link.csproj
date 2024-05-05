@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Domain\Finance.Collection.Domain\Finance.Collection.Domain.csproj" />
+    <ProjectReference Include="..\FinanceScraper\FinanceScraper.Services\FinanceScraper.csproj" />
+    <ProjectReference Include="..\IntrinsicValue\IntrinsicValue.Calculation\IntrinsicValue.Calculation.csproj" />
+  </ItemGroup>
+
+</Project>

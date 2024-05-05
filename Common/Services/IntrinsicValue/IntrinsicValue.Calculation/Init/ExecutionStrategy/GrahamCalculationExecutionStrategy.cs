@@ -14,6 +14,7 @@ using IntrinsicValue.Calculation.DataSets.Results;
 using IntrinsicValue.Calculation.DCFIntrinsicModel.Commands;
 using IntrinsicValue.Calculation.GrahamIntrinsicModel.Commands;
 using System.Diagnostics.CodeAnalysis;
+using Financial.Collection.Domain.DTOs;
 
 namespace FinanceScraper.Common.Init.ExecutionStrategy
 {
@@ -27,12 +28,9 @@ namespace FinanceScraper.Common.Init.ExecutionStrategy
             _ticker = ticker;
         }
 
-        public async Task<MethodResult<ICalculationResult>> ExecuteCalculationStrategy(IScrapeResult scrapeResult, decimal safetyMargin)
+        public async Task<MethodResult<ICalculationResult>> ExecuteCalculationStrategy(TickerDto tickerDto, AAABondDto aaaBondDto, decimal safetyMargin)
         {
-            GrahamIntrinsicScrapeResult grahamScrapeResult = (GrahamIntrinsicScrapeResult)scrapeResult;
-            if (grahamScrapeResult.Ticker is null)
-                grahamScrapeResult.Ticker = _ticker;
-            GrahamIntrinsicModelCommand request = new GrahamIntrinsicModelCommand(grahamScrapeResult, safetyMargin);
+            GrahamIntrinsicModelCommand request = new GrahamIntrinsicModelCommand(tickerDto, aaaBondDto, safetyMargin);
 
             Task<GrahamCalculationResult> result = _mediator.Send(request);
 

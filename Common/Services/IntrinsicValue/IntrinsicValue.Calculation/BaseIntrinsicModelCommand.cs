@@ -8,16 +8,12 @@ namespace IntrinsicValue.Calculation
 {
     public class BaseIntrinsicModelCommand
     {
-        public BaseIntrinsicModelCommand(string ticker, decimal currentPrice)
+        public BaseIntrinsicModelCommand(string symbol, decimal currentPrice)
         {
-            Ticker = ticker;
+            Symbol = symbol;
             CurrentPrice = currentPrice;
         }
-        public BaseIntrinsicModelCommand(string ticker)
-        {
-            Ticker = ticker;
-        }
-        public string Ticker {  get; set; }
+        public string Symbol {  get; set; }
         public decimal CurrentPrice { get; set; }
     }
 }

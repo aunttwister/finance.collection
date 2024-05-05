@@ -1,4 +1,4 @@
-﻿using IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel;
+﻿using Finance.Collection.Domain.IntrinsicValue.Calculation.Results.DCFIntrinsicModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +11,10 @@ namespace Finance.Collection.Domain.Models
     {
         public GrowthRate()
         {
-            HistoricalGrowthRate = new HashSet<HistoricalGrowthRateDataSet>();
+            HistoricalGrowthRate = new HashSet<HistoricalGrowthRateResultDataSet>();
         }
         public string Period { get; set; }
         public decimal AverageGrowthRate { get; set; }
-        public ICollection<HistoricalGrowthRateDataSet> HistoricalGrowthRate { get; set; }
+        public ICollection<HistoricalGrowthRateResultDataSet> HistoricalGrowthRate { get; set; }
     }
 }

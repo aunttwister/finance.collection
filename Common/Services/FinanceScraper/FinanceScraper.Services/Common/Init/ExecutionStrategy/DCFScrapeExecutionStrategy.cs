@@ -38,7 +38,7 @@ namespace FinanceScraper.Common.Init.ExecutionStrategy
 
             await Task.WhenAll(cashFlowTask, balanceSheetTask, statisticsTask);
 
-            DCFIntrinsicScrapeResult dcfScrapeResult = new DCFIntrinsicScrapeResult()
+            DCFScrapeResult dcfScrapeResult = new DCFScrapeResult()
             {
                 Ticker = _ticker,
                 CashFlow = cashFlowTask.Result,

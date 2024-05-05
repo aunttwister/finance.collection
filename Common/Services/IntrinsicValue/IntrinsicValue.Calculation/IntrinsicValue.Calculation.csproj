@@ -15,8 +15,4 @@
     <ProjectReference Include="..\..\..\Domain\Finance.Collection.Domain\Finance.Collection.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DataSets\Results\" />
-  </ItemGroup>
-
 </Project>

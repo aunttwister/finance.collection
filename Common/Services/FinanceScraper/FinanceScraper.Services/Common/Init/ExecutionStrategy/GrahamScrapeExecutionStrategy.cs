@@ -27,7 +27,7 @@ namespace FinanceScraper.Common.Init.ExecutionStrategy
         }
         public async Task<MethodResult<IScrapeResult>> ExecuteScrapeStrategy()
         {
-            SummaryScraperCommand summaryRequest = new SummaryScraperCommand(_ticker, UrlPathConstants.YahooFinanceSummaryScraperPath);
+            YahooFinanceSummaryScraperCommand summaryRequest = new YahooFinanceSummaryScraperCommand(_ticker, UrlPathConstants.YahooFinanceSummaryScraperPath);
             Task<SummaryDataSet> summaryTask = _mediator.Send(summaryRequest);
 
             AnalysisScraperCommand analysisRequest = new AnalysisScraperCommand(_ticker, UrlPathConstants.YahooFinanceAnalysisScraperPath);
@@ -38,7 +38,7 @@ namespace FinanceScraper.Common.Init.ExecutionStrategy
 
             await Task.WhenAll(summaryTask, analysisTask, tripleABondYieldTask);
 
-            GrahamIntrinsicScrapeResult grahamScrapeResult = new GrahamIntrinsicScrapeResult()
+            GrahamScrapeResult grahamScrapeResult = new GrahamScrapeResult()
             {
                 Summary = summaryTask.Result,
                 Analysis = analysisTask.Result,

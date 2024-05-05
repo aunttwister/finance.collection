@@ -20,13 +20,17 @@ namespace FinanceScraper.Common.Init.ExecutionStrategy.Factory
             _mediator = mediator;
             _ticker = ticker;
             // Register individual strategies
+            strategies.Add(new CurrentPriceScrapeExecutionStrategy(_mediator, _ticker));
             strategies.Add(new GrahamScrapeExecutionStrategy(_mediator, _ticker));
             strategies.Add(new DCFScrapeExecutionStrategy(_mediator, _ticker));
         }
         [HandleMethodExecutionAspect]
         public MethodResult<IScrapeExecutionStrategy> GetScrapeExecutionStrategy(InitScrapeCommand request)
         {
-            var selectedStrategies = new List<IScrapeExecutionStrategy>();
+            var selectedStrategies = new List<IScrapeExecutionStrategy>
+            {
+                strategies.OfType<CurrentPriceScrapeExecutionStrategy>().First() //Mandatory scrape
+            };
 
             if (request.ExecuteGrahamScrape)
             {

@@ -1,4 +1,4 @@
-﻿@using IntrinsicValue.Blazor.Model
+﻿@using Financial.Collection.Domain.DTOs
 @using IntrinsicValue.Blazor.Services.StateManagement
 @inject TickerStateService TickerState
 
@@ -43,7 +43,7 @@
         <MudTd DataLabel="No.">1</MudTd>
         <MudTd DataLabel="Ticker">@ticker.Ticker</MudTd>
         <MudTd DataLabel="Current Price">@ticker.CurrentPrice</MudTd>
-        <MudTd DataLabel="Benjamin Graham Model Value">@ticker.BenjaminGrahamModel.Value</MudTd>
+        @* <MudTd DataLabel="Benjamin Graham Model Value">@ticker.BenjaminGrahamModel.Value</MudTd>
         <MudTd DataLabel="Benjamin Graham Model Price Difference">@ticker.BenjaminGrahamModel.PriceDifference</MudTd>
         <MudTd DataLabel="Benjamin Graham Model Price Difference Percent">@ticker.BenjaminGrahamModel.PriceDifferencePercentage.ToString() %</MudTd>
         <MudTd DataLabel="DCF Model Value">@ticker.DCFModel.Value</MudTd>
@@ -51,7 +51,7 @@
         <MudTd DataLabel="DCF Model Price Difference Percent">@ticker.DCFModel.PriceDifferencePercentage.ToString() %</MudTd>
         <MudTd DataLabel="Average Value">@ticker.AverageIntrinsic.Value</MudTd>
         <MudTd DataLabel="Average Price Difference">@ticker.AverageIntrinsic.PriceDifference</MudTd>
-        <MudTd DataLabel="Average Price Difference Percent">@ticker.AverageIntrinsic.PriceDifferencePercentage.ToString() %</MudTd>
+        <MudTd DataLabel="Average Price Difference Percent">@ticker.AverageIntrinsic.PriceDifferencePercentage.ToString() %</MudTd> *@
     </RowTemplate>
 </MudTable>
 

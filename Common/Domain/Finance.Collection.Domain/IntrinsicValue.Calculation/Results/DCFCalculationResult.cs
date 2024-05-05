@@ -1,4 +1,4 @@
-﻿using Finance.Collection.Domain.IntrinsicValue.Calculation.DataSets.DCFIntrinsicModel;
+﻿using Finance.Collection.Domain.IntrinsicValue.Calculation.Results.DCFIntrinsicModel;
 using Finance.Collection.Domain.IntrinsicValue.Calculation.Results;
 using Finance.Collection.Domain.IntrinsicValue.Calculation.Results.Base;
 using System;
@@ -12,60 +12,21 @@ namespace IntrinsicValue.Calculation.DataSets.Results
     public class DCFCalculationResult : BaseCalculationResult, ICalculationResult
     {
         public DCFCalculationResult(
-            string ticker,
-            decimal sharesOutstanding,
-            ValuationDataSet valuationDataSet,
-            AssetsDataSet assetsDataSet,
-            LiabilitiesDataSet liabilitiesDataSet,
-            CashFlowDataSet cashFlowDataSet,
-            GrowthRateDataSet growthRateDataSet,
-            ConfigurationDataSet configurationDataSet) : base(valuationDataSet.DiscountedCashFlowValue.Value)
+            decimal intrinsicValue,
+            decimal buyPrice,
+            decimal priceDifference,
+            decimal priceDifferencePercent,
+            decimal equityValue,
+            IEnumerable<EstimatedCashFlowResultDataSet> estimatedCashFlow,
+            HistoricalGrowthRateResultDataSet historicalGrowthRate) : base(intrinsicValue, buyPrice, priceDifference, priceDifferencePercent) 
         {
-            Ticker = ticker;
-
-            //Config params
-            ConfigurationDataSet = configurationDataSet;
-
-            //Specifics
-            SharesOutstanding = sharesOutstanding;
-            ValuationDataSet = valuationDataSet;
-            AssetsDataSet = assetsDataSet;
-            LiabilitiesDataSet = liabilitiesDataSet;
-            CashFlowDataSet = cashFlowDataSet;
-            GrowthRateDataSet = growthRateDataSet;
+            EquityValue = equityValue;
+            EstimatedCashFlows = estimatedCashFlow;
+            HistoricalGrowthRate = historicalGrowthRate;
         }
-        public DCFCalculationResult(
-            string ticker,
-            decimal currentPrice,
-            decimal sharesOutstanding,
-            ValuationDataSet valuationDataSet,
-            AssetsDataSet assetsDataSet,
-            LiabilitiesDataSet liabilitiesDataSet,
-            CashFlowDataSet cashFlowDataSet,
-            GrowthRateDataSet growthRateDataSet,
-            ConfigurationDataSet configurationDataSet,
-            decimal safetyMargin) : base(currentPrice, valuationDataSet.DiscountedCashFlowValue.Value, safetyMargin)
-        {
-            Ticker = ticker;
 
-            //Config params
-            ConfigurationDataSet = configurationDataSet;
-
-            //Specifics
-            SharesOutstanding = sharesOutstanding;
-            ValuationDataSet = valuationDataSet;
-            AssetsDataSet = assetsDataSet;
-            LiabilitiesDataSet = liabilitiesDataSet;
-            CashFlowDataSet = cashFlowDataSet;
-            GrowthRateDataSet = growthRateDataSet;
-        }
-        public string Ticker { get; set; }
-        public decimal SharesOutstanding { get; set; }
-        public CashFlowDataSet CashFlowDataSet { get; set; }
-        public GrowthRateDataSet GrowthRateDataSet { get; set; }
-        public AssetsDataSet AssetsDataSet { get; set; }
-        public LiabilitiesDataSet LiabilitiesDataSet { get; set; }
-        public ValuationDataSet ValuationDataSet { get; set; }
-        public ConfigurationDataSet ConfigurationDataSet { get; set; }
+        public decimal EquityValue { get; set; }
+        public IEnumerable<EstimatedCashFlowResultDataSet> EstimatedCashFlows { get; set; }
+        public HistoricalGrowthRateResultDataSet HistoricalGrowthRate { get; set; }
     }
 }

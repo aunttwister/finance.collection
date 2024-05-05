@@ -10,7 +10,6 @@ namespace Finance.Collection.Domain.FinanceScraper.DataSets
 {
     public class SummaryDataSet : IFinanceDataSet
     {
-        public MethodResult<decimal> CurrentPrice { get; set; }
         public MethodResult<decimal> Eps { get; set; }
     }
 }
