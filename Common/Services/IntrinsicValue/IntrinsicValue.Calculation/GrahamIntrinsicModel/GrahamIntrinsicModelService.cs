@@ -20,7 +20,7 @@ namespace IntrinsicValue.Calculation.GrahamIntrinsicModel
             decimal priceDifference = _postValuationService.CalculatePriceDifference(buyPrice, request.CurrentPrice);
             decimal priceDifferencePercent = _postValuationService.CalculatePriceDifferencePercent(priceDifference, request.CurrentPrice);
 
-            return new GrahamCalculationResult(intrinsicValue, buyPrice, priceDifference, priceDifferencePercent);
+            return new GrahamCalculationResult(intrinsicValue, buyPrice, priceDifference, priceDifferencePercent, request.SafetyMargin);
         }
     }
 }

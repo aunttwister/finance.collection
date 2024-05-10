@@ -11,11 +11,11 @@
         @if (TickerState.SelectedTicker is not null)
         {
             <MudDrawerHeader class="p-2">
-                <MudText Typo="Typo.h6">@($"{TickerState.SelectedTicker.Ticker} Details")</MudText>
+                <MudText Typo="Typo.h6">@($"{TickerState.SelectedTicker.Symbol} Details")</MudText>
             </MudDrawerHeader>
             <MudDrawerContainer class="p-2">
                 <MudListItem>
-                    <MudText Typo="Typo.subtitle1">@($"Symbol: {TickerState.SelectedTicker.Ticker}")</MudText>
+                    <MudText Typo="Typo.subtitle1">@($"Symbol: {TickerState.SelectedTicker.Symbol}")</MudText>
                     <MudText Typo="Typo.subtitle1">@($"Current Price: {TickerState.SelectedTicker.CurrentPrice}")</MudText>
                     <MudText Typo="Typo.subtitle1">@($"P/E: {TickerState.SelectedTicker.PE}")</MudText>
                 </MudListItem>

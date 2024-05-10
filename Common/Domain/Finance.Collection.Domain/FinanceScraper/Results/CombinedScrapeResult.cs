@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Finance.Collection.Domain.Common.Results;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Finance.Collection.Domain.FinanceScraper.Results
 {
-    public class CombinedScrapeResult : IScrapeResult
+    public class CombinedScrapeResult : IScrapeResult, ICombinedResult
     {
         public string Ticker { get; set; }
         private readonly Dictionary<Type, IScrapeResult> _results;
@@ -40,6 +41,5 @@ namespace Finance.Collection.Domain.FinanceScraper.Results
 
             return _results.Keys.Where(condition).AsEnumerable();
         }
-
     }
 }

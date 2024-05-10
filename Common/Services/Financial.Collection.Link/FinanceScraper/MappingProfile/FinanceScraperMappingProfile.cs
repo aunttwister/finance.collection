@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Finance.Collection.Domain.Common.Helpers.AutoMapper;
 using Finance.Collection.Domain.FinanceScraper.Results;
 using Finance.Collection.Domain.IntrinsicValue.Calculation.Results;
 using FinanceScraper.Common.Init.Commands;
@@ -77,37 +78,29 @@ namespace Financial.Collection.Link.FinanceScraper.MappingProfile
             CreateMap<CombinedScrapeResult, TickerDto>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Symbol, opt => opt.MapFrom(src => src.Ticker))
-                .ForMember(dest => dest.CurrentPrice, opt =>
-                    opt.MapFrom(src => src.GetResult<CurrentPriceScrapeResult>().CurrentPrice.CurrentPrice.IsSuccessful ?
-                        src.GetResult<CurrentPriceScrapeResult>().CurrentPrice.CurrentPrice.Data : 0m))
-
-                .ForMember(dest => dest.EPS, opt =>
-                    opt.MapFrom(src => src.GetResult<GrahamScrapeResult>().Summary.Eps.IsSuccessful ?
-                        src.GetResult<GrahamScrapeResult>().Summary.Eps.Data : 0m))
+                .ForMember(dest => dest.CurrentPrice, opt => opt.MapFrom(src => MappingHelpers.MapCurrentPrice(src)))
+                .ForMember(dest => dest.EPS, opt => opt.MapFrom(src => MappingHelpers.MapEPS(src)))
                 .ForMember(dest => dest.PE, opt => opt.Ignore())
-                .ForMember(dest => dest.ExpectedFiveYearGrowth, opt =>
-                    opt.MapFrom(src => src.GetResult<GrahamScrapeResult>().Analysis.FiveYearGrowth.IsSuccessful ?
-                        src.GetResult<GrahamScrapeResult>().Analysis.FiveYearGrowth.Data : 0m))
-
-                .ForMember(dest => dest.SharesOutstanding, opt =>
-                    opt.MapFrom(src => src.GetResult<DCFScrapeResult>().Statistics.SharesOutstanding.IsSuccessful ?
-                        src.GetResult<DCFScrapeResult>().Statistics.SharesOutstanding.Data : 0m))
-                .ForMember(dest => dest.TTMCashAndCashEquivalents, opt =>
-                    opt.MapFrom(src => src.GetResult<DCFScrapeResult>().BalanceSheet.TTMCashEquivalents.IsSuccessful ?
-                        src.GetResult<DCFScrapeResult>().BalanceSheet.TTMCashEquivalents.Data : 0m))
-                .ForMember(dest => dest.TTMTotalDebt, opt =>
-                    opt.MapFrom(src => src.GetResult<DCFScrapeResult>().BalanceSheet.TTMTotalDebt.IsSuccessful ?
-                        src.GetResult<DCFScrapeResult>().BalanceSheet.TTMTotalDebt.Data : 0m))
+                .ForMember(dest => dest.ExpectedFiveYearGrowth, opt => opt.MapFrom(src => MappingHelpers.MapExpectedFiveYearGrowth(src)))
+                .ForMember(dest => dest.SharesOutstanding, opt => opt.MapFrom(src => MappingHelpers.MapSharesOutstanding(src)))
+                .ForMember(dest => dest.TTMCashAndCashEquivalents, opt => opt.MapFrom(src => MappingHelpers.MapTTMCashAndCashEquivalents(src)))
+                .ForMember(dest => dest.TTMTotalDebt, opt => opt.MapFrom(src => MappingHelpers.MapTTMTotalDebt(src)))
                 .ForMember(dest => dest.Notes, opt => opt.Ignore())
                 .ForMember(dest => dest.EarningsDate, opt => opt.Ignore())
                 .ForMember(dest => dest.YearlyData, opt => opt.Ignore())
-                    .AfterMap((src, dest) =>
+                .AfterMap((src, dest) =>
+                {
+                    var dcfs = src.GetResult<DCFScrapeResult>();
+                    if (dcfs != null)
                     {
-                        dest.YearlyData = GenerateYearlyData(src.GetResult<DCFScrapeResult>());
-                    })
+                        dest.YearlyData = GenerateYearlyData(dcfs);
+                    }
+                })
                 .ForMember(dest => dest.Tickerlists, opt => opt.Ignore())
                 .ForMember(dest => dest.TickerIntrinsicValues, opt => opt.Ignore())
                 .ForMember(dest => dest.ScrapeDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
 
             //AAABondDto mappings
             CreateMap<GrahamScrapeResult, AAABondDto>()
@@ -136,35 +129,46 @@ namespace Financial.Collection.Link.FinanceScraper.MappingProfile
         {
             var yearlyData = new Dictionary<string, YearlyDataDto>();
 
-            // Merge data from HistoricalCashFlow
-            foreach (var entry in src.CashFlow.HistoricalCashFlows.Data)
+            if (src.CashFlow.HistoricalCashFlows.IsSuccessfulKey && src.CashFlow.HistoricalCashFlows.IsSuccessfulValue)
             {
-                if (!yearlyData.ContainsKey(entry.Key))
+                // Merge data from HistoricalCashFlow
+                foreach (var entry in src.CashFlow.HistoricalCashFlows.Data)
                 {
-                    yearlyData[entry.Key] = new YearlyDataDto { Id = Guid.NewGuid(), Year = entry.Key };
+                    if (!yearlyData.ContainsKey(entry.Key))
+                    {
+                        yearlyData[entry.Key] = new YearlyDataDto { Id = Guid.NewGuid(), Year = entry.Key };
+                    }
+                    yearlyData[entry.Key].CashFlow = entry.Value;
                 }
-                yearlyData[entry.Key].CashFlow = entry.Value;
             }
 
-            // Merge data from HistoricalTotalDebt
-            foreach (var entry in src.BalanceSheet.HistoricalTotalDebt.Data)
+            if (src.BalanceSheet.HistoricalTotalDebt.IsSuccessfulKey && src.BalanceSheet.HistoricalTotalDebt.IsSuccessfulValue)
             {
-                if (!yearlyData.ContainsKey(entry.Key))
+                // Merge data from HistoricalTotalDebt
+                foreach (var entry in src.BalanceSheet.HistoricalTotalDebt.Data)
                 {
-                    yearlyData[entry.Key] = new YearlyDataDto { Id = Guid.NewGuid(), Year = entry.Key };
+                    if (!yearlyData.ContainsKey(entry.Key))
+                    {
+                        yearlyData[entry.Key] = new YearlyDataDto { Id = Guid.NewGuid(), Year = entry.Key };
+                    }
+                    yearlyData[entry.Key].TotalDebt = entry.Value;
                 }
-                yearlyData[entry.Key].TotalDebt = entry.Value;
             }
 
-            // Merge data from HistoricalCashAndCashEquivalents
-            foreach (var entry in src.BalanceSheet.HistoricalCashEquivalents.Data)
+
+            if (src.BalanceSheet.HistoricalCashEquivalents.IsSuccessfulKey && src.BalanceSheet.HistoricalCashEquivalents.IsSuccessfulValue)
             {
-                if (!yearlyData.ContainsKey(entry.Key))
+                // Merge data from HistoricalCashAndCashEquivalents
+                foreach (var entry in src.BalanceSheet.HistoricalCashEquivalents.Data)
                 {
-                    yearlyData[entry.Key] = new YearlyDataDto { Id = Guid.NewGuid(), Year = entry.Key };
+                    if (!yearlyData.ContainsKey(entry.Key))
+                    {
+                        yearlyData[entry.Key] = new YearlyDataDto { Id = Guid.NewGuid(), Year = entry.Key };
+                    }
+                    yearlyData[entry.Key].CashAndCashEquivalents = entry.Value;
                 }
-                yearlyData[entry.Key].CashAndCashEquivalents = entry.Value;
             }
+                
 
             // Convert dictionary to list
             return yearlyData.Values.ToList();

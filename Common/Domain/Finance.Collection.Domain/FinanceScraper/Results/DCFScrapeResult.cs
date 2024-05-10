@@ -1,4 +1,5 @@
-﻿using Finance.Collection.Domain.FinanceScraper.DataSets;
+﻿using Finance.Collection.Domain.Common.Results;
+using Finance.Collection.Domain.FinanceScraper.DataSets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Finance.Collection.Domain.FinanceScraper.Results
 {
-    public class DCFScrapeResult : IScrapeResult, ICalculable
+    public class DCFScrapeResult : IScrapeResult, ICalculable, ISingleResult
     {
         public string Ticker { get; set; }
         public CashFlowDataSet CashFlow { get; set; }

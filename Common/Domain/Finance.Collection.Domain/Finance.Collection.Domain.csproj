@@ -6,4 +6,9 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="FinanceScraper\Results\DTOs\" />
+    <Folder Include="IntrinsicValue.Calculation\Results\DTOs\" />
+  </ItemGroup>
+
 </Project>

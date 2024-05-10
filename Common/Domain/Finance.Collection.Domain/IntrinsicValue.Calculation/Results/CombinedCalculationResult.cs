@@ -1,4 +1,5 @@
-﻿using Finance.Collection.Domain.FinanceScraper.Results;
+﻿using Finance.Collection.Domain.Common.Results;
+using Finance.Collection.Domain.FinanceScraper.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Finance.Collection.Domain.IntrinsicValue.Calculation.Results
 {
-    public class CombinedCalculationResult : ICalculationResult
+    public class CombinedCalculationResult : ICalculationResult, ICombinedResult
     {
         private readonly Dictionary<Type, ICalculationResult> _results;
 

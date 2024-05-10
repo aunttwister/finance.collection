@@ -16,6 +16,7 @@ namespace IntrinsicValue.Calculation.DataSets.Results
             decimal intrinsicValue,
             decimal buyPrice,
             decimal priceDifference,
-            decimal priceDifferencePercent) : base(intrinsicValue, buyPrice, priceDifference, priceDifferencePercent) { }
+            decimal priceDifferencePercent,
+            decimal safetyMargin) : base(intrinsicValue, buyPrice, priceDifference, priceDifferencePercent, safetyMargin) { }
     }
 }

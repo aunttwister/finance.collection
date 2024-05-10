@@ -1,8 +1,13 @@
 ﻿@page "/calculate";
-@using Financial.Collection.Link.FinanceScraper.Encapsulation
+@using Finance.Collection.Domain.DTOs.Results
+@using Financial.Collection.Domain.DTOs
+@using Financial.Collection.Link.Blazor.WASM.Calculator.Encapsulation
 @using Financial.Collection.Link.Blazor.WASM.Calculator.Services
+@using Financial.Collection.Link.FinanceScraper.Encapsulation
+@using Financial.Collection.Link.IntrinsicValue.Calculation.Encapsulator
 @inject ISnackbar Snackbar;
 @inject IValuationAnalysisService _valuationAnalysisService;
+@inject IDialogService DialogService
 
 <PageTitle>Calculate</PageTitle>
 <MudContainer Class="my-4">
@@ -29,17 +34,38 @@
             </MudItem>
             <MudItem xs="12" sm="2">
             </MudItem>
-            <MudItem sm="12" hidden="true">
-                <Result />
-            </MudItem>
+            @if (isLoading)
+            {
+                <MudItem xs="12" sm="12" Class="d-flex justify-center align-center">
+                    <MudProgressCircular Indeterminate="true" />
+                </MudItem>
+            }
+            else
+            {
+                <MudItem xs="12">
+                    <Result @ref="resultView" />
+                </MudItem>
+            }
         </MudGrid>
     </MudContainer>
 </MudContainer>
 
+<style>
+    .my-blur-class {
+        backdrop-filter: blur(10px);
+    }
+</style>
+
 @code {
     Configuration config;
+    Result resultView;
+
+    ScrapeResultDto scrapeResultDto;
+    CalculationResultDto calculationResultDto;
+    IResultDto currentResult;
 
     private string ticker = "";
+    bool isLoading = false;
 
     private async void CalculateValue()
     {
@@ -48,14 +74,68 @@
             Snackbar.Add("Please enter a valid ticker symbol.", Severity.Error);
             return;
         }
-        Snackbar.Add("Calculating intrinsic value for: " + ticker, Severity.Success);
 
-        ScraperParameterEncapsulator parameters = config.GatherConfigurationParameters(ticker);
-        
-        var result = await _valuationAnalysisService.PerformAnalysis(parameters);
-        
-        int test = 1;
+        ParameterEncapsulator parameters = config.GatherConfigurationParameters(ticker);
+
+        if (parameters.ScraperParameterEncapsulator.ExecuteGrahamScrape is false && parameters.ScraperParameterEncapsulator.ExecuteDCFScrape is false)
+            Snackbar.Add("No calculation type selected. Please try again.", Severity.Error);
+        else
+        {
+            isLoading = true;
+            StateHasChanged();
+
+            Snackbar.Add($"Calculating intrinsic value for: {ticker}. Please wait.", Severity.Info);
+
+            currentResult = await _valuationAnalysisService.PerformScrape(parameters.ScraperParameterEncapsulator);
+
+            isLoading = false;
+            StateHasChanged();
+
+            if (currentResult.Exceptions is not null && currentResult.Exceptions.Count > 0)
+            {
+                resultView.SetResult(currentResult);
+                foreach (var exception in currentResult.Exceptions)
+                {
+                    Snackbar.Add($"{exception.Message}", Severity.Error);
+                }
+
+                await OpenMissingValuesDialog(currentResult, "Insert Missing Values.");
+
+                parameters.CalculationParameterEncapsulator.TickerDto = currentResult.TickerDto;
+                parameters.CalculationParameterEncapsulator.AAABondDto = currentResult.AAABondDto;
+
+                currentResult = await _valuationAnalysisService.PerformValuation(parameters.CalculationParameterEncapsulator);
+
+                resultView.SetResult(currentResult);
+            }
+            else
+            {
+                if (parameters.CheckScrapeResult)
+                {
+                    await OpenMissingValuesDialog(currentResult, "Double Check Data For Calculation!");
+
+                    parameters.CalculationParameterEncapsulator.TickerDto = currentResult.TickerDto;
+                    parameters.CalculationParameterEncapsulator.AAABondDto = currentResult.AAABondDto;
+
+                    currentResult = await _valuationAnalysisService.PerformValuation(parameters.CalculationParameterEncapsulator);
+
+                    resultView.SetResult(currentResult);
+                }
+                else
+                {
+                    parameters.CalculationParameterEncapsulator.TickerDto = currentResult.TickerDto;
+                    parameters.CalculationParameterEncapsulator.AAABondDto = currentResult.AAABondDto;
+
+                    currentResult = await _valuationAnalysisService.PerformValuation(parameters.CalculationParameterEncapsulator);
+
+                    resultView.SetResult(currentResult);
+                }
+            }
+
+            config.ResetConfig();
+        }
     }
+
 
     private Task SearchTicker(KeyboardEventArgs args)
     {
@@ -63,7 +143,35 @@
             CalculateValue();
         return Task.CompletedTask;
     }
-}
-@code {
+}  
 
+@code {
+    private async Task OpenMissingValuesDialog(IResultDto resultParam, string header)
+    {
+        var parameters = new DialogParameters
+        {
+            { "Result", resultParam }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseButton = true,
+            ClassBackground = "my-blur-class",
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true
+        };
+
+        var dialog = DialogService.Show<InsertMissingValuesDialog>(header, parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            currentResult = (IResultDto)result.Data;
+            Snackbar.Add("Successfully calculated intrinsic value for ticker: " + ticker, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("Intrinsic Valuation Aborted.", Severity.Error);
+        }
+    }
 }

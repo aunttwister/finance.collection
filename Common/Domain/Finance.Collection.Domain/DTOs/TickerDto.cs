@@ -4,6 +4,7 @@
     {
         public TickerDto()
         {
+            YearlyData = new List<YearlyDataDto>();
             TickerIntrinsicValues = new List<HistoricalTickerIntrinsicValueDto>();
         }
         public Guid Id { get; set; }

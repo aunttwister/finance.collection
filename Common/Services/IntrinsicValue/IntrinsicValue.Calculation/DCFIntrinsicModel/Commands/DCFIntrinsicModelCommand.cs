@@ -14,9 +14,9 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel.Commands
     {
         public DCFIntrinsicModelCommand(
             TickerDto tickerDto,
+            decimal safetyMargin,
             decimal discountRate = 0.08m,
-            decimal perpetualRate = 0.025m,
-            decimal safetyMargin = 0.75m) : base(tickerDto.Symbol, tickerDto.CurrentPrice)
+            decimal perpetualRate = 0.025m) : base(tickerDto.Symbol, tickerDto.CurrentPrice)
         {
             HistoricalCashFlow = tickerDto.YearlyData
                 .Where(data => data.CashFlow != 0m)

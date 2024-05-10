@@ -12,15 +12,15 @@ namespace IntrinsicValue.Calculation.Init.ExecutionStrategy
     public class DCFCalculationExecutionStrategy : ICalculationExecutionStrategy
     {
         private readonly IMediator _mediator;
-        private readonly string _ticker;
+        private readonly string _symbol;
         /*public DCFCalculationExecutionStrategy(IMediator mediator)
         {
             _mediator = mediator;
         }*/
-        public DCFCalculationExecutionStrategy(IMediator mediator, string ticker)
+        public DCFCalculationExecutionStrategy(IMediator mediator, string symbol)
         {
             _mediator = mediator;
-            _ticker = ticker;
+            _symbol = symbol;
         }
 
         public async Task<MethodResult<ICalculationResult>> ExecuteCalculationStrategy(TickerDto tickerDto, AAABondDto aaaBondDto, decimal safetyMargin)

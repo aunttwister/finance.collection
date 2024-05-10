@@ -12,6 +12,8 @@ using Financial.Collection.Link.Blazor.WASM.Calculator.ServiceRegistar;
 using Financial.Collection.Link.Blazor.WASM.Calculator.Services;
 using Financial.Collection.Link.FinanceScraper.Encapsulation;
 using Financial.Collection.Domain.DTOs;
+using Finance.Collection.Domain.DTOs.Results;
+using Financial.Collection.Link.IntrinsicValue.Calculation.Encapsulator;
 
 namespace FinanceScrape.Executable.InitDebug
 {
@@ -24,23 +26,33 @@ namespace FinanceScrape.Executable.InitDebug
             IMediator _mediator = serviceProvider.GetRequiredService<IMediator>();
             IValuationAnalysisService _valuationAnalysisService = serviceProvider.GetRequiredService<IValuationAnalysisService>();
 
-            string ticker1 = "VRT";
+            string ticker1 = "NTDOY";
 
             bool executeGraham = true;
             bool executeDcf = true;
 
-            decimal safetyMargin = 0.65m;
+            decimal safetyMargin = 65m;
 
             ScraperParameterEncapsulator request = new ScraperParameterEncapsulator()
             {
                 Ticker = ticker1,
                 ExecuteGrahamScrape = executeGraham,
                 ExecuteDCFScrape = executeDcf,
-                SafetyMargin = safetyMargin,
-                UseHtmlContent = true
+                UseHtmlContent = false
             };
 
-            MethodResultExceptionSum<TickerDto> tickerDto = await _valuationAnalysisService.PerformAnalysis(request);
+            ScrapeResultDto scrapeResultDto = await _valuationAnalysisService.PerformScrape(request);
+
+            CalculationParameterEncapsulator calculationParameterEncapsulator = new CalculationParameterEncapsulator()
+            {
+                TickerDto = scrapeResultDto.TickerDto,
+                AAABondDto = scrapeResultDto.AAABondDto,
+                ExecuteGrahamCalculation = executeGraham,
+                ExecuteDCFCalculation = executeDcf,
+                SafetyMargin = safetyMargin
+            };
+
+            CalculationResultDto calculationResultDto = await _valuationAnalysisService.PerformValuation(calculationParameterEncapsulator);
 
             Console.Write($"Run time: {DateTime.Now - startTime}");
             Console.WriteLine();

@@ -1,4 +1,6 @@
-﻿@using Financial.Collection.Link.FinanceScraper.Encapsulation
+﻿@using Financial.Collection.Link.Blazor.WASM.Calculator.Encapsulation
+@using Financial.Collection.Link.FinanceScraper.Encapsulation
+@using Financial.Collection.Link.IntrinsicValue.Calculation.Encapsulator
 
 <MudContainer Class="mt-6">
     <MudExpansionPanels>
@@ -10,9 +12,9 @@
                 <MudStack Spacing="4">
                     <MudPaper Elevation="4" Class="pa-6">
                         <MudText Typo="Typo.body1">Calculation types</MudText>
-                        <MudChipSet Class="mt-2" @bind-SelectedChips="CalculationTypes" MultiSelection="true" Filter="true">
-                            <MudChip id="ExecuteGrahamScrape" Text="purple" Variant="Variant.Outlined" Color="Color.Primary">Benjamin Graham</MudChip>
-                            <MudChip id="ExecuteDCFScrape" Text="purple" Variant="Variant.Outlined" Color="Color.Primary">Discounted Cash Flow</MudChip>
+                        <MudChipSet Class="mt-2" @bind-SelectedChips="calculationTypes" MultiSelection="true" Filter="true">
+                            <MudChip id="executeGraham" Text="purple" Variant="Variant.Outlined" Color="Color.Primary">Benjamin Graham</MudChip>
+                            <MudChip id="executeDCF" Text="purple" Variant="Variant.Outlined" Color="Color.Primary">Discounted Cash Flow</MudChip>
                         </MudChipSet>
                     </MudPaper>
                 </MudStack>
@@ -21,7 +23,10 @@
                         <MudText Typo="Typo.body1">Safety Margin</MudText>
                         <MudGrid>
                             <MudItem sm="6">
-                                <MudNumericField Class="mt-3" @bind-Value="SafetyMargin" Label="Safety Margin" Variant="Variant.Outlined" Step="5M" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Percent" HelperText="Percentage of intrinsic value to be displayed" HelperTextOnFocus="true" />
+                                <MudNumericField Class="mt-3" @bind-Value="safetyMargin" Label="Safety Margin" Variant="Variant.Outlined" Step="5M" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Percent" HelperText="Percentage of intrinsic value to be displayed" HelperTextOnFocus="true" />
+                            </MudItem>
+                            <MudItem sm="6">
+                                <MudCheckBox @bind-Value="@checkScrapeResult" Color="Color.Primary" Dense="true" Label="Check Data Before Calculation"></MudCheckBox>
                             </MudItem>
                         </MudGrid>
                     </MudPaper>
@@ -32,32 +37,67 @@
 </MudContainer>
 
 @code {
-    public decimal? SafetyMargin { get; set; }
-    MudChip[] CalculationTypes;
+    public decimal? safetyMargin { get; set; }
+    MudChip[] calculationTypes = Array.Empty<MudChip>();
 
-    bool ExecuteGrahamScrape = false;
-    bool ExecuteDCFScrape = false;
+    bool executeGraham = false;
+    bool executeDCF = false;
+    bool checkScrapeResult = false;
 
-    public ScraperParameterEncapsulator GatherConfigurationParameters(string ticker)
+    public ParameterEncapsulator GatherConfigurationParameters(string ticker)
     {
-        var grahamChipId = CalculationTypes.FirstOrDefault(c => c.FieldId == "ExecuteGrahamScrape" && c.IsSelected);
-        if (!string.IsNullOrWhiteSpace(grahamChipId.FieldId))
-            ExecuteGrahamScrape = true;
-    
-        var dcfChipId = CalculationTypes.FirstOrDefault(c => c.FieldId == nameof(ExecuteDCFScrape) && c.IsSelected);
-        if (!string.IsNullOrWhiteSpace(dcfChipId.FieldId))
-            ExecuteDCFScrape = true;
-    
-        if (SafetyMargin == null)
-            SafetyMargin = 100;
-    
-        return new ScraperParameterEncapsulator()
+        if (calculationTypes.Count() < 1)
+            return new ParameterEncapsulator()
             {
-                Ticker = ticker,
-                ExecuteGrahamScrape = ExecuteGrahamScrape,
-                ExecuteDCFScrape = ExecuteDCFScrape,
-                UseHtmlContent = true,
-                SafetyMargin = SafetyMargin.Value
+                ScraperParameterEncapsulator = new ScraperParameterEncapsulator()
+                {
+                    Ticker = ticker
+                }
             };
+
+        MudChip grahamChipId = calculationTypes.FirstOrDefault(c => c.FieldId == nameof(executeGraham));
+        if (grahamChipId is not null)
+            if (grahamChipId.IsSelected)
+                executeGraham = grahamChipId.IsSelected;
+
+        MudChip dcfChipId = calculationTypes.FirstOrDefault(c => c.FieldId == nameof(executeDCF));
+        if (dcfChipId is not null)
+            if (dcfChipId.IsSelected)
+                executeDCF = dcfChipId.IsSelected;
+
+        if (safetyMargin == null)
+            safetyMargin = 100;
+
+        ScraperParameterEncapsulator scraperParameters = new ScraperParameterEncapsulator()
+        {
+            Ticker = ticker,
+            ExecuteGrahamScrape = executeGraham,
+            ExecuteDCFScrape = executeDCF,
+            UseHtmlContent = true
+        };
+
+        CalculationParameterEncapsulator calculationParameters = new CalculationParameterEncapsulator()
+        {
+            ExecuteGrahamCalculation = executeGraham,
+            ExecuteDCFCalculation = executeDCF,
+            SafetyMargin = safetyMargin.Value
+        };
+
+        return new ParameterEncapsulator()
+        {
+            ScraperParameterEncapsulator = scraperParameters,
+            CalculationParameterEncapsulator = calculationParameters,
+            CheckScrapeResult = checkScrapeResult
+        };
+    }
+
+    public void ResetConfig()
+    {
+        executeGraham = false;
+        executeDCF = false;
+        checkScrapeResult = false;
+        calculationTypes = Array.Empty<MudChip>();
+
+        StateHasChanged();
     }
 }

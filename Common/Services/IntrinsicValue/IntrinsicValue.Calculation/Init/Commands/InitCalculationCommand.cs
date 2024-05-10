@@ -13,8 +13,7 @@ namespace IntrinsicValue.Calculation.Init.Commands
 {
     public class InitCalculationCommand : IRequest<MethodResult<ICalculationResult>>
     {
-        public string Ticker { get; set; }
-        public IEnumerable<Type> ScrapeTypes { get; set; }
+        public IEnumerable<Type> CalculationExecutionTypes { get; set; }
         public TickerDto TickerDto { get; set; }
         public AAABondDto AAABondDto { get; set; }
         public decimal SafetyMargin { get; set; }

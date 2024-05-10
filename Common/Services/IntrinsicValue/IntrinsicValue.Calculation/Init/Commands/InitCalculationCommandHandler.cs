@@ -23,7 +23,7 @@ namespace IntrinsicValue.Calculation.Init.Commands
 
         public async Task<MethodResult<ICalculationResult>> Handle(InitCalculationCommand request, CancellationToken cancellationToken)
         {
-            MethodResult<ICalculationExecutionStrategy> strategyResolveResult = SwitchStrategy(request.ScrapeTypes, _mediator, request.Ticker);
+            MethodResult<ICalculationExecutionStrategy> strategyResolveResult = SwitchStrategy(request.CalculationExecutionTypes, _mediator, request.TickerDto.Symbol);
             if (!strategyResolveResult.IsSuccessful)
             {
                 return new MethodResult<ICalculationResult>(
@@ -35,9 +35,9 @@ namespace IntrinsicValue.Calculation.Init.Commands
             return await _executionStrategy.ExecuteCalculationStrategy(request.TickerDto, request.AAABondDto, request.SafetyMargin);
         }
 
-        private MethodResult<ICalculationExecutionStrategy> SwitchStrategy(IEnumerable<Type> scrapeTypes, IMediator _mediator, string ticker)
+        private MethodResult<ICalculationExecutionStrategy> SwitchStrategy(IEnumerable<Type> scrapeTypes, IMediator _mediator, string symnbol)
         {
-            var factory = new CalculationExecutionStrategyFactory(_mediator, ticker);
+            var factory = new CalculationExecutionStrategyFactory(_mediator, symnbol);
             return factory.GetCalculationExecutionStrategy(scrapeTypes);
         }
     }

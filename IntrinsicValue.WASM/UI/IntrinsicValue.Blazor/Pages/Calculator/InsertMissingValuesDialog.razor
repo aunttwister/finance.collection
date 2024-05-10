@@ -1,0 +1,98 @@
+﻿@using Finance.Collection.Domain.DTOs.Results
+@using Financial.Collection.Domain.DTOs
+@using System.Globalization
+
+<MudDialog>
+    <DialogContent>
+        <MudGrid>
+            <MudItem sm="2"></MudItem>
+            <MudItem sm="8">
+                <MudForm @ref="form" Class="form-container content-center">
+                    <MudGrid>
+                        <MudItem sm="6">
+                            <MudText Typo="Typo.h6">@Result.TickerDto?.Symbol</MudText>
+                        </MudItem>
+                        <MudItem sm="6">
+                            <MudNumericField @bind-Value="Result.TickerDto.CurrentPrice" Label="Current Price" Required="true" Min="1" HideSpinButtons="true" Culture="@_en" Format="N2" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Adornment="Adornment.Start" />
+                        </MudItem>
+                        <MudItem sm="6">
+                            <MudNumericField @bind-Value="Result.TickerDto.EPS" Label="EPS" Required="true" HideSpinButtons="true" Culture="_en" Format="N2" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Adornment="Adornment.Start" />
+                        </MudItem>
+                        <MudItem sm="6">
+                            <MudNumericField @bind-Value="Result.TickerDto.ExpectedFiveYearGrowth" Label="Expected Five-Year Growth" Required="true" HideSpinButtons="true" Culture="@_en" Format="N2" AdornmentIcon="@Icons.Material.Filled.Percent" Adornment="Adornment.End" />
+                        </MudItem>
+                        <MudItem sm="6">
+                            <MudNumericField @bind-Value="Result.TickerDto.SharesOutstanding" Label="Shares Outstanding" Required="true" Min="1" HideSpinButtons="true" Culture="@_en" Format="N2" />
+                        </MudItem>
+                        <MudItem sm="6">
+                            <MudNumericField @bind-Value="Result.TickerDto.TTMCashAndCashEquivalents" Label="TTM Cash and Cash Equivalents" Required="true" Min="1" HideSpinButtons="true" Culture="@_en" Format="N2" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Adornment="Adornment.Start" />
+                        </MudItem>
+                        <MudItem sm="6">
+                            <MudNumericField @bind-Value="Result.TickerDto.TTMTotalDebt" Label="TTM Total Debt" Required="true" Min="1" HideSpinButtons="true" Culture="@_en" Format="N2" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Adornment="Adornment.Start" />
+                        </MudItem>
+                        <MudItem sm="6">
+                            <MudNumericField @bind-Value="Result.TickerDto.YearlyData.First().CashFlow" Label="Latest Cash Flow" Required="true" HideSpinButtons="true" Culture="@_en" Format="N2" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Adornment="Adornment.Start" />
+                        </MudItem>
+                    </MudGrid>
+                </MudForm>
+            </MudItem>
+            <MudItem sm="2"></MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudContainer Class="mb-4 mr-4">
+            <MudGrid>
+                <MudItem xs="3" Class="content-center">
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@Cancel">Cancel</MudButton>
+                </MudItem>
+                <MudItem xs="6"></MudItem>
+                <MudItem xs="3" Class="content-center">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@Save">Save</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudContainer>
+    </DialogActions>
+</MudDialog>
+
+
+<style>
+    .my-blur-class {
+        backdrop-filter: blur(10px);
+    }
+
+    .content-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .center-text {
+        text-align: center;
+    }
+</style>
+
+
+@code {
+    [CascadingParameter] 
+    MudDialogInstance Dialog { get; set; }
+    [Parameter]
+    public IResultDto Result { get; set; }
+    private MudForm form;
+    private bool isValid = true;
+    public CultureInfo _en = CultureInfo.GetCultureInfo("en-US");
+
+    private async Task Save()
+    {
+        await form.Validate();
+        if (form.IsValid)
+        {
+            Dialog.Close(DialogResult.Ok(Result));
+        }
+    }
+
+    private void Cancel()
+    {
+        Dialog.Cancel();
+    }
+}

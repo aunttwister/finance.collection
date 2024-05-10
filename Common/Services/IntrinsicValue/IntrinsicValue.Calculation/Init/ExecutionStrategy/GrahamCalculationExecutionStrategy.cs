@@ -21,11 +21,11 @@ namespace FinanceScraper.Common.Init.ExecutionStrategy
     public class GrahamCalculationExecutionStrategy : ICalculationExecutionStrategy
     {
         private readonly IMediator _mediator;
-        private readonly string _ticker;
-        public GrahamCalculationExecutionStrategy(IMediator mediator, string ticker)
+        private readonly string _symbol;
+        public GrahamCalculationExecutionStrategy(IMediator mediator, string symbol)
         {
             _mediator = mediator;
-            _ticker = ticker;
+            _symbol = symbol;
         }
 
         public async Task<MethodResult<ICalculationResult>> ExecuteCalculationStrategy(TickerDto tickerDto, AAABondDto aaaBondDto, decimal safetyMargin)

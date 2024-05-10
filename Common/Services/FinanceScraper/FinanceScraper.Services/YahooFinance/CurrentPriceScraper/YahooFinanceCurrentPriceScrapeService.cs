@@ -35,7 +35,7 @@ namespace FinanceScraper.YahooFinance.CurrentPriceScraper
 
             await currentPrice.ConfigureAwait(false);
 
-            return new CurrentPriceDataSet() { CurrentPrice = currentPrice.Result };
+                return new CurrentPriceDataSet() { CurrentPrice = currentPrice.Result };
         }
         [HandleMethodExecutionAspect]
         private async Task<MethodResult<decimal>> GetCurrentPrice(HtmlNode node)

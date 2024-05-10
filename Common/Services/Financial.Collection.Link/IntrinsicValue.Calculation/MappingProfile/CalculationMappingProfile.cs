@@ -13,22 +13,7 @@ namespace Financial.Collection.Link.IntrinsicValue.Calculation.MappingProfile
     {
         public CalculationMappingProfile()
         {
-            CreateMap<IScrapeResult, InitCalculationCommand>()
-                .Include<DCFScrapeResult, InitCalculationCommand>()
-                .Include<GrahamScrapeResult, InitCalculationCommand>()
-                .Include<CombinedScrapeResult, InitCalculationCommand>();
-
-            CreateMap<CombinedScrapeResult, InitCalculationCommand>()
-                .ForMember(dest => dest.ScrapeTypes, opt => opt.MapFrom(src => src.GetResultTypes(key => typeof(ICalculable).IsAssignableFrom(key))));
-
-            CreateMap<GrahamScrapeResult, InitCalculationCommand>()
-                .ForMember(dest => dest.ScrapeTypes, opt => opt.MapFrom(src => src.GetType()));
-
-            CreateMap<DCFScrapeResult, InitCalculationCommand>()
-                .ForMember(dest => dest.ScrapeTypes, opt => opt.MapFrom(src => src.GetType()));
-
             CreateMap<TickerDto, InitCalculationCommand>()
-                .ForMember(dest => dest.Ticker, opt => opt.MapFrom(src => src.Symbol))
                 .ForMember(dest => dest.TickerDto, opt => opt.MapFrom(src => src));
 
             CreateMap<AAABondDto, InitCalculationCommand>()
@@ -51,7 +36,9 @@ namespace Financial.Collection.Link.IntrinsicValue.Calculation.MappingProfile
                             IntrinsicValue = src.IntrinsicValue,
                             BuyPrice = src.BuyPrice,
                             PriceDifference = src.PriceDifference,
-                            PriceDifferencePercentage = src.PriceDifferencePercent
+                            PriceDifferencePercentage = src.PriceDifferencePercent,
+                            DateTime = DateTime.UtcNow,
+                            SafetyMargin = src.SafetyMargin
                         });
                     });
 
@@ -65,7 +52,9 @@ namespace Financial.Collection.Link.IntrinsicValue.Calculation.MappingProfile
                             IntrinsicValue = src.IntrinsicValue,
                             BuyPrice = src.BuyPrice,
                             PriceDifference = src.PriceDifference,
-                            PriceDifferencePercentage = src.PriceDifferencePercent
+                            PriceDifferencePercentage = src.PriceDifferencePercent,
+                            DateTime = DateTime.UtcNow,
+                            SafetyMargin = src.SafetyMargin
                         });
                     })
                 .ForMember(dest => dest.YearlyData, opt => opt.Ignore())
@@ -95,7 +84,8 @@ namespace Financial.Collection.Link.IntrinsicValue.Calculation.MappingProfile
                                 BuyPrice = grahamCalculationResult.BuyPrice,
                                 PriceDifference = grahamCalculationResult.PriceDifference,
                                 PriceDifferencePercentage = grahamCalculationResult.PriceDifferencePercent,
-                                DateTime = DateTime.UtcNow
+                                DateTime = DateTime.UtcNow,
+                                SafetyMargin = grahamCalculationResult.SafetyMargin
                             });
                         }
 
@@ -109,7 +99,8 @@ namespace Financial.Collection.Link.IntrinsicValue.Calculation.MappingProfile
                                 BuyPrice = dcfCalculationResult.BuyPrice,
                                 PriceDifference = dcfCalculationResult.PriceDifference,
                                 PriceDifferencePercentage = dcfCalculationResult.PriceDifferencePercent,
-                                DateTime = DateTime.UtcNow
+                                DateTime = DateTime.UtcNow,
+                                SafetyMargin = dcfCalculationResult.SafetyMargin
                             });
                         }
                     })
@@ -133,12 +124,30 @@ namespace Financial.Collection.Link.IntrinsicValue.Calculation.MappingProfile
             var estimatedDataDict = estimatedDataList.ToDictionary(x => x.Year, x => x);
 
             // Iterate through each YearlyDataDto and update the relevant properties
-            foreach (var yearlyData in yearlyDataList)
+            foreach (var estimatedEntry in estimatedDataDict)
             {
-                if (estimatedDataDict.TryGetValue(yearlyData.Year, out var estimatedData))
+                bool keyFound = false;
+                foreach (var yearlyData in yearlyDataList)
                 {
-                    yearlyData.EstimatedCashFlow = estimatedData.EstimatedCashFlow;
-                    yearlyData.EstimatedPresentValue = estimatedData.EstimatedPresentValue;
+                    if (yearlyData.Year.Equals(estimatedEntry.Key))
+                    {
+                        yearlyData.EstimatedCashFlow = estimatedEntry.Value.EstimatedCashFlow;
+                        yearlyData.EstimatedPresentValue = estimatedEntry.Value.EstimatedPresentValue;
+                        keyFound = true;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                if (!keyFound)
+                {
+                    yearlyDataList.Add(new YearlyDataDto()
+                    {
+                        Year = estimatedEntry.Key,
+                        EstimatedCashFlow = estimatedEntry.Value.EstimatedCashFlow,
+                        EstimatedPresentValue = estimatedEntry.Value.EstimatedPresentValue
+                    });
                 }
             }
         }
@@ -156,4 +165,3 @@ namespace Financial.Collection.Link.IntrinsicValue.Calculation.MappingProfile
         }
     }
 }
-

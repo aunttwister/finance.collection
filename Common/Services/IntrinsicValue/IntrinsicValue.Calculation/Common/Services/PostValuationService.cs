@@ -8,19 +8,47 @@ namespace IntrinsicValue.Calculation.Common.Services
 {
     public class PostValuationService : IPostValuationService
     {
-        public decimal CalculateBuyPrice(decimal intrinsicValue, decimal safetyMargin) =>
-            Math.Round(intrinsicValue * safetyMargin, 2);
+        public decimal CalculateBuyPrice(decimal intrinsicValue, decimal safetyMargin)
+        {
+            decimal baseValue = Math.Round(intrinsicValue * safetyMargin, 2);
+            if (intrinsicValue < 0)
+            {
+                return baseValue + intrinsicValue;
+            }
+            else
+            {
+                return baseValue;
+            }
+        }
 
         public decimal CalculatePriceDifference(decimal buyPrice, decimal currentPrice)
         {
-            decimal priceDifference = buyPrice > 0 ? Math.Round(currentPrice - buyPrice, 2) : Math.Round(currentPrice + Math.Abs(buyPrice), 2);
+            decimal priceDifference;
+
+            // When buyPrice is positive
+            if (buyPrice > 0)
+            {
+                if (buyPrice > currentPrice)
+                    priceDifference = Math.Round(buyPrice - currentPrice, 2);
+                else if (buyPrice.Equals(currentPrice))
+                    priceDifference = 0;
+                else
+                    priceDifference = currentPrice - buyPrice;
+            }
+            else
+            {
+                // When buyPrice is zero or negative
+                priceDifference = Math.Round(currentPrice + Math.Abs(buyPrice), 2);
+            }
+
+            // Adjusting the sign based on currentPrice vs buyPrice
             if (currentPrice > buyPrice)
-                return priceDifference * -1;
+                priceDifference *= -1;
 
             return priceDifference;
         }
 
         public decimal CalculatePriceDifferencePercent(decimal priceDifference, decimal currentPrice) =>
-            Math.Round(priceDifference / currentPrice * 100, 2);
+            Math.Round(priceDifference / currentPrice, 2);
     }
 }

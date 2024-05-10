@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Finance.Collection.Domain.Common.Results;
 
 namespace IntrinsicValue.Calculation.DataSets.Results
 {
@@ -17,8 +18,9 @@ namespace IntrinsicValue.Calculation.DataSets.Results
             decimal priceDifference,
             decimal priceDifferencePercent,
             decimal equityValue,
+            decimal safetyMargin,
             IEnumerable<EstimatedCashFlowResultDataSet> estimatedCashFlow,
-            HistoricalGrowthRateResultDataSet historicalGrowthRate) : base(intrinsicValue, buyPrice, priceDifference, priceDifferencePercent) 
+            HistoricalGrowthRateResultDataSet historicalGrowthRate) : base(intrinsicValue, buyPrice, priceDifference, priceDifferencePercent, safetyMargin) 
         {
             EquityValue = equityValue;
             EstimatedCashFlows = estimatedCashFlow;

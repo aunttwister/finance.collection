@@ -154,7 +154,7 @@ namespace FinanceScraper.StockAnalysis.BalanceSheetScraper
 
             Func<MethodResult<IEnumerable<decimal>>>[] operations = new Func<MethodResult<IEnumerable<decimal>>>[]
             {
-                () => _exceptionResolverService.HtmlNodeNullReferenceExceptionResolver<IEnumerable<decimal>>(node),
+                () => _exceptionResolverService.HtmlNodeCollectionNullReferenceExceptionResolver<IEnumerable<decimal>>(nodeCollection),
                 () => _exceptionResolverService.MultiConvertToDecimalExceptionResolver(nodeCollection.Nodes()
                                                .Where(node => !node.InnerHtml.Contains("Upgrade") && !node.InnerHtml.Contains(' ') && !node.InnerHtml.Contains("HTML"))
                                                .Select(node => node.InnerHtml))

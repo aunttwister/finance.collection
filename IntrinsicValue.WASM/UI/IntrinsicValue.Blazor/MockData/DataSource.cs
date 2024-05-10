@@ -60,7 +60,7 @@ namespace IntrinsicValue.Blazor.MockData
 
             return new TickerDto()
             {
-                Ticker = ticker,
+                Symbol = ticker,
                 CurrentPrice = Math.Round(basePrice + (basePrice * priceChange / 100), 2),
                 EPS = baseEPS + epsChange,
                 PE = basePE + peChange,

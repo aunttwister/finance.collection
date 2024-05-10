@@ -34,9 +34,15 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel
 
             decimal latestCashFlow = historicalCashFlow.First().Value;
 
-            Dictionary<string, decimal> futureCashFlow = CalculateFutureCashFlow(averageGrowthRate, latestCashFlow);
+            Dictionary<string, decimal> futureCashFlow = CalculateFutureCashFlow(historicalGrowthRate.SafetyAverageGrowthRate, latestCashFlow);
             List<EstimatedCashFlowResultDataSet> estimatedCashFlows = PresentValueFacade(futureCashFlow);
-            decimal presentValueSum = estimatedCashFlows.Select(fcf => fcf.EstimatedPresentValue).Sum();
+
+            decimal presentEstimatedCFValueSum = estimatedCashFlows.Select(fcf => fcf.EstimatedPresentValue).Sum();
+            decimal terminalValue = CalculateTerminalValue(estimatedCashFlows.Last().EstimatedCashFlow, request.PerpetualRate, request.DiscountRate);
+            decimal presentTerminalValue = CalculatePresentValue(terminalValue, request.DiscountRate, estimatedCashFlows.Count);
+
+            decimal presentValueSum = presentEstimatedCFValueSum + presentTerminalValue;
+
 
             decimal equityValue = CalculateEquityValue(presentValueSum, request.TTMCashAndCashEquivalents, request.TTMTotalDebt);
 
@@ -52,6 +58,7 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel
                 priceDifference,
                 priceDifferencePercent,
                 equityValue,
+                request.SafetyMargin,
                 estimatedCashFlows,
                 historicalGrowthRate);
         }
@@ -74,8 +81,35 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel
 
             return historicalGrowthRateDataSet;
         }
-        public decimal CalculateHistoricalGrowthRateSingle(decimal currentYearCashFlow, decimal previousYearCashFlow) =>
-            Math.Round((currentYearCashFlow - previousYearCashFlow) / previousYearCashFlow * 100, 2);
+        public decimal CalculateHistoricalGrowthRateSingle(decimal currentYearCashFlow, decimal previousYearCashFlow)
+        {
+            decimal cashFlowDeduction;
+            if (currentYearCashFlow > 0 && previousYearCashFlow > 0)
+                cashFlowDeduction = currentYearCashFlow - previousYearCashFlow;
+            else if (currentYearCashFlow > 0 && previousYearCashFlow < 0)
+                cashFlowDeduction = currentYearCashFlow + Math.Abs(previousYearCashFlow);
+            else if (currentYearCashFlow < 0 && previousYearCashFlow > 0)
+                cashFlowDeduction = Math.Abs(currentYearCashFlow) - previousYearCashFlow;
+            else // currentYearCashFlow < 0 && previousYearCashFlow < 0
+                cashFlowDeduction = currentYearCashFlow + Math.Abs(previousYearCashFlow);
+
+            decimal growthRate;
+            if (cashFlowDeduction > 0 && previousYearCashFlow > 0) // auto current > prev
+                growthRate = cashFlowDeduction / previousYearCashFlow;
+            else if (cashFlowDeduction < 0 && previousYearCashFlow > 0) // auto prev > current
+            {
+                if (previousYearCashFlow < 0)
+                    growthRate = cashFlowDeduction / previousYearCashFlow * -1;
+                else
+                    growthRate = cashFlowDeduction / previousYearCashFlow;
+            }    
+            else if (cashFlowDeduction < 0 && previousYearCashFlow < 0)
+                growthRate = cashFlowDeduction / previousYearCashFlow * -1;
+            else // cashFlowDeduction > 0 && previousYearCashFlow < 0 // auto current > prev
+                growthRate = cashFlowDeduction / previousYearCashFlow * -1;
+
+            return Math.Round(growthRate, 6);
+        }       
 
 
 
@@ -84,10 +118,10 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel
             string firstYear = years.First();
             string lastYear = years.Last();
 
-            decimal averageGrowthRate = growthRates.Average();
+            decimal averageGrowthRate = growthRates.Where(gr => gr != 0).Average();
 
             string period = firstYear + "-" + lastYear;
-            decimal value = Math.Round(averageGrowthRate / 100, 2);
+            decimal value = Math.Round(averageGrowthRate, 4);
             
             return (period, value);
         }
@@ -109,15 +143,19 @@ namespace IntrinsicValue.Calculation.DCFIntrinsicModel
             return yearGrowthPairs;
         }
 
-        public decimal CalculateTerminalValue(decimal lastYearCashFlow, decimal perpetualRate = 2.5m, decimal discountRate = 8m) =>
+        public decimal CalculateTerminalValue(decimal lastYearCashFlow, decimal perpetualRate = 0.025m, decimal discountRate = 0.08m) =>
             lastYearCashFlow * (1 + perpetualRate) / (discountRate - perpetualRate);
 
-        public List<EstimatedCashFlowResultDataSet> PresentValueFacade(Dictionary<string, decimal> yearCashFlowPairs, decimal discountRate = 0.08m)
+        public List<EstimatedCashFlowResultDataSet> PresentValueFacade(Dictionary<string, decimal> yearCashFlowPairs, decimal perpetualRate = 0.025m, decimal discountRate = 0.08m)
         {
             List<EstimatedCashFlowResultDataSet> yearFutureCashFlow = new List<EstimatedCashFlowResultDataSet>();
             int multiplier = 1;
             foreach (var yearCashFlow in yearCashFlowPairs)
             {
+                /*decimal presentValue;
+                if (yearCashFlow.Key == yearCashFlowPairs.Last().Key)
+                    presentValue = CalculateTerminalValue(yearCashFlow.Value, multiplier, perpetualRate, discountRate);
+                else*/
                 decimal presentValue = CalculatePresentValue(yearCashFlow.Value, discountRate, multiplier);
                 EstimatedCashFlowResultDataSet yearlyFutureCashFlow = new EstimatedCashFlowResultDataSet()
                 {

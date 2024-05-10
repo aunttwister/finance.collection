@@ -1,5 +1,6 @@
 ﻿using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.FinanceScraper.Results;
+using Finance.Collection.Domain.IntrinsicValue.Calculation.Requests.CalculationExecution;
 using FinanceScraper.Common.Init.ExecutionStrategy;
 using IntrinsicValue.Calculation.Init.Commands;
 using MediatR;
@@ -16,15 +17,15 @@ namespace IntrinsicValue.Calculation.Init.ExecutionStrategy.Factory
     {
         private readonly IMediator _mediator;
         private readonly List<ICalculationExecutionStrategy> strategies = new List<ICalculationExecutionStrategy>();
-        private readonly string _ticker;
+        private readonly string _symbol;
 
-        public CalculationExecutionStrategyFactory(IMediator mediator, string ticker)
+        public CalculationExecutionStrategyFactory(IMediator mediator, string symbol)
         {
             _mediator = mediator;
-            _ticker = ticker;
+            _symbol = symbol;
             // Register individual strategies
-            strategies.Add(new GrahamCalculationExecutionStrategy(_mediator, ticker));
-            strategies.Add(new DCFCalculationExecutionStrategy(_mediator, ticker));
+            strategies.Add(new GrahamCalculationExecutionStrategy(_mediator, symbol));
+            strategies.Add(new DCFCalculationExecutionStrategy(_mediator, symbol));
         }
 
         //[HandleMethodExecutionAspect]
@@ -32,11 +33,11 @@ namespace IntrinsicValue.Calculation.Init.ExecutionStrategy.Factory
         {
             var selectedStrategies = new List<ICalculationExecutionStrategy>();
 
-            if (scrapeTypes.Contains(typeof(GrahamScrapeResult)))
+            if (scrapeTypes.Contains(typeof(GrahamCalculationRequest)))
             {
                 selectedStrategies.Add(strategies.OfType<GrahamCalculationExecutionStrategy>().First());
             }
-            if (scrapeTypes.Contains(typeof(DCFScrapeResult)))
+            if (scrapeTypes.Contains(typeof(DCFCalculationRequest)))
             {
                 selectedStrategies.Add(strategies.OfType<DCFCalculationExecutionStrategy>().First());
             }
@@ -45,7 +46,7 @@ namespace IntrinsicValue.Calculation.Init.ExecutionStrategy.Factory
             {
                 return new MethodResult<ICalculationExecutionStrategy>(
                     null,
-                    new ApplicationException($"Unable to resolve calculation execution strategy for ticker {_ticker}. Please try again."));
+                    new ApplicationException($"Unable to resolve calculation execution strategy for ticker {_symbol}. Please try again."));
             }
 
             // Use a composite strategy if more than one strategy is selected
