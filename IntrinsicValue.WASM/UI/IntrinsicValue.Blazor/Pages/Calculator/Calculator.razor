@@ -1,13 +1,14 @@
-﻿@page "/calculate";
+﻿@page "/calculate"
 @using Finance.Collection.Domain.DTOs.Results
 @using Financial.Collection.Domain.DTOs
 @using Financial.Collection.Link.Blazor.WASM.Calculator.Encapsulation
 @using Financial.Collection.Link.Blazor.WASM.Calculator.Services
 @using Financial.Collection.Link.FinanceScraper.Encapsulation
 @using Financial.Collection.Link.IntrinsicValue.Calculation.Encapsulator
-@inject ISnackbar Snackbar;
-@inject IValuationAnalysisService _valuationAnalysisService;
+@inject ISnackbar Snackbar
+@inject IValuationAnalysisService _valuationAnalysisService
 @inject IDialogService DialogService
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Calculate</PageTitle>
 <MudContainer Class="my-4">
@@ -27,13 +28,15 @@
                 </MudItem>
                 <MudItem>
                     <MudContainer Class="mt-6">
-                        <MudTextField @bind-Value="ticker" Label="Enter Ticker Symbol" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" Adornment="Adornment.End" @onkeydown="@SearchTicker" Class="mt-2" />
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-6" OnClick="CalculateValue">Calculate</MudButton>
+                        <MudTextField T="string" Id="tickerInput" Value="@ticker" @oninput="HandleInput"
+                                      @onkeydown="HandleEnterPress" Label="Enter Ticker Symbol"
+                                      Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Search"
+                                      AdornmentColor="Color.Primary" Adornment="Adornment.End" Class="mt-2" />
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-6" OnClick="ClickSubmit">Calculate</MudButton>
                     </MudContainer>
                 </MudItem>
             </MudItem>
-            <MudItem xs="12" sm="2">
-            </MudItem>
+            <MudItem xs="12" sm="2"></MudItem>
             @if (isLoading)
             {
                 <MudItem xs="12" sm="12" Class="d-flex justify-center align-center">
@@ -49,6 +52,12 @@
         </MudGrid>
     </MudContainer>
 </MudContainer>
+
+<script>
+    function getTickerValue() {
+        return document.getElementById('tickerInput').value;
+    }
+</script>
 
 <style>
     .my-blur-class {
@@ -67,6 +76,8 @@
     private string ticker = "";
     bool isLoading = false;
 
+    
+
     private async void CalculateValue()
     {
         if (string.IsNullOrWhiteSpace(ticker))
@@ -78,18 +89,18 @@
         ParameterEncapsulator parameters = config.GatherConfigurationParameters(ticker);
 
         if (parameters.ScraperParameterEncapsulator.ExecuteGrahamScrape is false && parameters.ScraperParameterEncapsulator.ExecuteDCFScrape is false)
+        {
             Snackbar.Add("No calculation type selected. Please try again.", Severity.Error);
+        }
         else
         {
-            isLoading = true;
-            StateHasChanged();
+            SwitchLoader();
 
             Snackbar.Add($"Calculating intrinsic value for: {ticker}. Please wait.", Severity.Info);
 
             currentResult = await _valuationAnalysisService.PerformScrape(parameters.ScraperParameterEncapsulator);
 
-            isLoading = false;
-            StateHasChanged();
+            SwitchLoader();
 
             if (currentResult.Exceptions is not null && currentResult.Exceptions.Count > 0)
             {
@@ -101,12 +112,7 @@
 
                 await OpenMissingValuesDialog(currentResult, "Insert Missing Values.");
 
-                parameters.CalculationParameterEncapsulator.TickerDto = currentResult.TickerDto;
-                parameters.CalculationParameterEncapsulator.AAABondDto = currentResult.AAABondDto;
-
-                currentResult = await _valuationAnalysisService.PerformValuation(parameters.CalculationParameterEncapsulator);
-
-                resultView.SetResult(currentResult);
+                await PrepareValuation(parameters.CalculationParameterEncapsulator);
             }
             else
             {
@@ -114,21 +120,11 @@
                 {
                     await OpenMissingValuesDialog(currentResult, "Double Check Data For Calculation!");
 
-                    parameters.CalculationParameterEncapsulator.TickerDto = currentResult.TickerDto;
-                    parameters.CalculationParameterEncapsulator.AAABondDto = currentResult.AAABondDto;
-
-                    currentResult = await _valuationAnalysisService.PerformValuation(parameters.CalculationParameterEncapsulator);
-
-                    resultView.SetResult(currentResult);
+                    await PrepareValuation(parameters.CalculationParameterEncapsulator);
                 }
                 else
                 {
-                    parameters.CalculationParameterEncapsulator.TickerDto = currentResult.TickerDto;
-                    parameters.CalculationParameterEncapsulator.AAABondDto = currentResult.AAABondDto;
-
-                    currentResult = await _valuationAnalysisService.PerformValuation(parameters.CalculationParameterEncapsulator);
-
-                    resultView.SetResult(currentResult);
+                    await PrepareValuation(parameters.CalculationParameterEncapsulator);
                 }
             }
 
@@ -136,14 +132,47 @@
         }
     }
 
+    private void SwitchLoader()
+    {
+        isLoading = !isLoading;
+        StateHasChanged();
+    }
 
-    private Task SearchTicker(KeyboardEventArgs args)
+    private async Task PrepareValuation(CalculationParameterEncapsulator parameters)
+    {
+        parameters.TickerDto = currentResult.TickerDto;
+        parameters.AAABondDto = currentResult.AAABondDto;
+
+        currentResult = await _valuationAnalysisService.PerformValuation(parameters);
+
+        resultView.SetResult(currentResult);
+    }
+}
+
+@code {
+    private void HandleInput(ChangeEventArgs e)
+    {
+        ticker = e.Value?.ToString().ToUpper();
+    }
+
+    private async Task HandleEnterPress(KeyboardEventArgs args)
     {
         if (args.Key == "Enter")
+        {
+            ticker = await JSRuntime.InvokeAsync<string>("getTickerValue", "tickerInput");
+            StateHasChanged();
             CalculateValue();
-        return Task.CompletedTask;
+        }
     }
-}  
+
+    private async Task ClickSubmit()
+    {
+        ticker = await JSRuntime.InvokeAsync<string>("getTickerValue", "tickerInput");
+        StateHasChanged();
+        CalculateValue();
+    }
+
+}
 
 @code {
     private async Task OpenMissingValuesDialog(IResultDto resultParam, string header)
@@ -154,12 +183,12 @@
         };
 
         var options = new DialogOptions
-        {
-            CloseButton = true,
-            ClassBackground = "my-blur-class",
-            MaxWidth = MaxWidth.Medium,
-            FullWidth = true
-        };
+            {
+                CloseButton = true,
+                ClassBackground = "my-blur-class",
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true
+            };
 
         var dialog = DialogService.Show<InsertMissingValuesDialog>(header, parameters, options);
         var result = await dialog.Result;

@@ -1,0 +1,206 @@
+﻿@page "/"
+@using Finance.Collection.Domain.DTOs.Results
+@using Financial.Collection.Domain.DTOs
+@using Financial.Collection.Link.Blazor.WASM.Calculator.Encapsulation
+@using Financial.Collection.Link.Blazor.WASM.Calculator.Services
+@using Financial.Collection.Link.FinanceScraper.Encapsulation
+@using Financial.Collection.Link.IntrinsicValue.Calculation.Encapsulator
+@inject ISnackbar Snackbar
+@inject IValuationAnalysisService _valuationAnalysisService
+@inject IDialogService DialogService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Calculate</PageTitle>
+<MudContainer Class="my-4">
+    <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="12" sm="2"></MudItem>
+            <MudItem xs="12" sm="8">
+                <MudItem xs="12">
+                    <MudContainer>
+                        <MudText Typo="Typo.subtitle2">
+                            Set configurational parameters below and execute the calculation.
+                        </MudText>
+                    </MudContainer>
+                </MudItem>
+                <MudItem xs="12">
+                    <Configuration @ref="config" />
+                </MudItem>
+                <MudItem>
+                    <MudContainer Class="mt-6">
+                        <MudTextField T="string" Id="tickerInput" Value="@ticker" @oninput="HandleInput"
+                                      @onkeydown="HandleEnterPress" Label="Enter Ticker Symbol"
+                                      Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Search"
+                                      AdornmentColor="Color.Primary" Adornment="Adornment.End" Class="mt-2" />
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-6" OnClick="ClickSubmit">Calculate</MudButton>
+                    </MudContainer>
+                </MudItem>
+            </MudItem>
+            <MudItem xs="12" sm="2"></MudItem>
+            @if (isLoading)
+            {
+                <MudItem xs="12" sm="12" Class="d-flex justify-center align-center">
+                    <MudProgressCircular Indeterminate="true" />
+                </MudItem>
+            }
+            else
+            {
+                <MudItem xs="12">
+                    <Result @ref="resultView" />
+                </MudItem>
+            }
+        </MudGrid>
+    </MudContainer>
+</MudContainer>
+
+<script>
+    function getTickerValue() {
+        return document.getElementById('tickerInput').value;
+    }
+</script>
+
+<style>
+    .my-blur-class {
+        backdrop-filter: blur(10px);
+    }
+</style>
+
+@code {
+    Configuration config;
+    Result resultView;
+
+    ScrapeResultDto scrapeResultDto;
+    CalculationResultDto calculationResultDto;
+    IResultDto currentResult;
+
+    private string ticker = "";
+    bool isLoading = false;
+
+    
+
+    private async void CalculateValue()
+    {
+        if (string.IsNullOrWhiteSpace(ticker))
+        {
+            Snackbar.Add("Please enter a valid ticker symbol.", Severity.Error);
+            return;
+        }
+
+        ParameterEncapsulator parameters = config.GatherConfigurationParameters(ticker);
+
+        if (parameters.ScraperParameterEncapsulator.ExecuteGrahamScrape is false && parameters.ScraperParameterEncapsulator.ExecuteDCFScrape is false)
+        {
+            Snackbar.Add("No calculation type selected. Please try again.", Severity.Error);
+        }
+        else
+        {
+            SwitchLoader();
+
+            Snackbar.Add($"Calculating intrinsic value for: {ticker}. Please wait.", Severity.Info);
+
+            currentResult = await _valuationAnalysisService.PerformScrape(parameters.ScraperParameterEncapsulator);
+
+            SwitchLoader();
+
+            if (currentResult.Exceptions is not null && currentResult.Exceptions.Count > 0)
+            {
+                resultView.SetResult(currentResult);
+                foreach (var exception in currentResult.Exceptions)
+                {
+                    Snackbar.Add($"{exception.Message}", Severity.Error);
+                }
+
+                await OpenMissingValuesDialog(currentResult, "Insert Missing Values.");
+
+                await PrepareValuation(parameters.CalculationParameterEncapsulator);
+            }
+            else
+            {
+                if (parameters.CheckScrapeResult)
+                {
+                    await OpenMissingValuesDialog(currentResult, "Double Check Data For Calculation!");
+
+                    await PrepareValuation(parameters.CalculationParameterEncapsulator);
+                }
+                else
+                {
+                    await PrepareValuation(parameters.CalculationParameterEncapsulator);
+                }
+            }
+
+            config.ResetConfig();
+        }
+    }
+
+    private void SwitchLoader()
+    {
+        isLoading = !isLoading;
+        StateHasChanged();
+    }
+
+    private async Task PrepareValuation(CalculationParameterEncapsulator parameters)
+    {
+        parameters.TickerDto = currentResult.TickerDto;
+        parameters.AAABondDto = currentResult.AAABondDto;
+
+        currentResult = await _valuationAnalysisService.PerformValuation(parameters);
+
+        resultView.SetResult(currentResult);
+    }
+}
+
+@code {
+    private void HandleInput(ChangeEventArgs e)
+    {
+        ticker = e.Value?.ToString().ToUpper();
+    }
+
+    private async Task HandleEnterPress(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            ticker = await JSRuntime.InvokeAsync<string>("getTickerValue", "tickerInput");
+            StateHasChanged();
+            CalculateValue();
+        }
+    }
+
+    private async Task ClickSubmit()
+    {
+        ticker = await JSRuntime.InvokeAsync<string>("getTickerValue", "tickerInput");
+        StateHasChanged();
+        CalculateValue();
+    }
+
+}
+
+@code {
+    private async Task OpenMissingValuesDialog(IResultDto resultParam, string header)
+    {
+        var parameters = new DialogParameters
+        {
+            { "Result", resultParam }
+        };
+
+        var options = new DialogOptions
+            {
+                CloseButton = true,
+                ClassBackground = "my-blur-class",
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true
+            };
+
+        var dialog = DialogService.Show<InsertMissingValuesDialog>(header, parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            currentResult = (IResultDto)result.Data;
+            Snackbar.Add("Successfully calculated intrinsic value for ticker: " + ticker, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("Intrinsic Valuation Aborted.", Severity.Error);
+        }
+    }
+}

@@ -49,6 +49,6 @@ namespace IntrinsicValue.Calculation.Common.Services
         }
 
         public decimal CalculatePriceDifferencePercent(decimal priceDifference, decimal currentPrice) =>
-            Math.Round(priceDifference / currentPrice, 2);
+            Math.Round(priceDifference / currentPrice, 4);
     }
 }
