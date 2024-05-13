@@ -1,5 +1,6 @@
 ﻿using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.FinanceScraper.Constants;
+using Finance.Collection.Domain.FinanceScraper.Exceptions;
 using Finance.Collection.Domain.FinanceScraper.Results;
 using FinanceScraper.Common.Init.ExecutionStrategy;
 using FinanceScraper.Common.Init.ExecutionStrategy.Factory;
@@ -29,7 +30,7 @@ namespace FinanceScraper.Common.Init.Commands
             MethodResult<string> validationResult = await ValidateTicker(request).ConfigureAwait(false);
             if (!validationResult.IsSuccessful)
             {
-                ApplicationException exception = new ApplicationException(validationResult.Exception.Message);
+                TickerValidationException exception = new TickerValidationException(validationResult.Exception.Message);
                 return new MethodResult<IScrapeResult>(null, exception);
             }
 
@@ -63,7 +64,7 @@ namespace FinanceScraper.Common.Init.Commands
             {
                 return new MethodResult<string>(
                     request.Ticker,
-                    new ApplicationException("Invalid parameter combination. Please try again."));
+                    new TickerValidationException("Invalid parameter combination. Please try again."));
             }
 
             // Initialize tasks for each possible operation
@@ -95,7 +96,7 @@ namespace FinanceScraper.Common.Init.Commands
             // If there are multiple exceptions, concatenate their messages
             if (exceptions.Count > 1)
             {
-                var combinedException = new ApplicationException(
+                var combinedException = new TickerValidationException(
                     $"Multiple errors occurred: {string.Join(" | ", exceptions.Select(ex => ex.Message))}");
                 return new MethodResult<string>(request.Ticker, combinedException);
             }
@@ -109,9 +110,9 @@ namespace FinanceScraper.Common.Init.Commands
             INodeResolverStrategy nodeResolverStrategy = _nodeResolverStrategyProvider.GetCurrentStrategy();
             HtmlNode node = await nodeResolverStrategy.ResolveNodeAsync(BaseUrlConstants.StockAnalysis + ticker).ConfigureAwait(false);
 
-            if (node.InnerText.Contains("Not Found - 404"))
+            if (node.InnerText.Contains("404") || node.InnerText.Contains("Not Found"))
             {
-                ApplicationException exception = new ApplicationException($"Unable to ValidateTicker {ticker} on Stock Analysis. Please double check and try again.");
+                TickerValidationException exception = new TickerValidationException($"Unable to ValidateTicker {ticker} on Stock Analysis. Please double check and try again.");
                 return new MethodResult<string>(ticker, exception);
             }
 
@@ -124,7 +125,7 @@ namespace FinanceScraper.Common.Init.Commands
 
             if (node.InnerText.Contains("Symbols similar to"))
             {
-                ApplicationException exception = new ApplicationException($"Unable to ValidateTicker {ticker} on Yahoo Finance. Please double check and try again.");
+                TickerValidationException exception = new TickerValidationException($"Unable to ValidateTicker {ticker} on Yahoo Finance. Please double check and try again.");
                 return new MethodResult<string>(ticker, exception);
             }
 

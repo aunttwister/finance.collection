@@ -1,4 +1,5 @@
 ﻿using Finance.Collection.Domain.Common.Propagation;
+using Finance.Collection.Domain.FinanceScraper.Exceptions;
 using HtmlAgilityPack;
 using System.Runtime.CompilerServices;
 
@@ -8,7 +9,7 @@ namespace FinanceScraper.Common.Exceptions.ExceptionResolver
     {
         public ApplicationException HandleException(Exception exception, string contextMessage) 
         {
-            return new ApplicationException(contextMessage, exception);
+            return new UnresolvableHtmlNodeException(contextMessage, exception);
         }
         public MethodResult<decimal> ConvertToDecimalExceptionResolver(string toConvert)
         {

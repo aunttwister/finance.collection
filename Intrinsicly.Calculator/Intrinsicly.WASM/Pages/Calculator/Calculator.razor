@@ -110,9 +110,15 @@
                     Snackbar.Add($"{exception.Message}", Severity.Error);
                 }
 
-                await OpenMissingValuesDialog(currentResult, "Insert Missing Values.");
+                if (currentResult is ScrapeResultDto scrapeResultDto)
+                {
+                    if (scrapeResultDto.TickerValidationSuccessful)
+                    {
+                        await OpenMissingValuesDialog(currentResult, "Insert Missing Values.");
 
-                await PrepareValuation(parameters.CalculationParameterEncapsulator);
+                        await PrepareValuation(parameters.CalculationParameterEncapsulator);
+                    }
+                }
             }
             else
             {
