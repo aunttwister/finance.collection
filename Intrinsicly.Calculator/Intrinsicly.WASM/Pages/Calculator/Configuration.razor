@@ -13,8 +13,10 @@
                     <MudPaper Elevation="4" Class="pa-6">
                         <MudText Typo="Typo.body1">Calculation types</MudText>
                         <MudChipSet Class="mt-2" @bind-SelectedChips="calculationTypes" MultiSelection="true" Filter="true">
-                            <MudChip id="executeGraham" Text="purple" Variant="Variant.Outlined" Color="Color.Primary">Benjamin Graham</MudChip>
-                            <MudChip id="executeDCF" Text="purple" Variant="Variant.Outlined" Color="Color.Primary">Discounted Cash Flow</MudChip>
+                            <MudChip id="executeGraham" Text="Benjamin Graham" Label="false"
+                                Variant="Variant.Outlined" Color="Color.Primary">Benjamin Graham</MudChip>
+                            <MudChip id="executeDCF" Text="Discounted Cash Flow" Label="false"
+                                Variant="Variant.Outlined" Color="Color.Primary">Discounted Cash Flow</MudChip>
                         </MudChipSet>
                     </MudPaper>
                 </MudStack>
@@ -100,5 +102,10 @@
         safetyMargin = null;
 
         StateHasChanged();
+    }
+
+    public MudChip[] GetCalculationTypes()
+    {
+        return calculationTypes;    
     }
 }

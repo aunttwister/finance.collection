@@ -5,6 +5,7 @@
 @using Financial.Collection.Link.Blazor.WASM.Calculator.Services
 @using Financial.Collection.Link.FinanceScraper.Encapsulation
 @using Financial.Collection.Link.IntrinsicValue.Calculation.Encapsulator
+@using Intrinsicly.WASM.Pages.Calculator.InsertMissingValues
 @inject ISnackbar Snackbar
 @inject IValuationAnalysisService _valuationAnalysisService
 @inject IDialogService DialogService
@@ -32,7 +33,7 @@
                                       @onkeydown="HandleEnterPress" Label="Enter Ticker Symbol"
                                       Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Search"
                                       AdornmentColor="Color.Primary" Adornment="Adornment.End" Class="mt-2" />
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-6" OnClick="ClickSubmit">Calculate</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-6" OnClick="ProcessSubmit">Calculate</MudButton>
                     </MudContainer>
                 </MudItem>
             </MudItem>
@@ -76,7 +77,7 @@
     private string ticker = "";
     bool isLoading = false;
 
-    
+
 
     private async void CalculateValue()
     {
@@ -87,6 +88,7 @@
         }
 
         ParameterEncapsulator parameters = config.GatherConfigurationParameters(ticker);
+        MudChip[] calculationTypes = config.GetCalculationTypes();
 
         if (parameters.ScraperParameterEncapsulator.ExecuteGrahamScrape is false && parameters.ScraperParameterEncapsulator.ExecuteDCFScrape is false)
         {
@@ -114,7 +116,7 @@
                 {
                     if (scrapeResultDto.TickerValidationSuccessful)
                     {
-                        await OpenMissingValuesDialog(currentResult, "Insert Missing Values.");
+                        await OpenMissingValuesDialog(currentResult, calculationTypes, "Insert Missing Values.");
 
                         await PrepareValuation(parameters.CalculationParameterEncapsulator);
                     }
@@ -124,7 +126,7 @@
             {
                 if (parameters.CheckScrapeResult)
                 {
-                    await OpenMissingValuesDialog(currentResult, "Double Check Data For Calculation!");
+                    await OpenMissingValuesDialog(currentResult, calculationTypes, "Double Check Data For Calculation!");
 
                     await PrepareValuation(parameters.CalculationParameterEncapsulator);
                 }
@@ -150,8 +152,6 @@
         parameters.AAABondDto = currentResult.AAABondDto;
 
         currentResult = await _valuationAnalysisService.PerformValuation(parameters);
-
-        resultView.SetResult(currentResult);
     }
 }
 
@@ -165,28 +165,26 @@
     {
         if (args.Key == "Enter")
         {
-            ticker = await JSRuntime.InvokeAsync<string>("getTickerValue", "tickerInput");
-            StateHasChanged();
-            CalculateValue();
+            ProcessSubmit();
         }
     }
 
-    private async Task ClickSubmit()
+    private async Task ProcessSubmit()
     {
         ticker = await JSRuntime.InvokeAsync<string>("getTickerValue", "tickerInput");
         StateHasChanged();
         CalculateValue();
     }
-
 }
 
 @code {
-    private async Task OpenMissingValuesDialog(IResultDto resultParam, string header)
+    private async Task OpenMissingValuesDialog(IResultDto resultParam, MudChip[] chips, string header)
     {
         var parameters = new DialogParameters
-        {
-            { "Result", resultParam }
-        };
+    {
+        { "Result", resultParam },
+        { "Chips", chips }
+    };
 
         var options = new DialogOptions
             {
@@ -196,12 +194,13 @@
                 FullWidth = true
             };
 
-        var dialog = DialogService.Show<InsertMissingValuesDialog>(header, parameters, options);
+        var dialog = DialogService.Show<InsertMissingValuesDialogLayout>(header, parameters, options);
         var result = await dialog.Result;
 
         if (!result.Canceled)
         {
             currentResult = (IResultDto)result.Data;
+            resultView.SetResult(currentResult);
             Snackbar.Add("Successfully calculated intrinsic value for ticker: " + ticker, Severity.Success);
         }
         else

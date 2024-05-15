@@ -1,0 +1,42 @@
+﻿@using Finance.Collection.Domain.DTOs.Results
+@using System.Globalization
+
+<MudGrid>
+    <MudItem sm="6">
+        <MudNumericField @bind-Value="Result.TickerDto.SharesOutstanding" Label="Shares Outstanding"
+                         Required="true" Min="1" RequiredError="Shares Outstanding are required."
+                         HideSpinButtons="true" Format="N2"
+                         AdornmentIcon="@Icons.Material.Filled.ListAlt" Adornment="Adornment.Start"
+                         Class="centered-numeric-field" />
+    </MudItem>
+    <MudItem sm="6">
+        <MudNumericField @bind-Value="Result.TickerDto.TTMCashAndCashEquivalents" Label="TTM Cash and Cash Equivalents"
+                         Required="true" Min="1" RequiredError="TTM Cash and Cash Equivalents is required."
+                         HideSpinButtons="true" Culture="@Culture" Format="N2"
+                         AdornmentIcon="@Icons.Material.Filled.AttachMoney" Adornment="Adornment.Start"
+                         Class="centered-numeric-field" />
+    </MudItem>
+    <MudItem sm="6">
+        <MudNumericField @bind-Value="Result.TickerDto.TTMTotalDebt" Label="TTM Total Debt"
+                         Required="true" Min="1" RequiredError="TTM Total Debt is required."
+                         HideSpinButtons="true" Culture="@Culture" Format="N2"
+                         AdornmentIcon="@Icons.Material.Filled.AttachMoney" Adornment="Adornment.Start"
+                         Class="centered-numeric-field" />
+    </MudItem>
+    <MudItem sm="6">
+        <MudNumericField @bind-Value="Result.TickerDto.YearlyData.First().CashFlow" Label="Latest Cash Flow"
+                         Required="true" RequiredError="Latest Cash Flow is required."
+                         HideSpinButtons="true" Culture="@Culture" Format="N2"
+                         AdornmentIcon="@Icons.Material.Filled.AttachMoney" Adornment="Adornment.Start"
+                         Class="centered-numeric-field" />
+    </MudItem>
+</MudGrid>
+
+
+
+@code {
+    [Parameter]
+    public IResultDto Result { get; set; }
+    [Parameter]
+    public CultureInfo Culture { get; set; }
+}

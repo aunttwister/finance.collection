@@ -1,0 +1,33 @@
+﻿@using Finance.Collection.Domain.DTOs.Results
+@using System.Globalization
+
+<MudGrid>
+    <MudItem sm="3">
+
+    </MudItem>
+    <MudItem sm="3">
+        <MudNumericField @bind-Value="Result.TickerDto.EPS" Label="EPS"
+                         Required="true" RequiredError="EPS is required."
+                         HideSpinButtons="true" Culture="Culture" Format="N2"
+                         AdornmentIcon="@Icons.Material.Filled.AttachMoney" Adornment="Adornment.Start"
+                         Class="centered-numeric-field fit-content-numeric-field" />
+    </MudItem>
+    <MudItem sm="3">
+        <MudNumericField @bind-Value="Result.TickerDto.ExpectedFiveYearGrowth" Label="Expected Five-Year Growth"
+                         Required="true" RequiredError="Expected Five Year Growth is required."
+                         HideSpinButtons="true" Culture="@Culture" Format="N2"
+                         AdornmentIcon="@Icons.Material.Filled.Percent" Adornment="Adornment.Start"
+                         Class="centered-numeric-field fit-content-numeric-field" />
+    </MudItem>
+    <MudItem sm="3">
+
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    [Parameter]
+    public IResultDto Result { get; set; }
+    [Parameter]
+    public CultureInfo Culture { get; set; }
+}

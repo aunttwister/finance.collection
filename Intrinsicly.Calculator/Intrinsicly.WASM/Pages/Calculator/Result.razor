@@ -1,5 +1,6 @@
 ﻿@using Finance.Collection.Domain.DTOs.Results
 @using Financial.Collection.Domain.DTOs
+@using Intrinsicly.WASM.Pages.Calculator.InsertMissingValues
 @inject IDialogService DialogService
 
 <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
@@ -7,23 +8,29 @@
     {
         <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-5">Calculation Result:</MudText>
         <MudGrid>
-            <MudItem xs="12" sm="6">
-                <MudPaper Elevation="2" Class="pa-4 content-center">
-                    <MudText Typo="Typo.h6" Class="center-text mt-4">@Ticker?.Symbol</MudText>
-                    @if (Ticker.TickerIntrinsicValues.Count < 1)
-                    {
-                        <MudContainer>
+            @if (Ticker.TickerIntrinsicValues.Count < 1)
+            {
+                <MudItem xs="12" sm="12">
+                    <MudPaper Elevation="2" Class="pa-4 content-center">
+                        <MudText Typo="Typo.h6" Class="center-text mt-4">@Ticker?.Symbol</MudText>
+                        <MudContainer Class="content-center">
                             <MudText Typo="Typo.subtitle2">Unable to calculate intrinsic values due to missing data.</MudText>
                             <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(async () => await OpenMissingValuesDialog(Ticker))">Edit data</MudButton>
                         </MudContainer>
-                    }
-                    else
-                    {
+                    </MudPaper>
+                </MudItem>
+            }
+            else
+            {
+                <MudItem xs="12" sm="6">
+                    <MudPaper Elevation="2" Class="pa-4 content-center">
+                        <MudText Typo="Typo.h6" Class="center-text mt-4">@Ticker?.Symbol</MudText>
                         @foreach (var intrinsic in Ticker.TickerIntrinsicValues ?? Enumerable.Empty<HistoricalTickerIntrinsicValueDto>())
                         {
                             <MudList Color="Color.Primary" Dense="true" Clickable="true">
                                 <MudListItem>
-                                    <MudText Typo="Typo.subtitle2">Buy Price (@intrinsic.IntrinsicValueType):
+                                    <MudText Typo="Typo.subtitle2">
+                                        Buy Price (@intrinsic.IntrinsicValueType):
                                         @if (Ticker?.CurrentPrice > intrinsic.BuyPrice)
                                         {
                                             <MudChip Color="Color.Error" Variant="Variant.Outlined">@intrinsic.BuyPrice.ToString("C")</MudChip>
@@ -45,59 +52,60 @@
                                 <MudListItem>Price Difference %: @intrinsic.PriceDifferencePercentage.ToString("P2")</MudListItem>
                             </MudList>
                         }
-                    }
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudPaper Elevation="2" Class="pa-4">
-                    <MudExpansionPanels>
-                        <MudExpansionPanel Text="Detailed Information">
-                            <MudList Dense="true" Color="Color.Primary">
-                                <MudListItem>EPS: @Ticker?.EPS.ToString("C")</MudListItem>
-                                <MudListItem>PE: @Ticker?.PE</MudListItem>
-                                <MudListItem>Shares Outstanding: @Ticker?.SharesOutstanding.ToString("N0")</MudListItem>
-                                <MudListItem>Expected Yearly Cash Flow Growth Rate: @Ticker?.AverageGrowthRate.ToString("P2")</MudListItem>
-                                <MudListItem>Expected Five Year Growth: @Ticker?.ExpectedFiveYearGrowth.ToString("P2")</MudListItem>
-                                <MudListItem>Data acquiry date: @Ticker?.ScrapeDate.ToString("dd/MM/yyyy")</MudListItem>
-                            </MudList>
-                        </MudExpansionPanel>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudPaper Elevation="2" Class="pa-4">
+                        <MudExpansionPanels>
+                            <MudExpansionPanel Text="Detailed Information">
+                                <MudList Dense="true" Color="Color.Primary">
+                                    <MudListItem>EPS: @Ticker?.EPS.ToString("C")</MudListItem>
+                                    <MudListItem>PE: @Ticker?.PE</MudListItem>
+                                    <MudListItem>Shares Outstanding: @Ticker?.SharesOutstanding.ToString("N0")</MudListItem>
+                                    <MudListItem>Expected Yearly Cash Flow Growth Rate: @Ticker?.AverageGrowthRate.ToString("P2")</MudListItem>
+                                    <MudListItem>Expected Five Year Growth: @Ticker?.ExpectedFiveYearGrowth.ToString("P2")</MudListItem>
+                                    <MudListItem>Data acquiry date: @Ticker?.ScrapeDate.ToString("dd/MM/yyyy")</MudListItem>
+                                </MudList>
+                            </MudExpansionPanel>
 
-                        <MudExpansionPanel Text="Historical Yearly Data">
-                            <MudTable T="YearlyDataDto" Items="@HistoricalYearlyData" Striped="true" Bordered="true" Hover="true">
-                                <HeaderContent>
-                                    <MudTh>Year</MudTh>
-                                    <MudTh>Cash Flow Growth Rate</MudTh>
-                                    <MudTh>Cash Flow</MudTh>
-                                    <MudTh>Total Debt</MudTh>
-                                    <MudTh>Cash And Cash Equivalents</MudTh>
-                                </HeaderContent>
-                                <RowTemplate>
-                                    <MudTd DataLabel="Year">@context.Year</MudTd>
-                                    <MudTd DataLabel="Cash Flow Growth Rate">@context.GrowthRate.ToString("P2")</MudTd>
-                                    <MudTd DataLabel="Cash Flow">@context.CashFlow.ToString("C")</MudTd>
-                                    <MudTd DataLabel="Total Debt">@context.TotalDebt.ToString("C")</MudTd>
-                                    <MudTd DataLabel="Cash And Cash Equivalents">@context.CashAndCashEquivalents.ToString("C")</MudTd>
-                                </RowTemplate>
-                            </MudTable>
-                        </MudExpansionPanel>
+                            <MudExpansionPanel Text="Historical Yearly Data">
+                                <MudTable T="YearlyDataDto" Items="@HistoricalYearlyData" Striped="true" Bordered="true" Hover="true">
+                                    <HeaderContent>
+                                        <MudTh>Year</MudTh>
+                                        <MudTh>Cash Flow Growth Rate</MudTh>
+                                        <MudTh>Cash Flow</MudTh>
+                                        <MudTh>Total Debt</MudTh>
+                                        <MudTh>Cash And Cash Equivalents</MudTh>
+                                    </HeaderContent>
+                                    <RowTemplate>
+                                        <MudTd DataLabel="Year">@context.Year</MudTd>
+                                        <MudTd DataLabel="Cash Flow Growth Rate">@context.GrowthRate.ToString("P2")</MudTd>
+                                        <MudTd DataLabel="Cash Flow">@context.CashFlow.ToString("C")</MudTd>
+                                        <MudTd DataLabel="Total Debt">@context.TotalDebt.ToString("C")</MudTd>
+                                        <MudTd DataLabel="Cash And Cash Equivalents">@context.CashAndCashEquivalents.ToString("C")</MudTd>
+                                    </RowTemplate>
+                                </MudTable>
+                            </MudExpansionPanel>
 
-                        <MudExpansionPanel Text="Future Yearly Data">
-                            <MudTable T="YearlyDataDto" Items="@FutureYearlyData" Striped="true" Bordered="true" Hover="true">
-                                <HeaderContent>
-                                    <MudTh>Year</MudTh>
-                                    <MudTh>Estimated Cash Flow</MudTh>
-                                    <MudTh>Estimated Cash Flow Present Value</MudTh>
-                                </HeaderContent>
-                                <RowTemplate>
-                                    <MudTd DataLabel="Year">@context.Year</MudTd>
-                                    <MudTd DataLabel="Estimated Cash Flow">@context.EstimatedCashFlow.ToString("C")</MudTd>
-                                    <MudTd DataLabel="Estimated Cash Flow Present Value">@context.EstimatedPresentValue.ToString("C")</MudTd>
-                                </RowTemplate>
-                            </MudTable>
-                        </MudExpansionPanel>
-                    </MudExpansionPanels>
-                </MudPaper>
-            </MudItem>
+                            <MudExpansionPanel Text="Future Yearly Data">
+                                <MudTable T="YearlyDataDto" Items="@FutureYearlyData" Striped="true" Bordered="true" Hover="true">
+                                    <HeaderContent>
+                                        <MudTh>Year</MudTh>
+                                        <MudTh>Estimated Cash Flow</MudTh>
+                                        <MudTh>Estimated Cash Flow Present Value</MudTh>
+                                    </HeaderContent>
+                                    <RowTemplate>
+                                        <MudTd DataLabel="Year">@context.Year</MudTd>
+                                        <MudTd DataLabel="Estimated Cash Flow">@context.EstimatedCashFlow.ToString("C")</MudTd>
+                                        <MudTd DataLabel="Estimated Cash Flow Present Value">@context.EstimatedPresentValue.ToString("C")</MudTd>
+                                    </RowTemplate>
+                                </MudTable>
+                            </MudExpansionPanel>
+                        </MudExpansionPanels>
+                    </MudPaper>
+                </MudItem>
+            }
+            
         </MudGrid>
     }
 </MudContainer>
@@ -152,7 +160,7 @@
                 FullWidth = true
             };
 
-        var dialog = DialogService.Show<InsertMissingValuesDialog>("Insert Missing Values", parameters, options);
+        var dialog = DialogService.Show<InsertMissingValuesDialogLayout>("Insert Missing Values", parameters, options);
         var result = await dialog.Result;
 
         if (!result.Canceled)
