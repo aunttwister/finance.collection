@@ -1,0 +1,91 @@
+﻿@inherits LayoutComponentBase
+
+<MudContainer Class="drawer-footer-container">
+    <MudGrid Justify="Justify.SpaceBetween">
+        <MudItem xs="12" sm="6">
+            <div style="display: flex; justify-content: center;">
+                <ul class="footer-list">
+                    <li><h4 class="footer-title">Knowledge Hub</h4></li>
+                    <li><a href="#" class="footer-link">Guidelines</a></li>
+                    <li><a href="#" class="footer-link">DCF Intrinsic Value Calculation</a></li>
+                    <li><a href="#" class="footer-link">Benjamin Graham Intrinsic Value Calculation</a></li>
+                </ul>
+            </div>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <div style="display: flex; justify-content: center;">
+                <ul class="footer-list">
+                    <li><h4 class="footer-title">About Me</h4></li>
+                    <li><a href="#" class="footer-link">Development</a></li>
+                    <li><a href="#" class="footer-link">Roadmap</a></li>
+                    <li><a href="#" class="footer-link">Releases</a></li>
+                </ul>
+            </div>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+<style>
+    .drawer-footer-container {
+        padding: 20px;
+        background-color: var(--mud-palette-primary);
+        color: white;
+    }
+
+    .footer-title {
+        font-size: 1rem; /* Smaller font size for titles */
+        justify-content:center;
+    }
+
+    .footer-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        justify-content: center;
+    }
+
+    .footer-list li {
+        margin-bottom: 5px; /* Make list items denser */
+    }
+
+    .footer-link {
+        color: rgba(255, 255, 255, 0.7); /* Default link color for readability */
+        text-decoration: none; /* Remove underline */
+        font-size: 0.85rem; /* Smaller font size for links */
+    }
+
+    .footer-link:hover {
+        color: rgba(255, 255, 255, 1); /* Fully white on hover */
+        text-decoration: none; /* Ensure no underline on hover */
+    }
+
+    /* Dark mode styles */
+    .dark-mode .drawer-footer-container {
+        background-color: var(--mud-palette-background-dark);
+    }
+
+    .dark-mode .footer-title {
+        color: var(--mud-palette-text-primary);
+    }
+
+    .dark-mode .footer-link {
+        color: var(--mud-palette-text-secondary);
+    }
+
+    .dark-mode .footer-link:hover {
+        color: var(--mud-palette-text-primary);
+    }
+</style>
+
+@code {
+    [Parameter] public bool IsDarkMode { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (IsDarkMode)
+        {
+            StateHasChanged();
+        }
+    }
+}

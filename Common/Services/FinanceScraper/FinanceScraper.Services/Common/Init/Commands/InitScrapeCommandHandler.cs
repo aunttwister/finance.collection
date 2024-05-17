@@ -72,11 +72,11 @@ namespace FinanceScraper.Common.Init.Commands
 
             if (request.ExecuteGrahamScrape)
             {
-                tasks.Add(ValidateTickerStockAnalysis(request.Ticker));
+                tasks.Add(ValidateTickerYahooFinance(request.Ticker));
             }
             if (request.ExecuteDCFScrape)
             {
-                tasks.Add(ValidateTickerYahooFinance(request.Ticker));
+                tasks.Add(ValidateTickerStockAnalysis(request.Ticker));
             }
 
             // Await all initiated tasks

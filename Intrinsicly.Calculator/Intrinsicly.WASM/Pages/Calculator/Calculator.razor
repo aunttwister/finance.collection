@@ -133,6 +133,8 @@
                 else
                 {
                     await PrepareValuation(parameters.CalculationParameterEncapsulator);
+
+                    resultView.SetResult(currentResult);
                 }
             }
 
@@ -165,7 +167,7 @@
     {
         if (args.Key == "Enter")
         {
-            ProcessSubmit();
+            await ProcessSubmit();
         }
     }
 

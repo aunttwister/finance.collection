@@ -1,23 +1,72 @@
 ﻿@inherits LayoutComponentBase
 @using Financial.Collection.Domain.DTOs
+@inject IDialogService DialogService
 
-<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
+<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="@_theme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<MudLayout>
+<MudLayout DefaultMargin="MarginType.None" Style="min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto;">
     <MudAppBar Dense="true" Elevation="1">
         <MudText Typo="Typo.h6" Class="ml-3">Intrinsicly.</MudText>
         <MudSpacer />
-        <MudToggleIconButton @bind-Toggled="@_isDarkMode"
+        <MudToggleIconButton @bind-Toggled="_isDarkMode"
                              Icon="@Icons.Material.Filled.DarkMode" Color="@Color.Surface" Title="Off"
                              ToggledIcon="@Icons.Material.Filled.LightMode" ToggledColor="@Color.Surface" ToggledTitle="On" />
     </MudAppBar>
-    <MudMainContent>
+    <!-- MudDrawer acting as footer -->
+    <MudDrawer @bind-Open="_drawerOpen" Anchor="Anchor.Bottom" Elevation="6" Color="Color.Primary" Variant="DrawerVariant.Temporary" Style="">
+        <DrawerFooter IsDarkMode="@_isDarkMode" />
+    </MudDrawer>
+    <MudMainContent Class="main-content">
         @Body
     </MudMainContent>
-    <MainLayoutFooter />
+
+    <!-- Button to toggle drawer -->
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ToggleDrawer" Class="toggle-drawer-btn">
+        <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowUp" />
+    </MudButton>
+
+    
 </MudLayout>
+
+<style>
+    .main-content {
+        overflow-y: auto;
+    }
+
+    .toggle-drawer-btn {
+        position: fixed;
+        bottom: 10px;
+        right: 20px;
+        z-index: 1100; /* Ensure it's above other elements */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    @@media (max-width: 599px) {
+        .mud-drawer {
+            --mud-drawer-content-height: 263.32px !important; /* Set for mobile */
+        }
+
+        .toggle-drawer-btn {
+            bottom: 10px;
+            right: 7px;
+        }
+    }
+
+    @@media (min-width: 600px) {
+        .mud-drawer {
+            --mud-drawer-content-height: 137.92px !important; /* Set for others */
+        }
+    }
+
+</style>
 
 @code {
     private MudTheme _theme = new()
@@ -51,15 +100,26 @@
             },
             H5 = new H5()
             {
-                 FontFamily = new[] { "fontfile" },
+                FontFamily = new[] { "fontfile" },
                 FontSize = "2rem"
             },
             H6 = new H6()
             {
-                 FontFamily = new[] { "fontfile" },
+                FontFamily = new[] { "fontfile" },
                 FontSize = "1.75rem"
             },
         }
     };
     private bool _isDarkMode;
+    private bool _drawerOpen;
+
+    private void ToggleDrawer()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private void HandleThemeChanged()
+    {
+        StateHasChanged();
+    }
 }
