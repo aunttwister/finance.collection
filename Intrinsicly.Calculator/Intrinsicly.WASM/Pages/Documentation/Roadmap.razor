@@ -1,0 +1,44 @@
+﻿@using Intrinsicly.WASM.Services.Markdown
+@using MudBlazor.Markdown.Extensions.Domain.DTOs
+@inject MarkdownService _markdownService;
+
+<MudTimeline>
+    @if (TimelineEvents != null)
+    {
+        @foreach (var timelineEvent in TimelineEvents)
+        {
+            @foreach (var task in timelineEvent.Tasks)
+            {
+                <MudTimelineItem Color="@(task.IsCompleted ? Color.Success : Color.Info)" TimelineAlign="TimelineAlign.End">
+                    <MudText Typo="Typo.button">@task.Title</MudText>
+                    @foreach (var subTask in task.SubTasks)
+                    {
+                        <MudText Typo="Typo.body2" Class="mud-text-secondary">@subTask</MudText>
+                    }
+                </MudTimelineItem>
+            }
+            <MudTimelineItem Color="@(timelineEvent.Tasks.Any(t => !t.IsCompleted) ? Color.Info : Color.Success)" TimelineAlign="TimelineAlign.Start">
+                <MudAlert Severity="@(timelineEvent.Tasks.Any(t => !t.IsCompleted) ? Severity.Info : Severity.Success)">@timelineEvent.Version</MudAlert>
+            </MudTimelineItem>
+        }
+    }
+    else
+    {
+        <MudProgressCircular Indeterminate="true" />
+    }
+</MudTimeline>
+
+@code {
+    [Parameter]
+    public string DirectoryPath { get; set; }
+    private List<TimelineEventDto> TimelineEvents { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(DirectoryPath))
+        {
+            TimelineEvents = await _markdownService.GetParsedRoadmapAsync(DirectoryPath);
+            StateHasChanged();
+        }
+    }
+}

@@ -1,11 +1,10 @@
-// ProxyApi/Controllers/ProxyController.cs
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Net;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
 
-namespace IntrinsicValue.Proxy.CORS.Controllers
+namespace Intrinsicly.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

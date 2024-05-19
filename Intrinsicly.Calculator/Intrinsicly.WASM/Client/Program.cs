@@ -8,6 +8,8 @@ using MudBlazor;
 using Financial.Collection.Link.Blazor.WASM.Calculator.ServiceRegistar;
 using Financial.Collection.Link.IntrinsicValue.Calculation.ServiceRegistar;
 using Intrinsicly.WASM;
+using Intrinsicly.WASM.Services.Markdown;
+using Intrinsicly.WASM.Services.LocalStorage;
 
 namespace Intrinsicly.WASM
 {
@@ -19,7 +21,7 @@ namespace Intrinsicly.WASM
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:5001/") });
 
             // Register MediatR
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
@@ -45,6 +47,10 @@ namespace Intrinsicly.WASM
                 config.SnackbarConfiguration.ShowTransitionDuration = 500;
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             });
+
+            builder.Services.AddMudMarkdownServices();
+            builder.Services.AddScoped<MarkdownService>();
+            builder.Services.AddScoped<LocalStorageService>();
 
             await builder.Build().RunAsync();
         }

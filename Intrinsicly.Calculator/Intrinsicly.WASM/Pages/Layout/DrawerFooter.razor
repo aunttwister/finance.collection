@@ -1,27 +1,37 @@
-﻿@inherits LayoutComponentBase
+﻿@using Intrinsicly.WASM.Services.Markdown
+@using MudBlazor.Markdown.Extensions.Domain.DTOs
+@using static Intrinsicly.WASM.Services.Markdown.MarkdownService
+@inherits LayoutComponentBase
+@inject MarkdownService _markdownService;
 
 <MudContainer Class="drawer-footer-container">
     <MudGrid Justify="Justify.SpaceBetween">
-        <MudItem xs="12" sm="6">
-            <div style="display: flex; justify-content: center;">
-                <ul class="footer-list">
-                    <li><h4 class="footer-title">Knowledge Hub</h4></li>
-                    <li><a href="#" class="footer-link">Guidelines</a></li>
-                    <li><a href="#" class="footer-link">DCF Intrinsic Value Calculation</a></li>
-                    <li><a href="#" class="footer-link">Benjamin Graham Intrinsic Value Calculation</a></li>
-                </ul>
-            </div>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <div style="display: flex; justify-content: center;">
-                <ul class="footer-list">
-                    <li><h4 class="footer-title">About Me</h4></li>
-                    <li><a href="#" class="footer-link">Development</a></li>
-                    <li><a href="#" class="footer-link">Roadmap</a></li>
-                    <li><a href="#" class="footer-link">Releases</a></li>
-                </ul>
-            </div>
-        </MudItem>
+        @if (MarkdownFiles != null)
+        {
+            @foreach (var category in MarkdownFiles)
+            {
+                <MudItem xs="12" sm="@displayInstruction">
+                    <div style="display: flex; justify-content: center;">
+                        <ul class="footer-list">
+                            <li><h4 class="footer-title">@category.Key</h4></li>
+                            @foreach (var file in category.Value)
+                            {
+                                var link = $"/{file.UrlPath}";
+                                <li>
+                                    <a href="@link" class="footer-link" @onclick="(e) => OpenMarkdownPage(file)">
+                                        @file.DisplayName
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </MudItem>
+            }
+        }
+        else
+        {
+            <MudText>Loading...</MudText>
+        }
     </MudGrid>
 </MudContainer>
 
@@ -75,7 +85,30 @@
     .dark-mode .footer-link:hover {
         color: var(--mud-palette-text-primary);
     }
+
+    @@media (max-width: 599px) {
+        .footer-list {
+            width: 132.92px !important; /* Set for mobile */
+        }
+    }
 </style>
+
+
+@code {
+    private Dictionary<string, List<MarkdownInfoDto>> MarkdownFiles;
+    private int displayInstruction { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        MarkdownFiles = await _markdownService.GetCategorizedMarkdownFilesAsync();
+        displayInstruction = 12 / MarkdownFiles.Count;
+    }
+
+    private async Task OpenMarkdownPage(MarkdownInfoDto markdown)
+    {
+        await _markdownService.SaveCurrentMarkdownAsync(markdown);
+    }
+}
 
 @code {
     [Parameter] public bool IsDarkMode { get; set; }

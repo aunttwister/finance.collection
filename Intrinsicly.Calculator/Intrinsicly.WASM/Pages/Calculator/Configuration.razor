@@ -22,10 +22,12 @@
                 </MudStack>
                 <MudStack Spacing="4" Class="mt-4 mb-4">
                     <MudPaper Elevation="4" Class="pa-6">
-                        <MudText Typo="Typo.body1">Safety Margin</MudText>
                         <MudGrid>
                             <MudItem sm="6">
-                                <MudNumericField Class="mt-3" @bind-Value="safetyMargin" Label="Safety Margin" Variant="Variant.Outlined" Step="5M" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Percent" HelperText="Percentage of intrinsic value to be displayed" HelperTextOnFocus="true" />
+                                <MudNumericField Class="mt-3" @bind-Value="safetyMargin" Label="Safety Margin" ShrinkLabel="true" 
+                                Variant="Variant.Outlined" Step="5M" 
+                                Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Percent" 
+                                HelperText="Percentage of intrinsic value to be displayed" HelperTextOnFocus="true" />
                             </MudItem>
                             <MudItem sm="6">
                                 <MudCheckBox @bind-Value="@checkScrapeResult" Color="Color.Primary" Dense="true" Label="Check Data Before Calculation"></MudCheckBox>

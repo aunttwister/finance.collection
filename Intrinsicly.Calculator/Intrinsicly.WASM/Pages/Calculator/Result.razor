@@ -63,7 +63,7 @@
                                     <MudListItem>PE: @Ticker?.PE</MudListItem>
                                     <MudListItem>Shares Outstanding: @Ticker?.SharesOutstanding.ToString("N0")</MudListItem>
                                     <MudListItem>Expected Yearly Cash Flow Growth Rate: @Ticker?.AverageGrowthRate.ToString("P2")</MudListItem>
-                                    <MudListItem>Expected Five Year Growth: @Ticker?.ExpectedFiveYearGrowth.ToString("P2")</MudListItem>
+                                    <MudListItem>Expected Five Year Growth: @Ticker?.ExpectedFiveYearGrowth.ToString("0.##\\%")</MudListItem>
                                     <MudListItem>Data acquiry date: @Ticker?.ScrapeDate.ToString("dd/MM/yyyy")</MudListItem>
                                 </MudList>
                             </MudExpansionPanel>

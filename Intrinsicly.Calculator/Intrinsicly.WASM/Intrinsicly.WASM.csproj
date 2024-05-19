@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <None Include="wwwroot\css\bootstrap\bootstrap.min.css.map" />
+    <None Include="wwwroot\css\MarkdownPage.css" />
     <None Include="wwwroot\css\open-iconic\FONT-LICENSE" />
     <None Include="wwwroot\css\open-iconic\font\fonts\open-iconic.svg" />
     <None Include="wwwroot\css\open-iconic\ICON-LICENSE" />
@@ -27,11 +28,13 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.4" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
     <PackageReference Include="MudBlazor" Version="6.19.1" />
+    <PackageReference Include="MudBlazor.Markdown" Version="0.1.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Domain\Finance.Collection.Domain\Finance.Collection.Domain.csproj" />
     <ProjectReference Include="..\..\Common\Services\Financial.Collection.Link\Financial.Collection.Link.csproj" />
+    <ProjectReference Include="..\..\IntrinsicValue.Blazor\Api\Services\MudBlazor.Markdown.Extensions.Domain\MudBlazor.Markdown.Extensions.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

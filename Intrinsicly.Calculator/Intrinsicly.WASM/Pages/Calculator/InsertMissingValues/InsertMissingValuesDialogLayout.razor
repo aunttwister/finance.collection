@@ -9,10 +9,7 @@
             <MudItem sm="2"></MudItem>
             <MudItem sm="8">
                 <MudForm @ref="form" @bind-IsValid="@isValid" Class="form-container content-center">
-                    <MudGrid>
-                        <MudItem sm="3">
-
-                        </MudItem>
+                    <MudGrid Justify="Justify.Center">
                         <MudItem sm="3">
                             <MudText Typo="Typo.h6">@Result.TickerDto?.Symbol</MudText>
                         </MudItem>
@@ -22,9 +19,6 @@
                                              HideSpinButtons="true" Culture="@_en" Format="N2"
                                              AdornmentIcon="@Icons.Material.Filled.AttachMoney" Adornment="Adornment.Start"
                                              Class="centered-numeric-field fit-content-numeric-field" />
-                        </MudItem>
-                        <MudItem sm="3">
-
                         </MudItem>
                         <MudItem sm="12">
                             <MudTabs PanelClass="px-4 py-6" Elevation="3" ApplyEffectsToContainer="true"
