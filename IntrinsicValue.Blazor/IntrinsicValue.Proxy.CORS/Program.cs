@@ -1,5 +1,4 @@
-using Intrinsicly.Api.Services.ReadWebContent;
-using Intrinsicly.Api.Services.UnpackMarkdown;
+using Intrinsicly.Api.Services.ServiceRegistar;
 using MudBlazor.Markdown.Extensions.ServiceRegistar;
 
 namespace Intrinsicly.Api
@@ -10,7 +9,7 @@ namespace Intrinsicly.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddScoped<IReadWebContentService, ReadWebContentService>();
+            builder.Services.AddMarkdownServices();
             builder.Services.AddMarkdownButlerServices();
 
             // Add CORS policy to allow requests from your Blazor WebAssembly app
@@ -35,6 +34,7 @@ namespace Intrinsicly.Api
             app.UseRouting();
             app.UseCors("AllowBlazorApp"); // Enable CORS policy
             app.UseEndpoints(endpoints => endpoints.MapControllers());
+            app.UseStaticFiles();
 
             app.Run();
         }

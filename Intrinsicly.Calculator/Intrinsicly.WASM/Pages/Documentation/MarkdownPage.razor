@@ -1,7 +1,5 @@
 ﻿@using Intrinsicly.WASM.Services.Markdown
 @inject HttpClient Http
-@inject MarkdownService _markdownService
-@inject IJSRuntime _jsRuntime;
 
 <MudMarkdown Value="@MarkdownContent" />
 
@@ -12,15 +10,3 @@
     [Parameter]
     public string MarkdownContent { get; set; }
 }
-
-@* @code {
-    private void InitializeExpandableList()
-    {
-        // Call the JavaScript function to initialize expandable lists
-        _ = Task.Run(async () =>
-        {
-            await Task.Delay(100); // Short delay to ensure content is rendered
-            await _jsRuntime.InvokeVoidAsync("initializeMarkdownPage");
-        });
-    }
-} *@

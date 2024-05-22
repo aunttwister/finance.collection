@@ -8,7 +8,7 @@ using System.Linq;
 using Markdig.Parsers;
 using System.Threading.Tasks;
 
-namespace MudBlazor.Markdown.Extensions.MarkdownRoadmapGeneratorService
+namespace MudBlazor.Markdown.Extensions.MarkdownRoadmapGenerator
 {
     public class MarkdownRoadmpaGeneratorService : IMarkdownRoadmpaGeneratorService
     {
@@ -129,9 +129,9 @@ namespace MudBlazor.Markdown.Extensions.MarkdownRoadmapGeneratorService
                             {
                                 if (subInnerParagraphBlock is ParagraphBlock subParagraphBlock)
                                 {
-                                    Title = sourceMarkdown.Substring(subParagraphBlock.Span.Start, subParagraphBlock.Span.Length);
+                                    string subTaskTitle = sourceMarkdown.Substring(subParagraphBlock.Span.Start, subParagraphBlock.Span.Length);
 
-                                    SubTasks.Add(Title.Replace("*", "").Trim());
+                                    SubTasks.Add(subTaskTitle.Replace("*", "").Trim());
                                 }
                             }
                         }

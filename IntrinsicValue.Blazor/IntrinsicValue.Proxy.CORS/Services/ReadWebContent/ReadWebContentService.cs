@@ -1,26 +1,59 @@
-﻿
+﻿using Intrinsicly.Api.Services.Category;
+using Intrinsicly.Api.Services.FileWorm;
+using MudBlazor.Markdown.Extensions.Domain.DTOs;
+
 namespace Intrinsicly.Api.Services.ReadWebContent
 {
     public class ReadWebContentService : IReadWebContentService
     {
-        public string GetMarkdownContent(IWebHostEnvironment _env, string directoryPath)
-        {
-            var filePath = Path.Combine(_env.WebRootPath, directoryPath);
-            if (!File.Exists(filePath))
-            {
-                return "";
-            }
+        private readonly IFileWormService _fileService;
+        private readonly ICategoryService _categoryService;
 
-            var content = File.ReadAllText(filePath);
-            return content;
+        public ReadWebContentService(IFileWormService fileService, ICategoryService categoryService)
+        {
+            _fileService = fileService;
+            _categoryService = categoryService;
         }
 
-        public List<string> GetMarkdownFiles(IWebHostEnvironment _env)
+        public List<string> GetMarkdownFiles()
         {
-            var markdownDir = Path.Combine(_env.WebRootPath, "markdown");
-            return Directory.GetFiles(markdownDir, "*.md", SearchOption.AllDirectories)
-                                 .Select(f => f.Replace(_env.WebRootPath + Path.DirectorySeparatorChar, "").Replace("\\", "/"))
-                                 .ToList();
+            return _fileService.GetFiles("markdown", "*.md");
+        }
+
+        public KeyValuePair<MarkdownInfoDto, string> GetMarkdownEntity(string urlPath)
+        {
+            List<string> markdownFiles = GetMarkdownFiles();
+            Dictionary<string, List<MarkdownInfoDto>> categorizedFiles = _categoryService.CategorizeFiles(markdownFiles);
+
+            MarkdownInfoDto markdownInfoDto = categorizedFiles
+                .SelectMany(ctg => ctg.Value)
+                .First(md => md.UrlPath == urlPath);
+
+            if (markdownInfoDto == null)
+            {
+                return new KeyValuePair<MarkdownInfoDto, string>(null, "");
+            }
+
+            string content = GetMarkdownContentFromDirectory(markdownInfoDto.DirectoryPath);
+
+            return new KeyValuePair<MarkdownInfoDto, string>(markdownInfoDto, content);
+        }
+
+        public string GetMarkdownContent(string urlPath)
+        {
+            List<string> markdownFiles = GetMarkdownFiles();
+            Dictionary<string, List<MarkdownInfoDto>> categorizedFiles = _categoryService.CategorizeFiles(markdownFiles);
+
+            MarkdownInfoDto markdownInfoDto = categorizedFiles
+                .SelectMany(ctg => ctg.Value)
+                .First(md => md.UrlPath == urlPath);
+
+            return GetMarkdownContentFromDirectory(markdownInfoDto.DirectoryPath);
+        }
+
+        private string GetMarkdownContentFromDirectory(string directoryPath)
+        {
+            return _fileService.ReadFileContent(directoryPath);
         }
     }
 }

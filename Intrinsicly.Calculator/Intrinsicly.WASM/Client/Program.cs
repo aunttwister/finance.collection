@@ -1,15 +1,12 @@
+using Financial.Collection.Link.Blazor.WASM.Calculator.ServiceRegistar;
+using Financial.Collection.Link.FinanceScraper.ServiceRegistar;
+using Financial.Collection.Link.IntrinsicValue.Calculation.ServiceRegistar;
+using Intrinsicly.WASM.Services.ServiceRegistar;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using MudBlazor.Services;
-using IntrinsicValue.Calculation;
-using Financial.Collection.Link.FinanceScraper.ServiceRegistar;
-using System.Reflection;
 using MudBlazor;
-using Financial.Collection.Link.Blazor.WASM.Calculator.ServiceRegistar;
-using Financial.Collection.Link.IntrinsicValue.Calculation.ServiceRegistar;
-using Intrinsicly.WASM;
-using Intrinsicly.WASM.Services.Markdown;
-using Intrinsicly.WASM.Services.LocalStorage;
+using MudBlazor.Services;
+using System.Reflection;
 
 namespace Intrinsicly.WASM
 {
@@ -49,8 +46,8 @@ namespace Intrinsicly.WASM
             });
 
             builder.Services.AddMudMarkdownServices();
-            builder.Services.AddScoped<MarkdownService>();
-            builder.Services.AddScoped<LocalStorageService>();
+
+            builder.Services.AddMarkdownServices();
 
             await builder.Build().RunAsync();
         }

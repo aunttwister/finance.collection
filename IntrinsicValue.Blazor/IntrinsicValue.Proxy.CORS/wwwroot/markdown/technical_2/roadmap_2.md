@@ -19,6 +19,7 @@
     - Present acquired data and intrinsic values clearly and effectively
 - [x] **Margin of Safety**
     - Input option available for the margin of safety
+    - different testdadaddadadadadad 
 
 <br />
 ###### v0.1.1 Stabilization

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Intrinsicly.WASM.Services.LocalStorage
 {
-    public class LocalStorageService
+    public class LocalStorageService : ILocalStorageService
     {
         private readonly IJSRuntime _jsRuntime;
 

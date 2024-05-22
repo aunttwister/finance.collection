@@ -1,8 +1,9 @@
-﻿using Intrinsicly.Api.Services.ReadWebContent;
-using Intrinsicly.Api.Services.UnpackMarkdown;
+﻿using Intrinsicly.Api.Services.MarkdownButler;
+using Intrinsicly.Api.Services.ReadWebContent;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
-using MudBlazor.Markdown.Extensions.MarkdownRoadmapGeneratorService;
+using MudBlazor.Markdown.Extensions.Domain.DTOs;
+using MudBlazor.Markdown.Extensions.MarkdownRoadmapGenerator;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,17 +14,15 @@ namespace Intrinsicly.Api.Controllers
     [Route("api/[controller]")]
     public class MarkdownController : ControllerBase
     {
-        private readonly IWebHostEnvironment _env;
         private readonly IMarkdownButlerService _markdownButlerService;
         private readonly IReadWebContentService _readWebContentService;
         private readonly IMarkdownRoadmpaGeneratorService _roadmapGeneratorService;
 
-        public MarkdownController(IWebHostEnvironment env, 
+        public MarkdownController(
             IMarkdownButlerService markdownButlerService,
             IReadWebContentService readWebContentService,
             IMarkdownRoadmpaGeneratorService roadmapGeneratorService)
         {
-            _env = env;
             _markdownButlerService = markdownButlerService;
             _readWebContentService = readWebContentService;
             _roadmapGeneratorService = roadmapGeneratorService;
@@ -32,7 +31,7 @@ namespace Intrinsicly.Api.Controllers
         [HttpGet("files")]
         public IActionResult GetMarkdownFiles()
         {
-            List<string> markdownFiles = _readWebContentService.GetMarkdownFiles(_env);
+            List<string> markdownFiles = _readWebContentService.GetMarkdownFiles();
             var result = _markdownButlerService.CategorizeMarkdownFiles(markdownFiles);
 
             if (result is null)
@@ -41,10 +40,21 @@ namespace Intrinsicly.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("content")]
-        public IActionResult GetMarkdownContent([FromQuery] string directoryPath)
+        [HttpGet("entity")]
+        public IActionResult GetMarkdownEntity([FromQuery] string urlPath)
         {
-            var result = _readWebContentService.GetMarkdownContent(_env, directoryPath);
+            KeyValuePair<MarkdownInfoDto, string>? result = _readWebContentService.GetMarkdownEntity(urlPath);
+
+            if (result is null)
+                return NotFound("");
+
+            return Ok(result.Value);
+        }
+
+        [HttpGet("content")]
+        public IActionResult GetMarkdownContent([FromQuery] string urlPath)
+        {
+            var result = _readWebContentService.GetMarkdownContent(urlPath);
 
             if (result == "")
                 return Ok("");
@@ -52,11 +62,12 @@ namespace Intrinsicly.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("roadmap")]
-        public IActionResult GetParsedRoadmapAsync([FromQuery] string directoryPath)
+        [HttpGet("parseEntity")]
+        public IActionResult GetParsedRoadmapAsync([FromQuery] string urlPath)
         {
-            string roadMapMarkdown = _readWebContentService.GetMarkdownContent(_env, directoryPath);
-            var result = _roadmapGeneratorService.ParseRoadmapMarkdown(roadMapMarkdown);
+            string markDownContent = _readWebContentService.GetMarkdownContent(urlPath);
+
+            var result = _roadmapGeneratorService.ParseRoadmapMarkdown(markDownContent);
 
             if (result is null || result.Count < 1)
                 return NotFound();

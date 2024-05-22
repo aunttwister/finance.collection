@@ -1,6 +1,6 @@
 ﻿@using Intrinsicly.WASM.Services.Markdown
 @using MudBlazor.Markdown.Extensions.Domain.DTOs
-@inject MarkdownService _markdownService;
+@inject IMarkdownService _markdownService;
 
 <MudTimeline>
     @if (TimelineEvents != null)
@@ -30,15 +30,12 @@
 
 @code {
     [Parameter]
-    public string DirectoryPath { get; set; }
+    public string MarkdownPath { get; set; }
     private List<TimelineEventDto> TimelineEvents { get; set; }
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
-        if (!string.IsNullOrEmpty(DirectoryPath))
-        {
-            TimelineEvents = await _markdownService.GetParsedRoadmapAsync(DirectoryPath);
-            StateHasChanged();
-        }
+        TimelineEvents = await _markdownService.GetParsedRoadmapAsync(MarkdownPath);
+        StateHasChanged();
     }
 }

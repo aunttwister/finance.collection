@@ -1,14 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <PreBuildEvent>cd "$(ProjectDir)..\..\.." &amp;&amp; powershell -ExecutionPolicy Bypass -File ".\script\build-latest-markdown.ps1"</PreBuildEvent>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Domain\Finance.Collection.Domain\Finance.Collection.Domain.csproj" />
     <ProjectReference Include="..\Api\Services\MudBlazor.Markdown.Extensions\MudBlazor.Markdown.Extensions.csproj" />
   </ItemGroup>
 
+  
 </Project>
+
+

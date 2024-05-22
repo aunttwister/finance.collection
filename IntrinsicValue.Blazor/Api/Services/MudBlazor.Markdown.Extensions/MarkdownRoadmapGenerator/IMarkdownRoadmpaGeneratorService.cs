@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MudBlazor.Markdown.Extensions.MarkdownRoadmapGeneratorService
+namespace MudBlazor.Markdown.Extensions.MarkdownRoadmapGenerator
 {
     public interface IMarkdownRoadmpaGeneratorService
     {

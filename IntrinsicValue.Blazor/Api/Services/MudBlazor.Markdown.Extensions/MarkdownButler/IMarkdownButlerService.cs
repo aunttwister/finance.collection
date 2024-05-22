@@ -1,6 +1,6 @@
 ﻿using MudBlazor.Markdown.Extensions.Domain.DTOs;
 
-namespace Intrinsicly.Api.Services.UnpackMarkdown
+namespace Intrinsicly.Api.Services.MarkdownButler
 {
     public interface IMarkdownButlerService
     {

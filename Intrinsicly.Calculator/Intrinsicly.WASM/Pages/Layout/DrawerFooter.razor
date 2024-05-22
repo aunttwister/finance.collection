@@ -1,8 +1,7 @@
 ﻿@using Intrinsicly.WASM.Services.Markdown
 @using MudBlazor.Markdown.Extensions.Domain.DTOs
-@using static Intrinsicly.WASM.Services.Markdown.MarkdownService
 @inherits LayoutComponentBase
-@inject MarkdownService _markdownService;
+@inject IMarkdownService _markdownService;
 
 <MudContainer Class="drawer-footer-container">
     <MudGrid Justify="Justify.SpaceBetween">

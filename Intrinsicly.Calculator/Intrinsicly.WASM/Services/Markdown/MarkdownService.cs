@@ -1,47 +1,27 @@
 ﻿using Intrinsicly.WASM.Services.LocalStorage;
+using Intrinsicly.WASM.Services.MarkdownContent;
 using MudBlazor.Markdown.Extensions.Domain.DTOs;
 using System.Net.Http.Json;
 
 namespace Intrinsicly.WASM.Services.Markdown
 {
-    public class MarkdownService
+    public class MarkdownService : IMarkdownService
     {
-        private readonly HttpClient _httpClient;
-        private readonly LocalStorageService _localStorageService;
+        private readonly IMarkdownContentService _markdownContentService;
+        private readonly ILocalStorageService _localStorageService;
         private const string CurrentMarkdownKey = "currentMarkdown";
 
         public MarkdownInfoDto CurrentMarkdown { get; set; }
 
-        public MarkdownService(HttpClient httpClient, LocalStorageService localStorageService)
+        public MarkdownService(IMarkdownContentService markdownContentService, ILocalStorageService localStorageService)
         {
-            _httpClient = httpClient;
+            _markdownContentService = markdownContentService;
             _localStorageService = localStorageService;
         }
 
-        public async Task<Dictionary<string, List<MarkdownInfoDto>>> GetCategorizedMarkdownFilesAsync()
+        public async Task LoadCurrentMarkdownAsync()
         {
-            return await _httpClient.GetFromJsonAsync<Dictionary<string, List<MarkdownInfoDto>>>("api/Markdown/files");
-        }
-
-        public async Task<string> GetMarkdownContentAsync(string directoryPath)
-        {
-            var url = $"api/Markdown/content?directoryPath={directoryPath}";
-            return await _httpClient.GetStringAsync(url);
-        }
-        public async Task<List<TimelineEventDto>> GetParsedRoadmapAsync(string directoryPath)
-        {
-            var url = $"api/Markdown/roadmap?directoryPath={directoryPath}";
-            var response = await _httpClient.GetAsync(url);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<List<TimelineEventDto>>();
-            }
-            else
-            {
-                // Handle error response accordingly
-                throw new HttpRequestException($"Request to {url} failed with status code {response.StatusCode}");
-            }
+            CurrentMarkdown = await _localStorageService.GetItemAsync<MarkdownInfoDto>(CurrentMarkdownKey);
         }
 
         public async Task SaveCurrentMarkdownAsync(MarkdownInfoDto markdown)
@@ -50,9 +30,25 @@ namespace Intrinsicly.WASM.Services.Markdown
             await _localStorageService.SetItemAsync(CurrentMarkdownKey, markdown);
         }
 
-        public async Task LoadCurrentMarkdownAsync()
+        public async Task<string> GetMarkdownContentAsync(string urlPath)
         {
-            CurrentMarkdown = await _localStorageService.GetItemAsync<MarkdownInfoDto>(CurrentMarkdownKey);
+            return await _markdownContentService.GetMarkdownContentAsync(urlPath);
+        }
+
+        public async Task<KeyValuePair<MarkdownInfoDto, string>> GetMarkdownEntityAsync(string urlPath)
+        {
+            return await _markdownContentService.GetMarkdownEntityAsync(urlPath);
+        }
+
+        public async Task<Dictionary<string, List<MarkdownInfoDto>>> GetCategorizedMarkdownFilesAsync()
+        {
+            return await _markdownContentService.GetCategorizedMarkdownFilesAsync();
+        }
+
+        public async Task<List<TimelineEventDto>> GetParsedRoadmapAsync(string urlPath)
+        {
+            return await _markdownContentService.GetParsedRoadmapAsync(urlPath);
         }
     }
+
 }
