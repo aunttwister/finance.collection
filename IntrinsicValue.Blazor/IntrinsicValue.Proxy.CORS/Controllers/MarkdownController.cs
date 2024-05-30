@@ -1,4 +1,5 @@
-﻿using Intrinsicly.Api.Services.MarkdownButler;
+﻿using Intrinsicly.Api.Services.Category;
+using Intrinsicly.Api.Services.MarkdownButler;
 using Intrinsicly.Api.Services.ReadWebContent;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -14,16 +15,16 @@ namespace Intrinsicly.Api.Controllers
     [Route("api/[controller]")]
     public class MarkdownController : ControllerBase
     {
-        private readonly IMarkdownButlerService _markdownButlerService;
+        private readonly ICategoryService _categoryService;
         private readonly IReadWebContentService _readWebContentService;
         private readonly IMarkdownRoadmpaGeneratorService _roadmapGeneratorService;
 
         public MarkdownController(
-            IMarkdownButlerService markdownButlerService,
+            ICategoryService categoryService,
             IReadWebContentService readWebContentService,
             IMarkdownRoadmpaGeneratorService roadmapGeneratorService)
         {
-            _markdownButlerService = markdownButlerService;
+            _categoryService = categoryService;
             _readWebContentService = readWebContentService;
             _roadmapGeneratorService = roadmapGeneratorService;
         }
@@ -32,7 +33,7 @@ namespace Intrinsicly.Api.Controllers
         public IActionResult GetMarkdownFiles()
         {
             List<string> markdownFiles = _readWebContentService.GetMarkdownFiles();
-            var result = _markdownButlerService.CategorizeMarkdownFiles(markdownFiles);
+            var result = _categoryService.CategorizeFiles(markdownFiles);
 
             if (result is null)
                 return Ok("");

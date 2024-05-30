@@ -1,14 +1,15 @@
 ﻿@page "/{**MarkdownPath}"
+@using Intrinsicly.WASM.Pages.Documentation.Headings
 @using Intrinsicly.WASM.Services.Markdown
 @using MudBlazor.Markdown.Extensions.Domain.DTOs
 @inject IMarkdownService _markdownService
 
-<MudContainer Style="overflow-y: hidden;">
+<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
     <MudGrid>
-        <MudItem sm="1">
-
+        <MudItem xs="12" sm="12" md="12" lg="4" xl="3">
+            <Headings HeadingsData="Headings"></Headings>
         </MudItem>
-        <MudItem sm="10">
+        <MudItem xs="12" sm="12" md="12" lg="8" xl="6">
             @if (isRoadmap)
             {
                 <Roadmap MarkdownPath="@MarkdownPath" />
@@ -18,7 +19,7 @@
                 <MarkdownPage MarkdownPath="@MarkdownPath" MarkdownContent="@MarkdownContent" />
             }
         </MudItem>
-        <MudItem sm="1">
+        <MudItem xs="0" sm="0" md="0" lg="0" xl="3">
 
         </MudItem>
     </MudGrid>
@@ -31,6 +32,7 @@
     private string MarkdownContent = "";
     private bool isRoadmap = false;
     private bool _isInitialized = false;
+    private List<HeadingDto> Headings { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,11 +58,7 @@
 
         if (IsCurrentMarkdownValid(currentMarkdown))
         {
-            await HandleValidCurrentMarkdownAsync(currentMarkdown);
-        }
-        else if (IsDifferentMarkdownUrl(currentMarkdown))
-        {
-            await HandleDifferentMarkdownUrlAsync();
+            await HandleCurrentMarkdownAsync(currentMarkdown);
         }
         else
         {
@@ -77,7 +75,7 @@
     {
         return currentMarkdown != null && currentMarkdown.UrlPath != MarkdownPath;
     }
- 
+
     private void SetMarkdownUnavailable()
     {
         MarkdownContent = "Markdown information not available.";
@@ -92,20 +90,7 @@
 }
 
 @code {
-    private async Task HandleValidCurrentMarkdownAsync(MarkdownInfoDto currentMarkdown)
-    {
-        if (currentMarkdown.DisplayName == "Roadmap")
-        {
-            isRoadmap = true;
-        }
-        else
-        {
-            MarkdownContent = await GetMarkdownContentAsync(MarkdownPath);
-            isRoadmap = false;
-        }
-    }
-
-    private async Task HandleDifferentMarkdownUrlAsync()
+    private async Task HandleCurrentMarkdownAsync(MarkdownInfoDto currentMarkdown)
     {
         KeyValuePair<MarkdownInfoDto, string> markdown = await _markdownService.GetMarkdownEntityAsync(MarkdownPath);
         if (!string.IsNullOrEmpty(markdown.Value))
@@ -121,6 +106,8 @@
                 MarkdownContent = markdown.Value;
                 isRoadmap = false;
             }
+
+            Headings = markdown.Key.Headings;
         }
         else
         {

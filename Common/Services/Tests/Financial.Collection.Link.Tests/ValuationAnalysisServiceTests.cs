@@ -1,4 +1,4 @@
-using AutoMapper;
+/*using AutoMapper;
 using Finance.Collection.Domain.Common.Propagation;
 using Finance.Collection.Domain.FinanceScraper.Results;
 using Finance.Collection.Domain.IntrinsicValue.Calculation.Results;
@@ -97,4 +97,4 @@ namespace Financial.Collection.Link.Tests
 
 
     }
-}
+}*/

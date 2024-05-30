@@ -2,6 +2,8 @@
 # Roadmap
 
 <br />
+
+
 ###### v0.1 - MVP/Initial
 * [x] **Valuation Models** 
     - Benjamin Graham Intrinsic Value Model
@@ -18,10 +20,10 @@
 - [x] **Results Display**
     - Present acquired data and intrinsic values clearly and effectively
 - [x] **Margin of Safety**
-    - Input option available for the margin of safety
-    - different testdadaddadadadadad 
+    - Input option available for execution evaluation with the margin of safety
 
 <br />
+
 ###### v0.1.1 Stabilization
 - [x] **Documentation Infrastructure**
 	- Dynamic display of documentation, guidelines and useful info using Markdown.

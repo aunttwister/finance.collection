@@ -27,9 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Financial.Collection.Link.T
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Markdown", "Markdown", "{E8734BEF-F5B2-43CF-B3F8-1B4E1F863329}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Markdown.Extensions", "..\..\IntrinsicValue.Blazor\Api\Services\MudBlazor.Markdown.Extensions\MudBlazor.Markdown.Extensions.csproj", "{1197591A-E2AA-4A48-885A-C1BCEA5D41A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Markdown.Extensions", "..\..\IntrinsicValue.Blazor\Api\Services\MudBlazor.Markdown.Extensions\MudBlazor.Markdown.Extensions.csproj", "{1197591A-E2AA-4A48-885A-C1BCEA5D41A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Markdown.Extensions.Domain", "..\..\IntrinsicValue.Blazor\Api\Services\MudBlazor.Markdown.Extensions.Domain\MudBlazor.Markdown.Extensions.Domain.csproj", "{2F328568-F686-45B8-B7BA-639119490ACB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Markdown.Extensions.Domain", "..\..\IntrinsicValue.Blazor\Api\Services\MudBlazor.Markdown.Extensions.Domain\MudBlazor.Markdown.Extensions.Domain.csproj", "{2F328568-F686-45B8-B7BA-639119490ACB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

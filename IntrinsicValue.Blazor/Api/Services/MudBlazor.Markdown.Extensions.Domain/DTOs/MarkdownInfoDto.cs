@@ -8,10 +8,15 @@ namespace MudBlazor.Markdown.Extensions.Domain.DTOs
 {
     public class MarkdownInfoDto
     {
+        public MarkdownInfoDto()
+        {
+            Headings = new();
+        }
         public string OriginalName { get; set; }
         public string DisplayName { get; set; }
         public int Priority { get; set; }
         public string UrlPath { get; set; }
         public string DirectoryPath { get; set; }
+        public List<HeadingDto> Headings { get; set; }
     }
 }

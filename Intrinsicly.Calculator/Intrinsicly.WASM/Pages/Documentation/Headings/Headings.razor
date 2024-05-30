@@ -1,0 +1,89 @@
+﻿@using MudBlazor.Markdown.Extensions.Domain.DTOs
+@using System.Text.RegularExpressions
+@inject IJSRuntime _js;
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudExpansionPanels Class="mt-6 position-fixed" Elevation="4">
+        <MudExpansionPanel Text="Table of Content" MaxHeight="1000" IsInitiallyExpanded="true">
+            <MudList Dense="true" Clickable="true">
+                @if (HeadingsData != null && HeadingsData.Any())
+                {
+                    @foreach (var heading in HeadingsData)
+                    {
+                        @if (heading.NestedHeadings != null && heading.NestedHeadings.Any())
+                        {
+                            <MudListItem Text="@heading.Heading" Expanded="@IsExpanded(heading)" OnClickHandlerPreventDefault="true" OnClick="@(async () => await ScrollToHeadingExpand(heading))">
+                                <NestedList>
+                                    <NestedHeadings NestedHeadingsData="heading.NestedHeadings" />
+                                </NestedList>
+                            </MudListItem>
+                        }
+                        else
+                        {
+                            <MudListItem OnClick="() => ScrollToHeading(heading.Heading)">
+                                @heading.Heading
+                            </MudListItem>
+                        }
+                        <MudDivider />
+                    }
+                }
+                else
+                {
+                    <MudListItem>
+                        <MudText>No headings to display.</MudText>
+                    </MudListItem>
+                }
+            </MudList>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</MudContainer>
+
+<style>
+    @@media (min-width: 1600px) {
+        .position-fixed {
+            position: fixed;
+        }
+    }
+</style>
+
+<script>
+    function scrollToHeading(id) {
+        var element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>
+
+
+@code {
+    [Parameter]
+    public List<HeadingDto> HeadingsData { get; set; }
+    private Dictionary<string, bool> expandedStates = new Dictionary<string, bool>();
+
+    private async Task ScrollToHeadingExpand(HeadingDto heading)
+    {
+        var headingId = GenerateId(heading.Heading);
+        expandedStates[headingId] = !IsExpanded(heading);
+        StateHasChanged();
+        await _js.InvokeVoidAsync("scrollToHeading", headingId);
+    }
+
+    private bool IsExpanded(HeadingDto heading)
+    {
+        var headingId = GenerateId(heading.Heading);
+        return expandedStates.ContainsKey(headingId) && expandedStates[headingId];
+    }
+
+    private async Task ScrollToHeading(string heading)
+    {
+        var id = GenerateId(heading);
+        await _js.InvokeVoidAsync("scrollToHeading", id);
+    }
+
+    private string GenerateId(string headingText)
+    {
+        // Generate a URL-friendly ID from the heading text
+        return Regex.Replace(headingText.ToLower(), @"\s+", "-");
+    }
+}

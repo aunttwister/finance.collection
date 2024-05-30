@@ -1,6 +1,7 @@
 ﻿using Intrinsicly.Api.Services.Category;
 using Intrinsicly.Api.Services.FileWorm;
 using MudBlazor.Markdown.Extensions.Domain.DTOs;
+using MudBlazor.Markdown.Extensions.MarkdownHeadingsExtractor;
 
 namespace Intrinsicly.Api.Services.ReadWebContent
 {
@@ -8,11 +9,16 @@ namespace Intrinsicly.Api.Services.ReadWebContent
     {
         private readonly IFileWormService _fileService;
         private readonly ICategoryService _categoryService;
+        private readonly IMarkdownHeadingsExtractorService _markdownHeadingsExtractorService;
 
-        public ReadWebContentService(IFileWormService fileService, ICategoryService categoryService)
+        public ReadWebContentService(
+            IFileWormService fileService, 
+            ICategoryService categoryService, 
+            IMarkdownHeadingsExtractorService markdownHeadingsExtractorService)
         {
             _fileService = fileService;
             _categoryService = categoryService;
+            _markdownHeadingsExtractorService = markdownHeadingsExtractorService;
         }
 
         public List<string> GetMarkdownFiles()
@@ -35,6 +41,8 @@ namespace Intrinsicly.Api.Services.ReadWebContent
             }
 
             string content = GetMarkdownContentFromDirectory(markdownInfoDto.DirectoryPath);
+
+            markdownInfoDto.Headings = _markdownHeadingsExtractorService.ExtractHeadings(content);
 
             return new KeyValuePair<MarkdownInfoDto, string>(markdownInfoDto, content);
         }

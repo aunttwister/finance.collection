@@ -1,0 +1,47 @@
+﻿@using MudBlazor.Markdown.Extensions.Domain.DTOs
+@using System.Text.RegularExpressions
+@inject IJSRuntime _js;
+
+@foreach (var heading  in NestedHeadingsData)
+{
+    @if (heading.NestedHeadings != null && heading.NestedHeadings.Any())
+    {
+        <MudListItem Text="@heading.Heading" InitiallyExpanded="true" OnClick="() => ScrollToHeading(heading.Heading)">
+            <NestedList>
+                <NestedHeadings NestedHeadingsData="heading.NestedHeadings" />
+            </NestedList>
+        </MudListItem>
+    }
+    else
+    {
+        <MudListItem OnClick="() => ScrollToHeading(heading.Heading)">
+            @heading.Heading
+        </MudListItem>
+    }
+}
+
+<script>
+    function scrollToHeading(id) {
+        var element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>
+
+@code {
+    [Parameter]
+    public List<HeadingDto> NestedHeadingsData { get; set; }
+
+    private async Task ScrollToHeading(string heading)
+    {
+        var id = GenerateId(heading);
+        await _js.InvokeVoidAsync("scrollToHeading", id);
+    }
+
+    private string GenerateId(string headingText)
+    {
+        // Generate a URL-friendly ID from the heading text
+        return Regex.Replace(headingText.ToLower(), @"\s+", "-");
+    }
+}

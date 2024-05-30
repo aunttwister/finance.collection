@@ -1,10 +1,6 @@
-# Define source and target directories
-$sourceDir = "C:\Users\pavle\Documents\Obsidian\Personal_MD_Library\Intrinsicly.Calculator\live_version"
-$targetDir = "C:\Users\pavle\Documents\Hobby\MyProjects\Financial.Collection\IntrinsicValue.Blazor\IntrinsicValue.Proxy.CORS\wwwroot\markdown"
-$mediaDir = "C:\Users\pavle\Documents\Hobby\MyProjects\Financial.Collection\IntrinsicValue.Blazor\IntrinsicValue.Proxy.CORS\wwwroot\media"
-
-# Log file
-$logFile = "$(Split-Path -Path $MyInvocation.MyCommand.Path -Parent)\build-log.txt"
+param (
+    [string]$configFilePath = ".\config.json"
+)
 
 # Function to display status messages with timestamps
 function Show-Status {
@@ -63,6 +59,19 @@ function Clear-Directory {
         Show-Status "Cleared directory: $directory"
     }
 }
+
+# Log file
+$logFile = "$(Split-Path -Path $MyInvocation.MyCommand.Path -Parent)\build-log.txt"
+
+# Read configuration file
+if (-Not (Test-Path $configFilePath)) {
+    Show-Error "Configuration file '$configFilePath' does not exist."
+}
+
+$config = Get-Content -Path $configFilePath | ConvertFrom-Json
+$sourceDir = $config.sourceDir
+$targetDir = $config.targetDir
+$mediaDir = $config.mediaDir
 
 # Debug message to confirm script execution
 Show-Status "Starting the file copy script with markdown image link replacement..."
